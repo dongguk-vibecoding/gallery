@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>도서관 빈자리</title>
+  <style>
+    body { margin: 0; background: #0f172a; color: #e2e8f0; font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 32px 16px; }
+    h1 { margin: 0 0 4px; font-size: 28px; }
+    .sub { margin: 0 0 20px; color: #94a3b8; }
+    .rooms { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .rooms button { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; border-radius: 10px; padding: 8px 14px; font: inherit; cursor: pointer; }
+    .rooms button.on { background: #38bdf8; border-color: #38bdf8; color: #0f172a; font-weight: 700; }
+    .stats { display: flex; gap: 16px; margin-bottom: 16px; color: #94a3b8; font-size: 14px; }
+    .stats b { color: #f8fafc; font-size: 18px; }
+    .seats { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; background: #1e293b; padding: 16px; border-radius: 16px; }
+    .seat { aspect-ratio: 1; border-radius: 6px; border: 0; font-size: 11px; font-family: inherit; cursor: pointer; background: #22c55e; color: #052e16; font-weight: 700; }
+    .seat.used { background: #334155; color: #64748b; cursor: not-allowed; }
+    .seat.mine { background: #38bdf8; color: #0f172a; }
+    .legend { display: flex; gap: 14px; margin-top: 12px; font-size: 13px; color: #94a3b8; }
+    .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+    .msg { margin-top: 16px; min-height: 24px; color: #38bdf8; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>📚 도서관 빈자리</h1>
+    <p class="sub">초록색 좌석을 누르면 예약돼요. (데모라 실제 예약은 되지 않습니다)</p>
+    <div class="rooms" id="rooms"></div>
+    <div class="stats" id="stats"></div>
+    <div class="seats" id="seats"></div>
+    <div class="legend"><span><i style="background:#22c55e"></i>빈자리</span><span><i style="background:#334155"></i>사용 중</span><span><i style="background:#38bdf8"></i>내 자리</span></div>
+    <div class="msg" id="msg"></div>
+  </div>
+  <script>
+    // 가짜 데이터 (데모 버전): 열람실별 사용 중 좌석 비율로 무작위 생성
+    const ROOMS = [
+      { name: "제1열람실", seats: 60, usage: 0.8 },
+      { name: "제2열람실", seats: 50, usage: 0.55 },
+      { name: "노트북석", seats: 40, usage: 0.9 },
+      { name: "그룹스터디", seats: 30, usage: 0.35 }
+    ];
+    let seed = 7;
+    const rand = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+    ROOMS.forEach((r) => { r.used = Array.from({ length: r.seats }, () => rand() < r.usage); });
+
+    let roomIndex = 0;
+    let mine = null;
+
+    function render() {
+      const room = ROOMS[roomIndex];
+      document.getElementById("rooms").innerHTML = "";
+      ROOMS.forEach((r, i) => {
+        const b = document.createElement("button");
+        b.textContent = r.name;
+        b.className = i === roomIndex ? "on" : "";
+        b.onclick = () => { roomIndex = i; render(); };
+        document.getElementById("rooms").append(b);
+      });
+      const free = room.used.filter((u) => !u).length;
+      document.getElementById("stats").innerHTML = `<span>전체 <b>${room.seats}</b></span><span>빈자리 <b>${free}</b></span><span>사용률 <b>${Math.round((1 - free / room.seats) * 100)}%</b></span>`;
+
+      const seats = document.getElementById("seats");
+      seats.innerHTML = "";
+      room.used.forEach((used, i) => {
+        const s = document.createElement("button");
+        const isMine = mine && mine.room === roomIndex && mine.seat === i;
+        s.className = "seat" + (isMine ? " mine" : used ? " used" : "");
+        s.textContent = i + 1;
+        s.onclick = () => {
+          if (used && !isMine) return;
+          if (mine) ROOMS[mine.room].used[mine.seat] = false;
+          if (isMine) { mine = null; msg(`${room.name} ${i + 1}번 예약을 취소했어요.`); }
+          else { mine = { room: roomIndex, seat: i }; room.used[i] = true; msg(`${room.name} ${i + 1}번 좌석을 예약했어요!`); }
+          render();
+        };
+        seats.append(s);
+      });
+    }
+    const msg = (t) => { document.getElementById("msg").textContent = t; };
+    render();
+  </script>
+</body>
+</html>

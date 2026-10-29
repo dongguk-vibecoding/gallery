@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>할 일 정원</title>
+  <style>
+    body { margin: 0; min-height: 100vh; background: #fdf6ff; color: #3b2a4a; font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; display: flex; flex-direction: column; }
+    .wrap { max-width: 520px; width: 100%; margin: 0 auto; padding: 32px 16px 0; box-sizing: border-box; flex: 1; }
+    h1 { margin: 0 0 4px; font-size: 28px; }
+    .sub { margin: 0 0 20px; color: #8a6f9e; }
+    form { display: flex; gap: 8px; margin-bottom: 16px; }
+    input[type=text] { flex: 1; height: 44px; border: 2px solid #e6d3f2; border-radius: 12px; padding: 0 14px; font: inherit; }
+    form button { height: 44px; padding: 0 18px; border: 0; border-radius: 12px; background: #a855f7; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; box-shadow: 0 2px 8px rgba(120, 60, 160, .06); }
+    li.done span { text-decoration: line-through; color: #b9a5c9; }
+    li span { flex: 1; }
+    li .del { border: 0; background: none; color: #c4b0d4; cursor: pointer; font-size: 18px; }
+    input[type=checkbox] { width: 20px; height: 20px; accent-color: #a855f7; }
+    .garden { margin-top: 24px; background: linear-gradient(#e9fbe9, #c6efc6); border-top: 6px solid #8bd18b; min-height: 120px; padding: 18px 16px; text-align: center; font-size: 34px; letter-spacing: 4px; }
+    .garden small { display: block; font-size: 14px; letter-spacing: 0; color: #3f7d3f; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🌷 할 일 정원</h1>
+    <p class="sub">할 일을 끝낼 때마다 정원에 꽃이 피어요.</p>
+    <form id="form"><input type="text" id="input" placeholder="할 일을 입력하세요" required><button>추가</button></form>
+    <ul id="list"></ul>
+  </div>
+  <div class="garden" id="garden"></div>
+  <script>
+    // 저장 키에 작품 고유 이름을 붙여 다른 작품과 겹치지 않게 한다.
+    const KEY = "04-park-minji:todos";
+    const FLOWERS = ["🌷", "🌼", "🌸", "🌻", "🌹", "🪻", "🌺"];
+    const SAMPLE = [
+      { text: "전공 과제 제출하기", done: true },
+      { text: "도서관 책 반납", done: true },
+      { text: "바이브코딩 데모 버전 만들기", done: false },
+      { text: "동아리 회의 자료 정리", done: false }
+    ];
+
+    let todos;
+    try { todos = JSON.parse(localStorage.getItem(KEY)) || SAMPLE; } catch { todos = SAMPLE; }
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify(todos)); } catch {} };
+
+    function render() {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+      todos.forEach((t, i) => {
+        const li = document.createElement("li");
+        li.className = t.done ? "done" : "";
+        const box = document.createElement("input");
+        box.type = "checkbox";
+        box.checked = t.done;
+        box.onchange = () => { t.done = box.checked; save(); render(); };
+        const span = document.createElement("span");
+        span.textContent = t.text;
+        const del = document.createElement("button");
+        del.className = "del";
+        del.textContent = "×";
+        del.onclick = () => { todos.splice(i, 1); save(); render(); };
+        li.append(box, span, del);
+        list.append(li);
+      });
+      const done = todos.filter((t) => t.done).length;
+      const garden = document.getElementById("garden");
+      garden.textContent = Array.from({ length: done }, (_, i) => FLOWERS[i % FLOWERS.length]).join("") || "🌱";
+      const note = document.createElement("small");
+      note.textContent = done ? `꽃 ${done}송이가 피었어요` : "아직 새싹이에요. 할 일을 하나 끝내 보세요!";
+      garden.append(note);
+    }
+
+    document.getElementById("form").onsubmit = (e) => {
+      e.preventDefault();
+      const input = document.getElementById("input");
+      todos.push({ text: input.value.trim(), done: false });
+      input.value = "";
+      save();
+      render();
+    };
+    render();
+  </script>
+</body>
+</html>

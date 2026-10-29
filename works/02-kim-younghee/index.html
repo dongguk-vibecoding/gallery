@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>공강 메이트</title>
+  <style>
+    body { margin: 0; background: #f0f7f4; color: #17332a; font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 32px 16px; }
+    h1 { margin: 0 0 4px; font-size: 28px; }
+    .sub { margin: 0 0 20px; color: #4d7566; }
+    .friends { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .friends label { display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #cfe5dc; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    table { width: 100%; border-collapse: separate; border-spacing: 4px; table-layout: fixed; }
+    th { font-size: 13px; color: #4d7566; font-weight: 600; }
+    td { height: 34px; border-radius: 8px; background: #fff; font-size: 11px; text-align: center; color: #9bb5aa; }
+    td.time { background: none; color: #4d7566; font-size: 12px; width: 48px; }
+    td.busy { background: #e3ece8; color: #7c978c; }
+    td.free { background: #2fbf71; color: #fff; font-weight: 700; }
+    .result { margin-top: 20px; background: #fff; border-radius: 14px; padding: 16px 18px; border: 1px solid #cfe5dc; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🌿 공강 메이트</h1>
+    <p class="sub">같이 놀 친구를 체크하면, 모두 비는 시간이 초록색으로 표시돼요.</p>
+    <div class="friends" id="friends"></div>
+    <table id="table"></table>
+    <div class="result" id="result"></div>
+  </div>
+  <script>
+    // 가짜 데이터 (데모 버전): 요일별 수업 있는 시간(시)
+    const DAYS = ["월", "화", "수", "목", "금"];
+    const HOURS = [9, 10, 11, 12, 13, 14, 15, 16, 17];
+    const FRIENDS = [
+      { name: "나", color: "#2f6fbf", busy: { 월: [9, 10, 13], 화: [11, 12, 15, 16], 수: [9, 10], 목: [11, 12, 15], 금: [10] } },
+      { name: "민수", color: "#bf2f6f", busy: { 월: [11, 12], 화: [9, 10, 15], 수: [13, 14, 15], 목: [9, 10], 금: [13, 14] } },
+      { name: "지은", color: "#bf8a2f", busy: { 월: [9, 14, 15], 화: [13, 14], 수: [11, 12], 목: [13, 14, 16], 금: [9, 10, 11] } },
+      { name: "현우", color: "#6f2fbf", busy: { 월: [16, 17], 화: [9, 10, 11], 수: [15, 16, 17], 목: [9, 17], 금: [15, 16] } }
+    ];
+    const selected = new Set(["나", "민수"]);
+
+    const friendsEl = document.getElementById("friends");
+    FRIENDS.forEach((f) => {
+      const label = document.createElement("label");
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.checked = selected.has(f.name);
+      box.onchange = () => {
+        box.checked ? selected.add(f.name) : selected.delete(f.name);
+        render();
+      };
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      dot.style.background = f.color;
+      label.append(box, dot, f.name);
+      friendsEl.append(label);
+    });
+
+    function render() {
+      const table = document.getElementById("table");
+      const people = FRIENDS.filter((f) => selected.has(f.name));
+      const freeSlots = [];
+      let html = "<tr><th></th>" + DAYS.map((d) => `<th>${d}</th>`).join("") + "</tr>";
+      HOURS.forEach((h) => {
+        html += `<tr><td class="time">${h}시</td>`;
+        DAYS.forEach((d) => {
+          const busyNames = people.filter((p) => (p.busy[d] || []).includes(h)).map((p) => p.name);
+          if (!people.length) html += "<td></td>";
+          else if (busyNames.length) html += `<td class="busy">${busyNames.length}명 수업</td>`;
+          else { html += "<td class=\"free\">공강</td>"; freeSlots.push(`${d} ${h}시`); }
+        });
+        html += "</tr>";
+      });
+      table.innerHTML = html;
+      document.getElementById("result").textContent = !people.length
+        ? "친구를 한 명 이상 선택해 주세요."
+        : `${people.map((p) => p.name).join(", ")} 모두 비는 시간: ${freeSlots.length}칸 (${freeSlots.slice(0, 4).join(", ")}${freeSlots.length > 4 ? " …" : ""})`;
+    }
+    render();
+  </script>
+</body>
+</html>

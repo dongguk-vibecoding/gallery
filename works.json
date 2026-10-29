@@ -1,0 +1,40 @@
+{
+  "works": [
+    {
+      "id": "01-hong-gildong",
+      "title": "오늘 뭐 먹지",
+      "author": "홍길동",
+      "summary": "점심 메뉴 고민을 끝내 주는 학교 앞 맛집 룰렛. 종류를 골라 돌리면 오늘의 메뉴를 정해 줍니다.",
+      "liveUrl": "https://example.com",
+      "prompt": "버튼 누르면 슬롯머신처럼 메뉴가 빠르게 바뀌다가 멈추게 해줘",
+      "thumb": "thumb.png"
+    },
+    {
+      "id": "02-kim-younghee",
+      "title": "공강 메이트",
+      "author": "김영희",
+      "summary": "친구들 시간표를 겹쳐서 다 같이 비는 공강 시간을 한눈에 찾아 줍니다.",
+      "liveUrl": "",
+      "prompt": "체크한 친구들이 모두 비어 있는 칸만 초록색으로 칠해줘",
+      "thumb": "thumb.png"
+    },
+    {
+      "id": "03-lee-cheolsu",
+      "title": "도서관 빈자리",
+      "author": "이철수",
+      "summary": "열람실별 좌석 현황을 보고 빈자리를 눌러 바로 예약하는 좌석 안내판입니다.",
+      "liveUrl": "",
+      "prompt": "",
+      "thumb": "thumb.png"
+    },
+    {
+      "id": "04-park-minji",
+      "title": "할 일 정원",
+      "author": "박민지",
+      "summary": "할 일을 하나 끝낼 때마다 정원에 꽃이 한 송이씩 피어나는 투두 리스트.",
+      "liveUrl": "",
+      "prompt": "할 일을 체크하면 화면 아래 정원에 꽃이 하나씩 자라게 해줘",
+      "thumb": "thumb.png"
+    }
+  ]
+}

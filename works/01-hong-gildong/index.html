@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>오늘 뭐 먹지</title>
+  <style>
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #fff1e6, #ffd6a5); color: #3d2c1e;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; padding: 20px; box-sizing: border-box;
+    }
+    .box { background: #fff; border-radius: 24px; padding: 40px 32px; width: 100%; max-width: 440px; text-align: center; box-shadow: 0 20px 50px rgba(160, 90, 30, .18); }
+    h1 { margin: 0 0 6px; font-size: 30px; }
+    .sub { margin: 0 0 24px; color: #9a6b44; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 24px; }
+    .tags button { border: 2px solid #ffb26b; background: #fff; color: #c2621a; border-radius: 999px; padding: 6px 14px; font: inherit; cursor: pointer; }
+    .tags button.on { background: #ff8c42; border-color: #ff8c42; color: #fff; }
+    .slot { font-size: 34px; font-weight: 800; height: 64px; line-height: 64px; background: #fff7ef; border-radius: 16px; margin-bottom: 8px; }
+    .place { height: 24px; color: #9a6b44; margin-bottom: 24px; }
+    .go { width: 100%; height: 56px; border: 0; border-radius: 16px; background: #ff6b1a; color: #fff; font: inherit; font-size: 20px; font-weight: 700; cursor: pointer; }
+    .go:disabled { opacity: .6; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>🍱 오늘 뭐 먹지</h1>
+    <p class="sub">학교 앞 맛집 중에서 골라 드려요</p>
+    <div class="tags" id="tags"></div>
+    <div class="slot" id="slot">❓</div>
+    <div class="place" id="place"></div>
+    <button class="go" id="go">돌려!</button>
+  </div>
+  <script>
+    // 가짜 데이터 (데모 버전)
+    const MENUS = [
+      { name: "제육볶음", type: "한식", place: "충무로 할머니집" },
+      { name: "김치찌개", type: "한식", place: "필동 찌개마을" },
+      { name: "비빔밥", type: "한식", place: "학생식당 2층" },
+      { name: "짜장면", type: "중식", place: "만리장성" },
+      { name: "마라탕", type: "중식", place: "라라마라" },
+      { name: "크림파스타", type: "양식", place: "파스타공방" },
+      { name: "수제버거", type: "양식", place: "버거스탠드" },
+      { name: "떡볶이", type: "분식", place: "엽기분식 충무로점" },
+      { name: "김밥+라면", type: "분식", place: "김밥천국" },
+      { name: "돈코츠라멘", type: "일식", place: "멘야 동국" },
+      { name: "연어덮밥", type: "일식", place: "사케동" }
+    ];
+    const TYPES = ["전체", "한식", "중식", "양식", "분식", "일식"];
+    let current = "전체";
+
+    const tags = document.getElementById("tags");
+    TYPES.forEach((t) => {
+      const b = document.createElement("button");
+      b.textContent = t;
+      b.className = t === current ? "on" : "";
+      b.onclick = () => {
+        current = t;
+        [...tags.children].forEach((c) => c.classList.toggle("on", c.textContent === t));
+      };
+      tags.append(b);
+    });
+
+    const slot = document.getElementById("slot");
+    const place = document.getElementById("place");
+    const go = document.getElementById("go");
+
+    go.onclick = () => {
+      const pool = MENUS.filter((m) => current === "전체" || m.type === current);
+      go.disabled = true;
+      place.textContent = "";
+      let tick = 0;
+      const total = 18 + Math.floor(Math.random() * 6);
+      const spin = () => {
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        slot.textContent = pick.name;
+        tick++;
+        if (tick < total) {
+          setTimeout(spin, 40 + tick * 8);
+        } else {
+          place.textContent = "📍 " + pick.place;
+          go.disabled = false;
+          go.textContent = "다시 돌려!";
+        }
+      };
+      spin();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>바이브코딩 전시관 · 동국대학교</title>
+  <meta name="description" content="코드를 직접 쓰는 대신 AI에게 말로 설명해 만든 수강생 웹사이트를 모은 온라인 전시관입니다.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <style>
+    :root {
+      --bg: #fafaf9;
+      --surface: #ffffff;
+      --text: #1c1917;
+      --muted: #78716c;
+      --line: #e7e5e4;
+      --accent: #1c1917;
+      --accent-text: #ffffff;
+      --soft: #f5f5f4;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+    a { color: inherit; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+    /* 상단 */
+    header { padding: 72px 0 48px; border-bottom: 1px solid var(--line); }
+    .eyebrow { font-size: 14px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; margin: 0 0 16px; }
+    h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.2; letter-spacing: -0.03em; margin: 0 0 20px; font-weight: 700; }
+    .lead { font-size: 17px; color: #44403c; max-width: 560px; margin: 0 0 32px; }
+    .header-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .count { font-size: 14px; color: var(--muted); }
+
+    /* 버튼 */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      height: 44px; padding: 0 20px; border-radius: 999px;
+      font: inherit; font-size: 15px; font-weight: 600; text-decoration: none;
+      border: 1px solid var(--accent); background: var(--accent); color: var(--accent-text);
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn.ghost { background: transparent; color: var(--text); border-color: var(--line); }
+    .btn.ghost:hover { border-color: var(--text); opacity: 1; }
+    .btn.small { height: 38px; padding: 0 16px; font-size: 14px; }
+
+    /* 작품 목록 */
+    main { padding: 48px 0 80px; }
+    .grid {
+      display: grid; gap: 28px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+    .card {
+      display: flex; flex-direction: column;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      overflow: hidden; transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(28, 25, 23, .08); }
+    .thumb {
+      display: block; aspect-ratio: 16 / 10; background: var(--soft);
+      border-bottom: 1px solid var(--line); overflow: hidden;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+    .thumb .fallback {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-weight: 600; padding: 20px; text-align: center;
+    }
+    .card-body { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
+    .card h2 { font-size: 19px; letter-spacing: -0.02em; margin: 0 0 2px; }
+    .author { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
+    .summary { font-size: 15px; color: #44403c; margin: 0 0 16px; }
+    .prompt {
+      font-size: 13px; color: var(--muted); background: var(--soft);
+      border-radius: 10px; padding: 10px 12px; margin: 0 0 18px;
+    }
+    .prompt::before { content: "기억에 남는 프롬프트"; display: block; font-weight: 600; color: #57534e; margin-bottom: 2px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+
+    .status { color: var(--muted); text-align: center; padding: 60px 0; }
+
+    /* 하단 */
+    footer { border-top: 1px solid var(--line); padding: 32px 0 48px; font-size: 14px; color: var(--muted); }
+    footer p { margin: 0 0 6px; }
+
+    @media (max-width: 640px) {
+      header { padding: 48px 0 36px; }
+      .lead { font-size: 16px; }
+      main { padding: 32px 0 56px; }
+      .grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <p class="eyebrow">동국대학교 · 클로드 코드 활용 바이브코딩 강의 수료 전시</p>
+      <h1>말로 만든 웹사이트들</h1>
+      <p class="lead">코드를 한 줄씩 쓰는 대신, AI에게 하고 싶은 걸 말로 설명해서 만든 수강생들의 작품입니다. 카드의 [데모 체험]을 눌러 직접 써 보세요.</p>
+      <div class="header-actions">
+        <a class="btn" id="submit-btn" href="#" target="_blank" rel="noopener" hidden>작품 제출하기</a>
+        <span class="count" id="count"></span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="grid" id="grid"></div>
+      <p class="status" id="status">작품을 불러오는 중입니다…</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>동국대학교 클로드 코드 활용 바이브코딩 강의</p>
+      <p>작품 수정·삭제 요청: <a href="mailto:contact@example.com">contact@example.com</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // 수강생 제출용 구글폼 주소. 비워 두면 [작품 제출하기] 버튼이 숨겨진다 (제출 마감 후에도 비우면 됨).
+    const SUBMIT_URL = "";
+
+    const grid = document.getElementById("grid");
+    const status = document.getElementById("status");
+
+    if (SUBMIT_URL) {
+      const btn = document.getElementById("submit-btn");
+      btn.href = SUBMIT_URL;
+      btn.hidden = false;
+    }
+
+    // 수강생이 입력한 링크는 http(s)만 허용한다.
+    function safeUrl(url) {
+      try {
+        const u = new URL(url);
+        return u.protocol === "https:" || u.protocol === "http:" ? u.href : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function el(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text) node.textContent = text;
+      return node;
+    }
+
+    function linkButton(label, href, ghost) {
+      const a = el("a", "btn small" + (ghost ? " ghost" : ""), label);
+      a.href = href;
+      a.target = "_blank";
+      a.rel = "noopener";
+      return a;
+    }
+
+    function renderCard(work) {
+      const demoUrl = `works/${encodeURIComponent(work.id)}/`;
+      const card = el("article", "card");
+
+      const thumb = el("a", "thumb");
+      thumb.href = demoUrl;
+      thumb.target = "_blank";
+      thumb.rel = "noopener";
+      thumb.setAttribute("aria-label", `${work.title} 데모 체험`);
+      const img = document.createElement("img");
+      img.src = demoUrl + (work.thumb || "thumb.png");
+      img.alt = "";
+      img.loading = "lazy";
+      img.onerror = () => thumb.replaceChildren(el("div", "fallback", work.title));
+      thumb.append(img);
+
+      const body = el("div", "card-body");
+      body.append(el("h2", null, work.title));
+      body.append(el("p", "author", work.author));
+      body.append(el("p", "summary", work.summary));
+      if (work.prompt) body.append(el("p", "prompt", `“${work.prompt}”`));
+
+      const actions = el("div", "actions");
+      actions.append(linkButton("데모 체험 ↗", demoUrl));
+      const live = work.liveUrl && safeUrl(work.liveUrl);
+      if (live) actions.append(linkButton("실제 사이트 ↗", live, true));
+      body.append(actions);
+
+      card.append(thumb, body);
+      return card;
+    }
+
+    fetch("works.json", { cache: "no-cache" })
+      .then((res) => {
+        if (!res.ok) throw new Error(res.status);
+        return res.json();
+      })
+      .then((data) => {
+        const works = data.works || [];
+        document.getElementById("count").textContent = `작품 ${works.length}점`;
+        if (!works.length) {
+          status.textContent = "아직 전시된 작품이 없습니다.";
+          return;
+        }
+        status.remove();
+        works.forEach((work) => grid.append(renderCard(work)));
+      })
+      .catch(() => {
+        status.textContent = "작품 목록을 불러오지 못했습니다. 잠시 후 새로고침해 주세요.";
+      });
+  </script>
+</body>
+</html>
