@@ -19,6 +19,15 @@
       "thumb": "thumb.png"
     },
     {
+      "id": "03",
+      "title": "test4",
+      "author": "test4",
+      "summary": "test4",
+      "liveUrl": "",
+      "prompt": "test4",
+      "thumb": "gallery-thumb.png"
+    },
+    {
       "id": "03-lee-cheolsu",
       "title": "도서관 빈자리",
       "author": "이철수",
