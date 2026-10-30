@@ -1,15 +1,6 @@
 {
   "works": [
     {
-      "id": "01",
-      "title": "테스트제목",
-      "author": "테스트맨",
-      "summary": "테스트소개",
-      "liveUrl": "",
-      "prompt": "테스트프롬프트",
-      "thumb": "gallery-thumb.png"
-    },
-    {
       "id": "01-hong-gildong",
       "title": "오늘 뭐 먹지",
       "author": "홍길동",
