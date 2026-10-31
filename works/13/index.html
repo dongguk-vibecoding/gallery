@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비슷한 상품 찾기 (데모)</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a1a;--muted:#6b7280;--line:#e5e7eb;--soft:#f5f6f8;--accent:#2563eb;--accent-fg:#fff;--warn-bg:#fff7e6;--warn-fg:#8a5a00;}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;line-height:1.5;-webkit-text-size-adjust:100%}
+.app{max-width:480px;margin:0 auto;padding:20px 16px 112px;min-height:100vh}
+h1{font-size:22px;margin:8px 0 6px}
+h2{font-size:16px;margin:24px 0 10px}
+.lead{color:var(--muted);margin:0 0 20px;font-size:15px}
+.muted{color:var(--muted);font-size:13px}
+.dropzone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--line);border-radius:16px;background:var(--soft);min-height:220px;padding:24px;text-align:center;cursor:pointer}
+.dropzone strong{font-size:16px}
+.btn{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px;padding:14px 16px;font-size:16px;font-weight:600;cursor:pointer;width:100%}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.small{width:auto;padding:8px 12px;font-size:14px;font-weight:500}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.preview{display:flex;gap:12px;align-items:center}
+.preview img,.preview .ph{width:88px;height:88px;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:var(--soft);flex:none}
+label.field{display:block;margin-bottom:12px;font-size:14px;font-weight:600}
+label.field input,label.field select{display:block;width:100%;margin-top:6px;padding:12px;font-size:16px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);font-weight:400}
+.seg{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.seg button{flex:1;appearance:none;border:0;background:var(--bg);color:var(--fg);padding:11px 4px;font-size:14px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed='true']{background:var(--accent);color:var(--accent-fg);font-weight:600}
+.group{margin-bottom:16px}
+.group .name{font-size:14px;font-weight:600;margin-bottom:6px}
+.sub{margin-top:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--soft);color:var(--fg);border-radius:999px;padding:8px 12px;font-size:13px;cursor:pointer}
+.notice{background:var(--warn-bg);color:var(--warn-fg);border-radius:10px;padding:10px 12px;font-size:13px;margin:8px 0}
+.bottom{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.bottom .inner{max-width:480px;margin:0 auto}
+.summary{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--soft);border-radius:12px;padding:10px 12px;font-size:13px}
+.cards{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+.card{display:flex;gap:12px;border:1px solid var(--line);border-radius:14px;padding:10px;color:inherit;text-align:left;background:var(--bg);width:100%;font:inherit;cursor:pointer}
+.card .thumb{width:96px;height:96px;flex:none;border-radius:10px;background:var(--soft);overflow:hidden}
+.card .thumb svg{width:100%;height:100%;display:block}
+.card .body{min-width:0;flex:1}
+.card .title{font-size:14px;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .price{font-size:17px;font-weight:700;margin:2px 0}
+.card .meta{font-size:12px;color:var(--muted)}
+.reasons{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.reasons span{font-size:11px;background:#eef4ff;color:#1d4ed8;padding:2px 8px;border-radius:999px}
+.loading{text-align:center;padding:48px 0;color:var(--muted)}
+.spinner{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.foot{margin-top:28px;font-size:12px;color:var(--muted);text-align:center}
+.linkbtn{appearance:none;border:0;background:none;color:var(--muted);text-decoration:underline;font-size:12px;cursor:pointer;padding:4px}
+.badge{position:fixed;top:6px;right:6px;z-index:50;background:rgba(26,26,26,.78);color:#fff;font-size:11px;padding:3px 8px;border-radius:999px;pointer-events:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:24px;z-index:60}
+.modal .box{background:#fff;border-radius:16px;padding:20px;max-width:360px;width:100%}
+.modal p{margin:0 0 16px;font-size:15px}
+</style>
+</head>
+<body>
+<div class="badge">데모 버전 · 가짜 데이터</div>
+<main class="app" id="app"></main>
+<div id="modal-root"></div>
+
+<script>
+(function () {
+'use strict';
+
+/* ---------- 상수 ---------- */
+var LS_KEY = 'similar-finder-demo:state';
+var COLORS = ['블랙','화이트','그레이','네이비','블루','레드','핑크','그린','카키','베이지','브라운','옐로우','오렌지','퍼플'];
+var COLOR_WORDS = {
+  '블랙':['블랙','검정','검은','black'],'화이트':['화이트','흰색','아이보리','white','ivory'],
+  '그레이':['그레이','회색','차콜','gray','grey','charcoal'],'네이비':['네이비','남색','navy'],
+  '블루':['블루','파랑','파란','스카이','blue'],'레드':['레드','빨강','와인','버건디','red','burgundy'],
+  '핑크':['핑크','분홍','pink'],'그린':['그린','초록','민트','green','mint'],
+  '카키':['카키','올리브','khaki','olive'],'베이지':['베이지','크림','샌드','beige','cream'],
+  '브라운':['브라운','갈색','카멜','초코','brown','camel'],'옐로우':['옐로우','노랑','머스타드','yellow','mustard'],
+  '오렌지':['오렌지','orange'],'퍼플':['퍼플','보라','라벤더','purple','lavender']
+};
+var COLOR_HEX = {'블랙':'#2b2b2b','화이트':'#efefea','그레이':'#8a8f98','네이비':'#1f2d54','블루':'#2f6fd0','레드':'#c0392b','핑크':'#e88aa5','그린':'#3f7d4e','카키':'#7b7a4a','베이지':'#d8c3a0','브라운':'#7a5230','옐로우':'#e3b82f','오렌지':'#e2802f','퍼플':'#7a56b0'};
+var EXCLUDE_WORDS = ['커버','케이스','키링','키홀더','키체인','레인커버','스트랩','액세서리','악세사리','가방끈','어깨패드','어깨 패드','미니어처','인형','이너백','정리함','스티커','와펜','패치','열쇠고리','체인','리폼','수리','대여','렌탈','중고','리퍼','장난감','완구','피규어'];
+var TIER_LABEL = {premium:'프리미엄',mid:'미들',budget:'보급',unknown:'등급 미정'};
+var LEVELS = [{v:'must',l:'반드시 같게'},{v:'prefer',l:'비슷하면 좋음'},{v:'any',l:'상관없음'}];
+
+/* 브랜드 등급표: [이름, 등급, 별칭들...] */
+var BRANDS = [
+  ['투미','premium','투미','tumi'],['포터','premium','포터','porter','요시다'],['브릭스앤라일리','premium','브릭스앤라일리','briggs'],
+  ['몽블랑','premium','몽블랑','montblanc'],['루이비통','premium','루이비통','louis vuitton'],['구찌','premium','구찌','gucci'],
+  ['프라다','premium','프라다','prada'],['코치','premium','코치','coach'],['보테가베네타','premium','보테가','bottega'],
+  ['버버리','premium','버버리','burberry'],['발렌시아가','premium','발렌시아가','balenciaga'],['아크테릭스','premium','아크테릭스','arcteryx'],
+  ['펜디','premium','펜디','fendi'],['생로랑','premium','생로랑','saint laurent'],['MCM','premium','mcm'],['벨로이','premium','벨로이','bellroy'],
+  ['노스페이스','mid','노스페이스','north face'],['오스프리','mid','오스프리','osprey'],['그레고리','mid','그레고리','gregory'],
+  ['파타고니아','mid','파타고니아','patagonia'],['헤르셰','mid','헤르셰','허쉘','헤르쉐','herschel'],['샘소나이트','mid','샘소나이트','samsonite'],
+  ['만하탄포티지','mid','만하탄','manhattan portage'],['인케이스','mid','인케이스','incase'],['빈폴','mid','빈폴','beanpole'],
+  ['헤지스','mid','헤지스','hazzys'],['나이키','mid','나이키','nike'],['아디다스','mid','아디다스','adidas'],['뉴발란스','mid','뉴발란스','new balance'],
+  ['칼하트','mid','칼하트','carhartt'],['컬럼비아','mid','컬럼비아','columbia'],['디스커버리','mid','디스커버리'],['케이스위스','mid','케이스위스'],
+  ['내셔널지오그래픽','mid','내셔널지오그래픽'],['아메리칸투어리스터','mid','아메리칸투어리스터'],['마이클코어스','mid','마이클코어스','michael kors'],
+  ['키플링','mid','키플링','kipling'],['밀레','mid','밀레','millet'],['블랙야크','mid','블랙야크','blackyak'],['네파','mid','네파','nepa'],
+  ['데상트','mid','데상트','descente'],['아이띵소','mid','아이띵소'],
+  ['이스트팩','budget','이스트팩','eastpak'],['잔스포츠','budget','잔스포츠','jansport'],['휠라','budget','휠라','fila'],['푸마','budget','푸마','puma'],
+  ['챔피온','budget','챔피온','champion'],['무신사스탠다드','budget','무신사 스탠다드','무신사스탠다드'],['탑텐','budget','탑텐','topten'],
+  ['스파오','budget','스파오','spao'],['프로스펙스','budget','프로스펙스'],['엘레쎄','budget','엘레쎄'],['반스','budget','반스','vans'],['컨버스','budget','컨버스','converse']
+];
+
+/* ---------- 가짜 상품 데이터 (모두 지어낸 값) ---------- */
+var MALLS = ['데모몰 가','데모몰 나','데모몰 다','데모몰 라'];
+var RAW = [
+  ['투미','알파 브라보','블랙',650000,['미니멀','롤탑','비즈니스']],
+  ['투미','하몬','네이비',720000,['미니멀','비즈니스']],
+  ['포터','탱커','블랙',420000,['캐주얼','미니멀']],
+  ['포터','히트','네이비',380000,['캐주얼']],
+  ['벨로이','클래식','블랙',280000,['미니멀','롤탑']],
+  ['벨로이','튜크','그레이',310000,['미니멀']],
+  ['브릭스앤라일리','앳워크','블랙',590000,['비즈니스','미니멀']],
+  ['몽블랑','스포트','블랙',760000,['비즈니스']],
+  ['코치','하이브리드','브라운',480000,['가죽','클래식']],
+  ['아크테릭스','어로','블랙',330000,['아웃도어','미니멀','롤탑']],
+  ['아크테릭스','만티스','그린',189000,['아웃도어']],
+  ['MCM','스타크','브라운',890000,['가죽','클래식']],
+  ['샘소나이트','비즈니스','블랙',159000,['비즈니스','미니멀']],
+  ['노스페이스','빅샷','블랙',129000,['캐주얼','아웃도어']],
+  ['노스페이스','보레알리스','그레이',119000,['캐주얼']],
+  ['헤르셰','리틀아메리카','네이비',119000,['캐주얼','롤탑']],
+  ['오스프리','데이라이트','블랙',99000,['아웃도어','미니멀']],
+  ['그레고리','데이팩','그레이',139000,['아웃도어']],
+  ['파타고니아','레프지오','그린',149000,['아웃도어']],
+  ['만하탄포티지','캐주얼','블랙',135000,['캐주얼','미니멀']],
+  ['인케이스','아이콘','블랙',189000,['미니멀','비즈니스']],
+  ['빈폴','클래식','브라운',169000,['가죽','클래식']],
+  ['나이키','헤리티지','블랙',55000,['캐주얼']],
+  ['아디다스','클래식','블랙',49000,['캐주얼']],
+  ['뉴발란스','오피스','블랙',79000,['캐주얼','미니멀']],
+  ['칼하트','에센셜','베이지',118000,['캐주얼']],
+  ['키플링','시티팩','핑크',99000,['캐주얼']],
+  ['이스트팩','패디드','블랙',69000,['캐주얼']],
+  ['잔스포츠','슈퍼브레이크','블랙',59000,['캐주얼']],
+  ['휠라','스쿨','블랙',45000,['캐주얼']],
+  ['무신사스탠다드','데일리','블랙',39000,['미니멀','캐주얼']],
+  ['탑텐','베이직','네이비',35000,['캐주얼']],
+  ['스파오','라이트','베이지',32000,['캐주얼']],
+  ['','심플 롤탑','블랙',49000,['미니멀','롤탑']],
+  ['','가죽 클래식','카멜',89000,['가죽','클래식']],
+  ['','미니멀 비즈니스','그레이',59000,['미니멀','비즈니스']]
+];
+var PRODUCTS = RAW.map(function (r, i) {
+  return { id: 'p' + i, title: (r[0] ? r[0] + ' ' : '') + r[1] + ' 백팩 ' + r[2], brand: r[0], price: r[3], styles: r[4], mall: MALLS[i % MALLS.length], category: '패션잡화>가방>백팩', productType: 1 };
+});
+/* 필터가 걸러내는 노이즈 상품 */
+[['백팩 레인커버 블랙',9000,'패션잡화>가방액세서리>레인커버',1],['투미 백팩 키링 블랙',25000,'패션잡화>가방액세서리>키링',1],
+ ['백팩 어깨패드 그레이',12000,'패션잡화>가방액세서리>패드',1],['투미 백팩 블랙 상태좋음',230000,'패션잡화>가방>백팩',4]].forEach(function (n, i) {
+  PRODUCTS.push({ id: 'n' + i, title: n[0], brand: '', price: n[1], styles: [], mall: MALLS[i % MALLS.length], category: n[2], productType: n[3] });
+});
+
+/* 사진 분석 예시 응답 (사진은 실제로 분석하지 않음) */
+var ANALYSES = [
+  { category:'백팩', brand:'투미', color:'블랙', style:['미니멀','롤탑'] },
+  { category:'백팩', brand:'포터', color:'네이비', style:['캐주얼'] },
+  { category:'백팩', brand:'노스페이스', color:'그린', style:['아웃도어','캐주얼'] },
+  { category:'백팩', brand:'코치', color:'브라운', style:['가죽','클래식'] },
+  { category:'백팩', brand:'', color:'베이지', style:['미니멀'] }
+];
+var SAMPLE_ORIGINAL = [650000, 420000, 160000, 480000, 90000];
+
+/* ---------- 순수 로직 (원본 pipeline 이식) ---------- */
+function lower(s){ return String(s || '').toLowerCase(); }
+function parseColors(t){ t = lower(t); var out = []; Object.keys(COLOR_WORDS).forEach(function(k){ if (COLOR_WORDS[k].some(function(w){ return t.indexOf(w) >= 0; })) out.push(k); }); return out; }
+function resolveBrand(field, title){
+  function find(text){ var t = lower(text); if (!t.trim()) return null; return BRANDS.filter(function(b){ return b.slice(2).some(function(a){ return t.indexOf(a) >= 0; }); })[0] || null; }
+  var e = find(field) || find(title);
+  return e ? { name: e[0], tier: e[1] } : { name: String(field || '').trim(), tier: 'unknown' };
+}
+function priceBounds(p){
+  var lo = Math.max(0, p.min || 0);
+  if (p.mode === 'cheaper' && p.original) return { lo: lo, hi: p.original - 1 };
+  if (p.mode === 'range' && p.original){ var pct = (p.pct == null ? 20 : p.pct) / 100; return { lo: Math.max(lo, Math.round(p.original * (1 - pct))), hi: Math.round(p.original * (1 + pct)) }; }
+  if (p.mode === 'max' && p.max) return { lo: lo >= p.max ? 0 : lo, hi: p.max };
+  return { lo: lo, hi: Infinity };
+}
+function hash(s){ var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
+
+function recommend(attrs, prefs){
+  var notes = [], orig = resolveBrand(attrs.brand, ''), b = priceBounds(prefs.price);
+  var brandLevel = prefs.brand.level;
+  if (brandLevel !== 'any' && prefs.brand.match === 'tier' && orig.tier === 'unknown'){ notes.push('원본 브랜드의 등급을 알 수 없어 브랜드 조건은 적용하지 않았어요. 브랜드를 직접 입력하면 반영돼요.'); brandLevel = 'any'; }
+  if (brandLevel !== 'any' && prefs.brand.match === 'brand' && !orig.name){ notes.push('브랜드가 비어 있어 브랜드 조건은 적용하지 않았어요.'); brandLevel = 'any'; }
+  var colorLevel = prefs.color.level;
+  if (colorLevel !== 'any' && !attrs.color){ notes.push('색상이 비어 있어 색상 조건은 적용하지 않았어요.'); colorLevel = 'any'; }
+  var designLevel = prefs.design.level;
+  if (designLevel !== 'any' && !attrs.style.length){ notes.push('디자인 키워드가 비어 있어 디자인 조건은 적용하지 않았어요.'); designLevel = 'any'; }
+
+  var wantCat = attrs.category || '백팩';
+  var stats = { noise: 0, price: 0, brand: 0, color: 0 };
+  var clean = PRODUCTS.filter(function(it){
+    if (it.productType > 3) return false;
+    if (EXCLUDE_WORDS.some(function(w){ return lower(it.title).indexOf(w) >= 0; })) return false;
+    if (!(it.category.indexOf('가방') >= 0 || it.category.indexOf(wantCat) >= 0)) return false;
+    return !/액세서리|악세사리/.test(it.category);
+  });
+  stats.noise = clean.length;
+  var inPrice = clean.filter(function(it){ return it.price >= b.lo && it.price <= b.hi; });
+  stats.price = inPrice.length;
+
+  var items = [];
+  inPrice.forEach(function(it){
+    var br = resolveBrand(it.brand, it.title);
+    if (brandLevel === 'must' && (prefs.brand.match === 'brand' ? br.name !== orig.name : br.tier !== orig.tier)) return;
+    stats.brand++;
+    var colors = parseColors(it.title);
+    var colorMatch = colorLevel !== 'any' && colors.indexOf(attrs.color) >= 0;
+    if (colorLevel === 'must' && !colorMatch) return;
+    var reasons = [], score = 0;
+    if (brandLevel !== 'any'){
+      var same = prefs.brand.match === 'brand' ? br.name === orig.name : br.tier === orig.tier;
+      if (same){ score += 1; reasons.push(prefs.brand.match === 'brand' ? '같은 브랜드(' + br.name + ')' : '같은 브랜드 등급(' + TIER_LABEL[br.tier] + ')'); }
+    }
+    if (colorMatch){ score += 1; reasons.push('색상 일치(' + attrs.color + ')'); }
+    if (prefs.price.original){
+      var diff = Math.round((1 - it.price / prefs.price.original) * 100);
+      reasons.push(diff > 0 ? '원본보다 ' + diff + '% 저렴' : diff === 0 ? '원본과 같은 가격' : '원본보다 ' + (-diff) + '% 비쌈');
+    }
+    items.push({ it: it, brand: br.name, tier: br.tier, colors: colors, score: score, reasons: reasons });
+  });
+  stats.color = items.length;
+  items.sort(function(a, c){ return c.score - a.score; });
+
+  /* 디자인: 키워드 겹침 + 약간의 고정 편차로 만든 가짜 유사도 */
+  if (designLevel !== 'any'){
+    var head = items.slice(0, 30);
+    head.forEach(function(c){
+      var hit = c.it.styles.filter(function(s){ return attrs.style.indexOf(s) >= 0; }).length;
+      var norm = Math.min(1, hit / Math.max(1, attrs.style.length) * 0.85 + (hash(c.it.id) % 15) / 100);
+      c.sim = norm; c.score += 2 * norm; c.reasons.push('디자인 비슷함 ' + Math.round(norm * 100) + '%');
+    });
+    if (designLevel === 'must'){
+      var ranked = head.slice().sort(function(a, c){ return c.sim - a.sim; });
+      var keep = {}; ranked.slice(0, Math.max(5, Math.ceil(ranked.length / 2))).forEach(function(c){ keep[c.it.id] = 1; });
+      items = items.filter(function(c){ return keep[c.it.id]; });
+    }
+    items.sort(function(a, c){ return c.score - a.score; });
+  }
+  var suggestions = [];
+  if (items.length < 3){
+    if (stats.noise > 0 && stats.price < 3) suggestions.push('가격 범위를 넓혀 보세요.');
+    if (prefs.brand.level === 'must' && stats.brand < stats.price) suggestions.push("브랜드를 '비슷하면 좋음'으로 바꿔 보세요.");
+    if (prefs.color.level === 'must' && stats.color < stats.brand) suggestions.push("색상을 '비슷하면 좋음'으로 바꿔 보세요.");
+    if (!suggestions.length) suggestions.push('조건을 조금 완화해 보세요.');
+  }
+  return { items: items.slice(0, 24), suggestions: suggestions, notes: notes };
+}
+
+/* ---------- 상태 ---------- */
+function defaultPrefs(){ return { brand:{level:'prefer',match:'tier'}, color:{level:'prefer'}, design:{level:'prefer'}, price:{mode:'cheaper',original:650000,max:undefined,pct:20,min:195000} }; }
+function freshState(){ return { attrs:{category:'백팩',brand:'투미',color:'블랙',style:['미니멀','롤탑']}, prefs:defaultPrefs() }; }
+var S = freshState(), previewUrl = '', analysisNotes = [], flash = '';
+try { var saved = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); if (saved && saved.attrs && saved.prefs) S = saved; } catch (e) {}
+function save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
+function resetAll(){ S = freshState(); previewUrl = ''; analysisNotes = []; try { localStorage.removeItem(LS_KEY); } catch (e) {} flash = '예시 데이터로 초기화했어요.'; if (location.hash === '#/upload' || location.hash === '' ) render(); else location.hash = '#/upload'; }
+
+/* ---------- 렌더링 ---------- */
+var app = document.getElementById('app');
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function won(n){ return Number(n).toLocaleString('ko-KR') + '원'; }
+function seg(key, value, opts){ return '<div class="seg" role="group">' + opts.map(function(o){ return '<button type="button" data-set="' + key + '" data-v="' + o.v + '" aria-pressed="' + (value === o.v) + '">' + o.l + '</button>'; }).join('') + '</div>'; }
+function bag(color){
+  var c = COLOR_HEX[color] || '#8a8f98';
+  return '<svg viewBox="0 0 96 96" aria-hidden="true"><rect width="96" height="96" fill="#f5f6f8"/><path d="M36 22c0-8 5-12 12-12s12 4 12 12" fill="none" stroke="#9aa0a8" stroke-width="4"/><rect x="22" y="22" width="52" height="62" rx="16" fill="' + c + '"/><rect x="32" y="52" width="32" height="20" rx="6" fill="rgba(255,255,255,.18)"/><rect x="30" y="34" width="36" height="5" rx="2.5" fill="rgba(255,255,255,.25)"/></svg>';
+}
+function resetLink(){ return '<p class="foot"><button class="linkbtn" data-act="reset">예시 데이터로 초기화</button></p>'; }
+function flashHtml(){ var f = flash; flash = ''; return f ? '<div class="notice">' + esc(f) + '</div>' : ''; }
+
+function viewUpload(){
+  app.innerHTML = '<h1>비슷한 상품 찾기</h1><p class="lead">마음에 든 상품을 찍어 올리면, 바꾸고 싶은 조건만 골라 비슷한 상품을 찾아 드려요.</p>' + flashHtml() +
+    '<input id="file" type="file" accept="image/jpeg,image/png,image/webp" hidden>' +
+    '<div class="dropzone" id="drop" role="button" tabindex="0"><strong>📷 사진 촬영 또는 선택</strong><span class="muted">지금은 백팩만 지원해요. 데모에서는 아무 이미지나 올려도 예시 분석 결과가 나와요. 사진은 어디에도 전송되지 않아요.</span></div>' + resetLink();
+  var file = document.getElementById('file'), drop = document.getElementById('drop');
+  drop.onclick = function(){ file.click(); };
+  drop.onkeydown = function(e){ if (e.key === 'Enter') file.click(); };
+  file.onchange = function(){
+    var f = file.files && file.files[0]; if (!f) return;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = URL.createObjectURL(f);
+    app.innerHTML = '<div class="loading" role="status"><div class="spinner"></div>사진을 분석하고 있어요…<div class="muted">(데모: 예시 결과를 불러오는 중)</div></div>';
+    var idx = (f.size + f.name.length) % ANALYSES.length;
+    setTimeout(function(){
+      var a = ANALYSES[idx];
+      S.attrs = { category:a.category, brand:a.brand, color:a.color, style:a.style.slice() };
+      S.prefs.price.original = SAMPLE_ORIGINAL[idx]; S.prefs.price.min = Math.round(SAMPLE_ORIGINAL[idx] * 0.3 / 1000) * 1000;
+      analysisNotes = ['데모: 사진을 실제로 분석하지 않고 미리 준비한 예시 결과를 보여 드려요.'];
+      save(); location.hash = '#/edit';
+    }, 1200 + (f.size % 600));
+  };
+}
+
+function priceMissing(){ var p = S.prefs.price; return p.mode === 'max' ? !p.max : !p.original; }
+
+function viewEdit(){
+  var P = S.prefs, A = S.attrs, p = P.price;
+  app.innerHTML =
+    '<div class="preview">' + (previewUrl ? '<img src="' + previewUrl + '" alt="업로드한 상품 사진">' : '<div class="ph"></div>') +
+    '<div><h1 style="margin:0">이렇게 읽었어요</h1><div class="muted">틀린 부분은 고쳐 주세요.</div></div></div>' +
+    flashHtml() + analysisNotes.map(function(n){ return '<div class="notice">' + esc(n) + '</div>'; }).join('') +
+    '<h2>상품 정보</h2>' +
+    '<label class="field">종류<input data-in="category" value="' + esc(A.category) + '"></label>' +
+    '<label class="field">브랜드<input data-in="brand" value="' + esc(A.brand) + '" placeholder="모르면 비워 두세요"></label>' +
+    '<label class="field">색상<select data-in="color"><option value="">모름</option>' + COLORS.map(function(c){ return '<option value="' + c + '"' + (A.color === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></label>' +
+    '<label class="field">디자인 키워드 (쉼표로 구분)<input data-in="style" value="' + esc(A.style.join(', ')) + '" placeholder="예: 미니멀, 롤탑"></label>' +
+    '<h2>무엇을 비슷하게 할까요?</h2><div class="chips"><button type="button" class="chip" data-act="preset">가격만 낮게, 나머지는 같게</button></div>' +
+    '<div class="group"><div class="name">브랜드</div>' + seg('brand.level', P.brand.level, LEVELS.map(function(o){return{v:o.v,l:o.l};})) +
+      (P.brand.level !== 'any' ? '<div class="sub">' + seg('brand.match', P.brand.match, [{v:'tier',l:'같은 등급'},{v:'brand',l:'같은 브랜드'}]) + '</div>' : '') + '</div>' +
+    '<div class="group"><div class="name">색상</div>' + seg('color.level', P.color.level, LEVELS) + '</div>' +
+    '<div class="group"><div class="name">디자인</div>' + seg('design.level', P.design.level, LEVELS) + '</div>' +
+    '<h2>가격</h2>' + seg('price.mode', p.mode, [{v:'cheaper',l:'더 저렴하게'},{v:'range',l:'비슷한 가격'},{v:'max',l:'상한 지정'}]) +
+    '<div class="sub">' +
+      (p.mode !== 'max' ? '<label class="field">원본 가격 (원)<input data-in="original" type="number" inputmode="numeric" value="' + (p.original || '') + '" placeholder="예: 650000"></label>' : '') +
+      (p.mode === 'range' ? '<label class="field">허용 범위<select data-in="pct">' + [10,20,30,50].map(function(v){ return '<option value="' + v + '"' + (p.pct === v ? ' selected' : '') + '>±' + v + '%</option>'; }).join('') + '</select></label>' : '') +
+      (p.mode === 'max' ? '<label class="field">상한 (원)<input data-in="max" type="number" inputmode="numeric" value="' + (p.max || '') + '" placeholder="예: 150000"></label>' : '') +
+      '<label class="field">하한 (원) — 너무 싼 상품을 걸러요<input data-in="min" type="number" inputmode="numeric" value="' + (p.min || '') + '" placeholder="원본 가격의 30%가 기본값"></label>' +
+    '</div>' + resetLink() +
+    '<div class="bottom"><div class="inner row"><button class="btn" style="flex:0 0 30%" data-act="again">다시 찍기</button><button class="btn primary" id="go" data-act="go"' + (priceMissing() ? ' disabled' : '') + '>추천 받기</button></div></div>';
+}
+
+function summaryText(){
+  var P = S.prefs, p = P.price;
+  function lv(v){ return LEVELS.filter(function(x){ return x.v === v; })[0].l; }
+  var parts = ['브랜드 ' + lv(P.brand.level), '색상 ' + lv(P.color.level), '디자인 ' + lv(P.design.level)];
+  if (p.mode === 'cheaper') parts.push('원본(' + won(p.original || 0) + ')보다 저렴');
+  if (p.mode === 'range') parts.push('원본 ±' + p.pct + '%');
+  if (p.mode === 'max') parts.push(won(p.max || 0) + ' 이하');
+  return parts.join(' · ');
+}
+
+function viewResult(){
+  app.innerHTML = '<div class="loading" role="status"><div class="spinner"></div>비슷한 상품을 찾는 중이에요…</div>';
+  setTimeout(function(){
+    if (location.hash !== '#/result') return;
+    var r = recommend(S.attrs, S.prefs);
+    app.innerHTML = '<h1>추천 결과</h1><div class="summary"><span>' + esc(summaryText()) + '</span><button class="btn small" data-act="edit">조건 변경</button></div>' +
+      '<div class="notice">가짜 상품 데이터로 보여 드려요. 실제 쇼핑몰 상품이 아니에요.</div>' +
+      r.notes.map(function(n){ return '<div class="notice">' + esc(n) + '</div>'; }).join('') +
+      (r.items.length === 0 ? '<div class="loading">조건에 맞는 상품이 없어요.</div>' : '') +
+      (r.suggestions.length ? '<div class="notice">' + r.suggestions.map(function(s){ return '<div>💡 ' + esc(s) + '</div>'; }).join('') + '</div>' : '') +
+      '<div class="cards">' + r.items.map(function(c){
+        return '<button class="card" data-act="open"><div class="thumb">' + bag(c.colors[0]) + '</div><div class="body"><div class="title">' + esc(c.it.title) + '</div><div class="price">' + won(c.it.price) + '</div>' +
+          '<div class="meta">' + esc([c.brand, c.it.mall].filter(Boolean).join(' · ')) + ' · 상품 보기 ↗</div><div class="reasons">' + c.reasons.map(function(x){ return '<span>' + esc(x) + '</span>'; }).join('') + '</div></div></button>';
+      }).join('') + '</div><p class="foot">데모 데이터 · 실제 상품 정보가 아닙니다</p>' + resetLink() +
+      '<div class="bottom"><div class="inner row"><button class="btn" data-act="again">새 사진으로 찾기</button><button class="btn primary" data-act="edit">조건 바꾸기</button></div></div>';
+    window.scrollTo(0, 0);
+  }, 700);
+}
+
+function showModal(msg){
+  var root = document.getElementById('modal-root');
+  root.innerHTML = '<div class="modal" role="dialog" aria-modal="true"><div class="box"><p>' + esc(msg) + '</p><button class="btn primary" data-act="close">확인</button></div></div>';
+}
+
+function render(){
+  var r = location.hash.replace(/^#\/?/, '') || 'upload';
+  if (r === 'edit') viewEdit(); else if (r === 'result') viewResult(); else viewUpload();
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', render);
+
+/* ---------- 이벤트 ---------- */
+function setPath(k, v){
+  var P = S.prefs;
+  if (k === 'brand.level') P.brand.level = v; else if (k === 'brand.match') P.brand.match = v;
+  else if (k === 'color.level') P.color.level = v; else if (k === 'design.level') P.design.level = v;
+  else if (k === 'price.mode') P.price.mode = v;
+}
+document.addEventListener('click', function(e){
+  var t = e.target.closest('[data-set],[data-act]'); if (!t) return;
+  if (t.dataset.set){ setPath(t.dataset.set, t.dataset.v); save(); viewEdit(); return; }
+  var a = t.dataset.act;
+  if (a === 'reset') resetAll();
+  else if (a === 'preset'){ S.prefs.brand = {level:'must',match:'tier'}; S.prefs.color = {level:'must'}; S.prefs.design = {level:'prefer'}; S.prefs.price.mode = 'cheaper'; save(); viewEdit(); }
+  else if (a === 'go'){ save(); location.hash = '#/result'; if (location.hash === '#/result') { /* 이미 결과 화면이면 다시 계산 */ } }
+  else if (a === 'edit') location.hash = '#/edit';
+  else if (a === 'again') location.hash = '#/upload';
+  else if (a === 'open') showModal('데모에서는 실제 쇼핑몰로 이동하지 않습니다. 실제 서비스에서는 해당 상품 페이지가 열려요.');
+  else if (a === 'close') document.getElementById('modal-root').innerHTML = '';
+});
+document.addEventListener('input', function(e){
+  var k = e.target.dataset && e.target.dataset.in; if (!k) return;
+  var v = e.target.value, A = S.attrs, p = S.prefs.price;
+  if (k === 'category') A.category = v; else if (k === 'brand') A.brand = v; else if (k === 'color') A.color = v;
+  else if (k === 'style') A.style = v.split(',').map(function(s){ return s.trim(); }).filter(Boolean).slice(0, 3);
+  else if (k === 'pct') p.pct = Number(v);
+  else if (k === 'max') p.max = v ? Number(v) : undefined;
+  else if (k === 'min') p.min = Number(v) || 0;
+  else if (k === 'original'){
+    p.original = v ? Number(v) : undefined; p.min = p.original ? Math.round(p.original * 0.3 / 1000) * 1000 : 0;
+    var minEl = document.querySelector('[data-in="min"]'); if (minEl) minEl.value = p.min || '';
+  }
+  save();
+  var go = document.getElementById('go'); if (go) go.disabled = priceMissing();
+});
+
+render();
+})();
+</script>
+</body>
+</html>
