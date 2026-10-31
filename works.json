@@ -35,6 +35,15 @@
       "liveUrl": "",
       "prompt": "할 일을 체크하면 화면 아래 정원에 꽃이 하나씩 자라게 해줘",
       "thumb": "thumb.png"
+    },
+    {
+      "id": "05",
+      "title": "오늘 하루",
+      "author": "edu015",
+      "summary": "투두리스트와 일일 캘린더를 결합시켜서 하루 계획 수립을 도와주는 웹사이트",
+      "liveUrl": "",
+      "prompt": "",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }
