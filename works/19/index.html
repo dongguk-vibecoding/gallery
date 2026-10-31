@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지역사회AX연구소 홈페이지 1차 시안</title>
+<!-- v0.2.1 / 2026-10-31(토) 16:25 KST. 시안: 문구와 수치는 가안입니다. 분석물 카드에 자동 분석 상태 표기 반영. 성명과 연락처는 시안용 가명과 가짜 번호이며 공개 전에 실제 정보로 교체해야 합니다. -->
+<style>
+:root{--navy:#1F3A5F;--ochre:#C08A3E;--ink:#1d2430;--mute:#5b6676;--line:#dde3ea;--bg:#f6f8fb;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;flex-wrap:wrap}
+.logo{font-weight:800;font-size:20px;color:var(--navy)}
+.logo b{color:var(--ochre)}
+nav{display:flex;gap:18px;font-size:14px;color:var(--mute);flex-wrap:wrap}
+nav a:hover{color:var(--navy)}
+.notice{background:var(--navy);color:#dfe8f3;font-size:13px;text-align:center;padding:6px 12px}
+.hero{padding:64px 0 48px}
+.hero h1{font-size:clamp(28px,4.5vw,44px);line-height:1.3;color:var(--navy);margin:0 0 14px}
+.hero p{font-size:18px;color:var(--mute);max-width:640px;margin:0 0 24px}
+.btn{display:inline-block;padding:11px 20px;border-radius:8px;font-weight:600;font-size:15px}
+.btn.p{background:var(--navy);color:#fff}
+.btn.s{border:1px solid var(--navy);color:var(--navy);margin-left:8px}
+h2{font-size:22px;color:var(--navy);margin:0 0 6px}
+.sub{color:var(--mute);font-size:14px;margin:0 0 20px}
+section{padding:36px 0}
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.card h3{margin:0 0 6px;font-size:17px;color:var(--navy)}
+.card p{margin:0;font-size:14px;color:var(--mute)}
+.tag{display:inline-block;font-size:12px;border:1px solid var(--ochre);color:#8a5e1f;border-radius:99px;padding:1px 10px;margin-bottom:8px}
+.flag{background:linear-gradient(135deg,var(--navy),#2f567f);color:#fff;border-radius:14px;padding:28px}
+.flag h2{color:#fff}
+.flag p{color:#dbe6f2;max-width:680px}
+.flag .tag{border-color:#e8c88f;color:#e8c88f}
+.steps{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:13px}
+.steps span{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;color:var(--navy)}
+.chart{display:flex;align-items:flex-end;gap:8px;height:84px;margin:12px 0 4px}
+.chart i{flex:1;background:var(--navy);border-radius:4px 4px 0 0;opacity:.85}
+.chart i:nth-child(3){background:var(--ochre);opacity:1}
+.meta{font-size:12px;color:var(--mute)}
+footer{background:var(--navy);color:#cfdbe9;margin-top:36px;padding:28px 0;font-size:13px}
+footer a{text-decoration:underline}
+
+.demo-badge{position:fixed;right:10px;bottom:10px;z-index:50;background:rgba(31,58,95,.9);color:#fff;font-size:11px;padding:4px 10px;border-radius:99px;pointer-events:none}
+.demo-bar{background:#eef2f7;border-bottom:1px solid #dde3ea;font-size:13px;padding:6px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.demo-bar a{color:#1F3A5F;text-decoration:underline}
+.demo-bar button{margin-left:auto;font:inherit;font-size:13px;padding:3px 10px;border:1px solid #1F3A5F;border-radius:6px;background:#fff;color:#1F3A5F;cursor:pointer}
+.tools{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.tools a.card{display:block;border:1px solid #dde3ea;border-radius:12px;padding:20px;background:#fff}
+.tools a.card:hover{border-color:#1F3A5F}
+</style>
+</head>
+<body>
+<div class="notice">시안입니다. 문구·수치·차트는 모두 가안이며 실제 데이터가 아닙니다.</div>
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="#">지역사회<b>AX</b>연구소</a>
+    <nav>
+      <a href="#a1">데이터분석</a><a href="#a2">정책연구</a><a href="#a3">중장기발전계획</a>
+      <a href="#a4">컨설팅</a><a href="#a5">시민교육</a><a href="#about">소개</a><a href="#method">연구방법</a><a href="#tools">분석도구</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="hero">
+    <h1>AI는 계산하고,<br>판단은 시민과 함께합니다.</h1>
+    <p>지역사회 정책연구에 AI를 접목하는, 성북구의 연구소입니다. 공개된 자료를 읽고, 시민과 함께 계획을 세웁니다.</p>
+    <a class="btn p" href="#recruit">연구위원·시민연구단 모집</a><a class="btn s" href="#a1">분석물 보기</a>
+  </div>
+
+  <section>
+    <h2>세 가지 연구의제</h2>
+    <p class="sub">모든 분석물과 연구는 아래 세 의제로 묶입니다.</p>
+    <div class="grid g3">
+      <div class="card"><span class="tag">의제 1</span><h3>사회적경제</h3><p>지역에서 협동과 연대로 일하는 조직의 현황과 가능성을 읽습니다.</p></div>
+      <div class="card"><span class="tag">의제 2</span><h3>지역사회돌봄</h3><p>주민의 건강과 돌봄 수요를 자료로 살피고 지역 돌봄체계를 논의합니다.</p></div>
+      <div class="card"><span class="tag">의제 3</span><h3>지역사회거버넌스</h3><p>주민 참여와 협력의 구조를 분석하고 더 나은 의사결정을 제안합니다.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="flag" id="a3">
+      <span class="tag">대표 프로젝트</span>
+      <h2>성북구 시민기반 중장기발전계획</h2>
+      <p>연구소와 시민연구단이 함께 만드는 시민 제안 계획입니다. 완성한 계획은 성북구와 구의회에 제안합니다. 공식 구 계획이 아닌 민간의 제안입니다.</p>
+    </div>
+  </section>
+
+  <section id="a1">
+    <h2>최신 분석물</h2>
+    <p class="sub">공개 자료를 재분석한 결과입니다. 모든 분석물에 사용 데이터와 AI 보조 범위를 밝힙니다.</p>
+    <div class="grid g3">
+      <div class="card"><span class="tag">지역사회돌봄</span><h3>성북구 주민의 건강 수준과 돌봄 수요(가안)</h3>
+        <div class="chart"><i style="height:40%"></i><i style="height:62%"></i><i style="height:85%"></i><i style="height:55%"></i></div>
+        <p class="meta">자료: KOSIS 지역사회건강조사(기준연도 표기 예정) · AI 보조: 서술 작성(SLM), 시각화 · 상태: 자동 분석(연구자 검토 전) · 오류 신고: 연구소 이메일</p></div>
+      <div class="card"><span class="tag">사회적경제</span><h3>성북구 사회적경제 조직의 분포와 업종(가안)</h3>
+        <div class="chart"><i style="height:70%"></i><i style="height:35%"></i><i style="height:90%"></i><i style="height:48%"></i></div>
+        <p class="meta">자료: 서울시 집계·성북구 센터 자료(출처 확인 후 표기) · AI 보조: 자료 정리, 시각화 · 상태: 연구자 검토 완료(검토일 표기 예정, 수동 분석)</p></div>
+      <div class="card"><span class="tag">지역사회거버넌스</span><h3>성북구 주민 참여와 신뢰 수준(가안)</h3>
+        <div class="chart"><i style="height:52%"></i><i style="height:80%"></i><i style="height:44%"></i><i style="height:66%"></i></div>
+        <p class="meta">자료: 서울서베이 도시정책지표조사(공공누리 1유형, 기준연도 표기 예정) · AI 보조: 서술 작성(SLM), 시각화 · 상태: 자동 분석(연구자 검토 전) · 오류 신고: 연구소 이메일</p></div>
+    </div>
+  </section>
+
+  <section id="tools">
+    <h2>분석 도구 체험</h2>
+    <p class="sub">성북구 사회조사 결과표를 재구성한 공개 통계로 직접 눌러 볼 수 있는 세 가지 도구입니다. 시험 화면이며 연구자 검토 전입니다.</p>
+    <div class="tools">
+      <a class="card" href="crosstab.html"><span class="tag">도구 1</span><h3>교차표</h3><p>데이터 막대와 색 농도로 집단별 결과를 비교합니다.</p></a>
+      <a class="card" href="scatter.html"><span class="tag">도구 2</span><h3>상관분석 산점도</h3><p>권역이나 연령 집단 사이의 관계를 점으로 봅니다.</p></a>
+      <a class="card" href="motion-chart.html"><span class="tag">도구 3</span><h3>성북 모션차트</h3><p>점이 시간에 따라 움직이는 모습을 재생해 봅니다.</p></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>다섯 가지 사업영역</h2>
+    <p class="sub">근거를 만들고, 해석하고, 설계하고, 현장에 적용하고, 시민에게 확산합니다.</p>
+    <div class="grid g3">
+      <div class="card" id="a1b"><span class="tag">1 근거</span><h3>데이터분석</h3><p>공개 통계와 조사 자료를 AI로 빠르게 정리하고, 해석과 검증은 연구자가 맡습니다.</p></div>
+      <div class="card" id="a2"><span class="tag">2 해석</span><h3>지역사회정책 연구</h3><p>선행 연구와 정책 사례를 AI로 폭넓게 훑고, 지역 맥락에 맞는 대안은 연구자가 판단합니다.</p></div>
+      <div class="card"><span class="tag">3 설계</span><h3>중장기발전계획 수립</h3><p>시민 의견과 지표를 AI로 구조화해 계획의 근거를 만들고, 우선순위는 시민이 정합니다.</p></div>
+      <div class="card" id="a4"><span class="tag">4 적용</span><h3>비영리·마을공동체 컨설팅</h3><p>조직의 사업 기록을 AI로 정리해 성과와 과제를 보이게 하고, 개선 방향은 함께 논의합니다.</p></div>
+      <div class="card" id="a5"><span class="tag">5 확산</span><h3>시민 교육</h3><p>시민이 AI를 도구로 직접 다루며 우리 동네 자료를 읽는 방법을 배웁니다.</p></div>
+    </div>
+  </section>
+
+  <section id="recruit">
+    <h2>함께하실 분을 모집합니다</h2>
+    <p class="sub">모집 계획은 안이며 확정되면 다시 안내합니다.</p>
+    <div class="grid g3">
+      <div class="card"><span class="tag">시민연구단 1기 계획(안)</span><h3>우리 동네를 함께 연구합니다</h3><p>12명 내외, 6개월 과정(교육 2개월, 연구 4개월), 월 2회 모임. 시민 교육의 심화 과정입니다.</p>
+        <div class="steps"><span>교육 신청</span><span>연구 활동</span><span>계획 제안</span></div></div>
+      <div class="card"><span class="tag">연구위원</span><h3>연구소를 함께 세웁니다</h3><p>협동조합 설립에 함께할 연구위원을 모집합니다. 지역사회 연구에 관심 있는 분을 기다립니다.</p></div>
+      <div class="card"><span class="tag">신청 방법</span><h3>신청 양식(준비 중)</h3><p>이름, 이메일, 소속, 관심 분야만 받으며, 양식 첫머리에 개인정보 수집·이용 동의와 보관 기간을 밝힙니다.</p></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>연구소 소개</h2>
+    <div class="card"><h3>대표 연구자</h3><p>홍길동(가명), 사회학 박사. 연구 분야: 사회적경제, 지역사회돌봄, 지역사회거버넌스. 주요 연구는 성과 아카이브에 공개 가능한 자료로 게시합니다. 연락: 010-0000-0000(가짜 번호), sample@example.org(가짜 주소).</p></div>
+  </section>
+
+  <section id="method">
+    <h2>연구 방법과 AI 사용 원칙</h2>
+    <div class="card"><p>모든 분석물 하단에 1) 사용한 데이터와 출처·기준 시점·이용조건, 2) AI가 보조한 범위, 3) 「자동 분석(연구자 검토 전)」 또는 「연구자 검토 완료」 상태를 표기합니다. 수치가 원본과 다르거나 값이 이상하면 자동 게시를 멈춥니다. 응답자 개인정보는 AI에 직접 입력하지 않으며, 필요하면 이름과 연락처를 지운 뒤에만 사용합니다.</p></div>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>지역사회AX연구소(협동조합 설립 준비 중) · Community AX Institute Cooperative</div>
+    <div style="margin-top:6px">서울특별시 성북구 · 연락처: 010-0000-0000, sample@example.org (시안용 가짜 정보) · <a href="#method">AI 사용 공개 원칙</a></div>
+  </div>
+</footer>
+<div class="demo-badge">데모 버전 · 시안 · 연구자 검토 전</div>
+</body>
+</html>

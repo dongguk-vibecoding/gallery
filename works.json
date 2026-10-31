@@ -152,6 +152,15 @@
       "liveUrl": "www.qpin.co.kr",
       "prompt": "인수인계서 만들어줘",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "19",
+      "title": "지역사회분석사이트",
+      "author": "남춘호",
+      "summary": "지역사회를 분석하는 사이트",
+      "liveUrl": "",
+      "prompt": "인터뷰",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }
