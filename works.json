@@ -116,6 +116,15 @@
       "liveUrl": "http://localhost:3100",
       "prompt": "",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "14",
+      "title": "좋은책 독서코칭 스튜디오",
+      "author": "김영주",
+      "summary": "아동 도서 독후 활동지, 교사 가이드, 부모자료 개발",
+      "liveUrl": "",
+      "prompt": "",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }

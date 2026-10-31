@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>좋은책 독서코칭 스튜디오</title>
+<style>
+:root{
+  --cream:#FBF6EE;--cream2:#F3E9DA;--paper:#FFFDF9;
+  --coral:#E8735A;--coral-d:#C9573F;--coral-l:#FDE8E1;
+  --char:#2F2F33;--muted:#6E6760;--line:#E6DACA;
+  --err:#C4412B;--ok:#3D8B68;--radius:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--cream);color:var(--char);font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+[hidden]{display:none!important}
+
+/* ---------- 앱 레이아웃 ---------- */
+#app{max-width:1180px;margin:0 auto;padding:16px 16px 48px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 0 16px}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:48px;height:48px;border-radius:14px;background:var(--coral);display:grid;place-items:center;font-size:26px;flex:none}
+.brand h1{font-size:1.3rem;margin:0;letter-spacing:-.02em;line-height:1.3}
+.slogan{margin:0;color:var(--coral-d);font-size:.95rem}
+.top-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.demo-badge{background:var(--char);color:#fff;font-size:.8rem;padding:5px 12px;border-radius:999px;font-weight:600}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.steps button{display:flex;align-items:center;gap:8px;justify-content:center;padding:12px 8px;border:1.5px solid var(--line);background:var(--paper);border-radius:12px;cursor:pointer;font-weight:700;color:var(--muted)}
+.steps button b{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--cream2);font-size:.85rem;flex:none}
+.steps button.active{border-color:var(--coral);color:var(--char);background:#fff;box-shadow:0 2px 0 var(--coral)}
+.steps button.active b{background:var(--coral);color:#fff}
+.steps button.done b{background:var(--ok);color:#fff}
+@media(max-width:640px){.steps button{flex-direction:column;gap:2px;padding:8px 4px}.steps button span{font-size:.78rem}}
+
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.panel-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-bottom:18px}
+h2{font-size:1.25rem;margin:0 0 4px}
+h3{font-size:1rem;margin:0 0 8px}
+.hint{color:var(--muted);font-size:.9rem;margin:4px 0}
+.btn{border:1.5px solid transparent;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:700;background:var(--cream2);min-height:44px;transition:background .15s}
+.btn.primary{background:var(--coral);color:#fff}
+.btn.primary:hover{background:var(--coral-d)}
+.btn.line{background:#fff;border-color:var(--coral);color:var(--coral-d)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.sm{padding:6px 12px;font-size:.88rem;min-height:36px}
+.btn.lg{padding:14px 28px;font-size:1.05rem}
+.btn:focus-visible,.steps button:focus-visible,.qchip:focus-visible,.doc-tab:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(232,115,90,.45);outline-offset:2px}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap}
+.foot-bar{display:flex;justify-content:space-between;gap:8px;margin-top:22px;flex-wrap:wrap}
+
+/* ---------- 1. 도서정보 ---------- */
+.form{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+.field.full{grid-column:1/-1}
+@media(max-width:720px){.form{grid-template-columns:1fr}.panel{padding:18px 16px}}
+.field label,.field .lbl{display:block;font-weight:700;margin-bottom:6px}
+.field em{color:var(--coral);font-style:normal}
+.field small{color:var(--muted);font-weight:400}
+input[type=text],textarea{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+textarea{resize:vertical;min-height:110px}
+.field.invalid input[type=text],.field.invalid textarea{border-color:var(--err);background:#FFF6F4}
+.field.invalid .chips{box-shadow:0 0 0 1.5px var(--err);border-radius:12px;padding:4px}
+.err{color:var(--err);font-size:.86rem;margin:4px 0 0}
+.err:empty{display:none}
+.scenes-in{display:grid;gap:8px}
+.scenes-in div{display:flex;gap:8px;align-items:center}
+.scenes-in b{flex:none;width:28px;height:28px;border-radius:50%;background:var(--coral-l);color:var(--coral-d);display:grid;place-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip span{display:inline-block;padding:9px 16px;border:1.5px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-weight:700}
+.chip input:checked+span{background:var(--coral);border-color:var(--coral);color:#fff}
+.chip input:focus-visible+span{outline:3px solid rgba(232,115,90,.45)}
+.privacy{grid-column:1/-1;background:var(--cream);border-radius:10px;padding:10px 14px;font-size:.88rem;color:var(--muted);margin:0}
+.err-summary{background:#FFF1EE;border:1px solid #F3C2B6;color:var(--err);border-radius:10px;padding:10px 14px;margin-top:16px;font-weight:600}
+
+/* ---------- 2. 코칭 조건 ---------- */
+.cond-block{margin-bottom:22px}
+.fixed{display:inline-block;padding:8px 16px;border-radius:999px;background:var(--cream2);font-weight:700}
+.type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.type-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.type-grid{grid-template-columns:1fr}}
+.mode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,300px));gap:12px}
+@media(max-width:520px){.mode-grid{grid-template-columns:1fr}}
+.opt{position:relative;display:block;cursor:pointer}
+.opt input{position:absolute;opacity:0}
+.opt .card{border:1.5px solid var(--line);border-radius:14px;padding:14px;background:#fff;height:100%}
+.opt input:checked+.card{border-color:var(--coral);background:var(--coral-l);box-shadow:inset 0 0 0 1px var(--coral)}
+.opt input:focus-visible+.card{outline:3px solid rgba(232,115,90,.45)}
+.opt .ic{font-size:1.6rem}
+.opt .t{font-weight:800;margin:4px 0 2px}
+.opt .f{color:var(--coral-d);font-size:.88rem;font-weight:700}
+.opt .d{color:var(--muted);font-size:.85rem;margin-top:6px}
+
+/* ---------- 3·4. 결과 / 편집 ---------- */
+.notice{background:#FFF7E6;border:1px solid #F0D49B;border-radius:10px;padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px;font-size:.92rem}
+.gen-info{font-size:.9rem;color:var(--muted)}
+.quick{display:flex;gap:10px 20px;flex-wrap:wrap;margin-bottom:14px;padding:12px;background:var(--cream);border-radius:12px}
+.quick .grp{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.quick .grp>b{font-size:.85rem;color:var(--muted);margin-right:2px}
+.qchip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-weight:700;cursor:pointer;font-size:.88rem}
+.qchip.on{background:var(--coral);color:#fff;border-color:var(--coral)}
+.doc-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.doc-tab{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;text-align:left}
+.doc-tab.on{border-color:var(--char);background:var(--char);color:#fff}
+.doc-tab .dot{display:inline-block;font-size:.72rem;background:var(--coral);color:#fff;border-radius:99px;padding:0 6px;margin-left:6px;vertical-align:middle}
+.view-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.frame{width:100%;max-width:820px;margin:0 auto;position:relative}
+.frame .page{transform-origin:top left;box-shadow:0 6px 24px rgba(60,40,20,.13)}
+.frame.editing .page{outline:2px dashed var(--line);outline-offset:0;cursor:text}
+.frame.editing .page:focus{outline-color:var(--coral)}
+.edit-layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:20px;align-items:start}
+.edit-layout>*{min-width:0}
+.frame{overflow:hidden}
+@media(max-width:900px){.edit-layout{grid-template-columns:minmax(0,1fr)}}
+.side-box{background:var(--cream);border-radius:12px;padding:14px;margin-bottom:12px}
+.edit-side .doc-tabs{flex-direction:column}
+@media(max-width:900px){.edit-side .doc-tabs{flex-direction:row}}
+.checks label{display:flex;gap:8px;align-items:center;padding:5px 0;font-weight:700;cursor:pointer}
+.checks input{width:18px;height:18px;accent-color:var(--coral)}
+.save-state{font-size:.84rem;color:var(--ok);min-height:1.3em;margin:6px 0 0}
+.fit{font-size:.88rem;border-radius:10px;padding:8px 12px;margin:0 auto 10px;max-width:820px;background:#EAF4EE;color:#2D6B4F}
+.fit.warn{background:#FFF1EE;color:var(--err)}
+.fit.shrink{background:#FFF7E6;color:#8A5A12}
+
+.modal{position:fixed;inset:0;background:rgba(40,32,26,.75);z-index:50;display:flex;flex-direction:column}
+.modal-bar{display:flex;gap:10px;align-items:center;padding:10px 16px;background:var(--paper);flex-wrap:wrap}
+.modal-bar .sp{flex:1;color:var(--muted);font-size:.88rem;min-width:140px}
+.modal-body{overflow:auto;padding:20px 16px;flex:1}
+.modal-body .frame{margin-bottom:28px}
+.pv-label{color:#fff;font-weight:700;max-width:820px;margin:0 auto 8px;font-size:.92rem}
+.pv-label span{font-weight:400;opacity:.85;margin-left:6px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--char);color:#fff;padding:10px 18px;border-radius:999px;font-size:.92rem;z-index:80;box-shadow:0 6px 20px rgba(0,0,0,.2);max-width:calc(100% - 32px);text-align:center}
+.app-foot{text-align:center;color:var(--muted);font-size:.82rem;margin-top:24px}
+#printArea{position:absolute;left:-10000px;top:0}
+.demo-corner{position:fixed;left:10px;bottom:10px;z-index:90;background:rgba(47,47,51,.82);color:#fff;font-size:.72rem;padding:3px 9px;border-radius:999px;pointer-events:none}
+
+/* ---------- A4 자료 (화면·인쇄 공통) ---------- */
+.page{--k:1;width:210mm;height:296mm;padding:12mm 14mm 16mm;background:#fff;color:#26262a;font-size:calc(12.5pt * var(--k));line-height:1.5;position:relative;word-break:keep-all;overflow-wrap:anywhere;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page.multi{height:auto;min-height:296mm}
+.page *{box-sizing:border-box}
+.page h1,.page h2,.page p,.page ul,.page ol{margin:0}
+.pg-foot{position:absolute;left:14mm;right:14mm;bottom:6mm;font-size:8pt;color:#9a948c;display:flex;justify-content:space-between;gap:1em;border-top:.3mm solid #eee;padding-top:1.5mm}
+.page.multi .pg-foot{position:static;margin-top:6mm}
+
+.ws-head{border-bottom:.6mm solid #E8735A;padding-bottom:.6em;margin-bottom:.8em}
+.ws-meta{font-size:.8em;color:#8a8178}
+.ws-title{font-size:1.9em;line-height:1.25;margin:.1em 0 .25em!important;letter-spacing:-.02em}
+.ws-sub{display:flex;gap:.4em;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;background:#E8735A;color:#fff;border-radius:99px;padding:.1em .7em;font-size:.8em;font-weight:700}
+.tag.soft{background:#FDE8E1;color:#B4523C}
+.ws-name{margin-left:auto;font-weight:700}
+.ws-tip{margin-top:.45em!important;font-size:.9em;color:#5d5750;background:#FBF6EE;border-radius:2mm;padding:.3em .6em}
+.blank{display:inline-block;border-bottom:.35mm solid #555;height:1.1em;vertical-align:bottom;margin:0 .2em}
+.q{margin:0 0 .9em;break-inside:avoid}
+.q-h{display:flex;gap:.45em;align-items:flex-start;font-size:1.18em;font-weight:800;margin-bottom:.45em;line-height:1.35}
+.q-n{flex:none;width:1.5em;height:1.5em;border-radius:50%;background:#E8735A;color:#fff;display:grid;place-items:center;font-size:.85em}
+.choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.4em,1fr));gap:.5em}
+.choice{border:.35mm dashed #cbbfae;border-radius:3mm;text-align:center;padding:.4em .2em}
+.choice .em{font-size:2.3em;line-height:1.2}
+.choice .lb{font-weight:700;font-size:1.05em}
+.scenes{display:grid;grid-template-columns:repeat(3,1fr);gap:.5em}
+.scene{border:.35mm solid #e2d6c5;border-radius:3mm;padding:.5em;text-align:center;background:#FFFCF7}
+.scene .em{font-size:2em;line-height:1.2}
+.scene .sn{font-weight:800;color:#C9573F}
+.scene .st{font-size:.92em}
+.stars{display:flex;gap:1.4em;flex-wrap:wrap;font-size:1.15em;font-weight:700;align-items:center}
+.star{font-size:1.6em;color:#E8735A;vertical-align:middle}
+.draw{border:.5mm solid #bdb3a5;border-radius:4mm;position:relative}
+.draw span{position:absolute;top:.4em;left:.7em;color:#a59c90;font-size:.85em}
+.feel-row{display:flex;align-items:center;gap:.6em;padding:.35em 0;border-bottom:.3mm dotted #ddd;flex-wrap:wrap}
+.feel-scene{flex:1 1 12em;font-weight:700}
+.faces{display:flex;gap:.4em}
+.face{text-align:center;font-size:.75em;width:4.3em}
+.face b{display:block;font-size:2.2em;font-weight:400;line-height:1.2}
+.say{background:#FBF6EE;border-radius:3mm;padding:.5em .7em;margin-bottom:.45em}
+.frame-sent{font-size:1.1em;margin-top:.35em}
+.chips-w{display:flex;gap:.6em;flex-wrap:wrap}
+.wchip{border:.4mm solid #cbbfae;border-radius:99px;padding:.25em 1em;font-size:1.25em;font-weight:800}
+.order-row{display:flex;align-items:center;gap:.6em;padding:.3em 0}
+.box{flex:none;width:1.8em;height:1.8em;border:.5mm solid #555;border-radius:1.5mm}
+.order-row .em{font-size:1.6em}
+.trace-row{display:flex;align-items:flex-end;gap:1em;padding:.15em 0}
+.trace{font-size:2em;font-weight:800;color:#d6cfc5;letter-spacing:.15em;min-width:4.5em}
+.cmp{width:100%;border-collapse:collapse}
+.cmp th,.cmp td{border:.3mm solid #d8ccbb;padding:.45em;text-align:center}
+.cmp th{background:#FBF6EE}
+.cmp td:first-child{text-align:left;font-weight:700;width:34%}
+.cmp .faces{justify-content:center}
+.small{font-size:.95em;margin-bottom:.4em!important}
+
+.doc-head{display:flex;justify-content:space-between;gap:1em;align-items:flex-end;border-bottom:.6mm solid #2F2F33;padding-bottom:.5em;margin-bottom:.75em}
+.doc-title{font-size:1.6em;line-height:1.25}
+.doc-tags{display:flex;gap:.3em;flex-wrap:wrap;justify-content:flex-end}
+.g-sec{margin-bottom:.75em;break-inside:avoid}
+.g-sec h2{font-size:1.05em;margin-bottom:.3em!important;color:#C9573F}
+.g-sec ul{padding-left:1.2em}
+.focus{margin-top:.35em!important;font-size:.92em;background:#FBF6EE;padding:.3em .6em;border-radius:2mm}
+.tbl{width:100%;border-collapse:collapse;font-size:.92em}
+.tbl th,.tbl td{border:.3mm solid #ddd2c2;padding:.35em .5em;vertical-align:top;text-align:left}
+.tbl th{background:#F6EEE3}
+.tbl tr{break-inside:avoid}
+.tbl td:first-child{white-space:nowrap;font-weight:700}
+.tbl.plan th,.tbl.plan td:nth-child(2){white-space:nowrap}
+.g-two{display:grid;grid-template-columns:1fr 1fr;gap:1em}
+.g-note{font-size:.8em;color:#8a8178;border-top:.3mm solid #eee;padding-top:.4em}
+
+.page.parent{padding:0}
+.half{height:148mm;padding:11mm 16mm 9mm;position:relative;display:flex;flex-direction:column;gap:.5em}
+.page.multi .half{height:auto;min-height:148mm}
+.half.a-card{border-top:.5mm dashed #aaa;background:#FFFCF7}
+.cut{position:absolute;top:-.75em;left:8mm;background:#fff;padding:0 .4em;font-size:.75em;color:#888}
+.pc-badge{align-self:flex-start;font-size:.78em;font-weight:800;color:#fff;background:#E8735A;border-radius:99px;padding:.1em .8em}
+.pc-badge.alt{background:#2F2F33}
+.pc-title{font-size:1.45em;line-height:1.3}
+.pc-title.sm{font-size:1.15em}
+.pc-intro{color:#5d5750;font-size:.95em}
+.pc-qs,.pc-as{padding-left:1.4em;margin:0;display:flex;flex-direction:column;gap:.4em}
+.pc-qs li{font-size:1.08em;font-weight:600}
+.kind{display:inline-block;font-size:.72em;border-radius:99px;padding:0 .55em;vertical-align:middle;background:#E7F1EC;color:#2f7a58;font-weight:800}
+.kind.think{background:#FDE8E1;color:#B4523C}
+.tip{font-size:.88em;color:#6e6760;margin-top:.1em}
+.mission{background:#FBF6EE;border-left:1.2mm solid #E8735A;padding:.45em .7em;border-radius:1.5mm}
+.pc-foot{margin-top:auto!important;font-size:.78em;color:#9a948c}
+
+/* ---------- 인쇄 ---------- */
+@page{size:A4 portrait;margin:0}
+@media print{
+  html,body{background:#fff!important}
+  #app,.modal,.toast,.demo-corner{display:none!important}
+  #printArea{position:static;left:auto}
+  #printArea .page{box-shadow:none;transform:none!important;margin:0;break-after:page;page-break-after:always}
+  #printArea .page:last-child{break-after:auto;page-break-after:auto}
+  .q,.g-sec,.tbl tr,.cmp tr,.choice,.scene,.pc-qs li,.pc-as li{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">📚</div>
+      <div>
+        <h1>좋은책 독서코칭 스튜디오</h1>
+        <p class="slogan">좋은 책을, 아이의 말과 생각으로.</p>
+      </div>
+    </div>
+    <div class="top-right">
+      <span class="demo-badge" title="AI가 아닌 규칙 기반 생성기입니다">데모 초안 생성 · 규칙 기반</span>
+      <button class="btn ghost sm" id="resetAll" type="button">예시 데이터로 초기화</button>
+    </div>
+  </header>
+
+  <nav class="steps" id="steps" aria-label="단계">
+    <button type="button" data-step="1"><b>1</b><span>도서정보</span></button>
+    <button type="button" data-step="2"><b>2</b><span>코칭 조건</span></button>
+    <button type="button" data-step="3"><b>3</b><span>생성 결과</span></button>
+    <button type="button" data-step="4"><b>4</b><span>편집·인쇄</span></button>
+  </nav>
+
+  <main>
+    <!-- 1. 도서정보 -->
+    <section class="panel" id="step1">
+      <div class="panel-head">
+        <div>
+          <h2>① 도서정보 입력</h2>
+          <p class="hint">입력한 정보만으로 초안을 만듭니다. 입력에 없는 인물·사건은 만들지 않아요.</p>
+        </div>
+        <div class="row-btns">
+          <button class="btn line" id="loadSample" type="button">📖 샘플 불러오기 (흥부와 놀부)</button>
+          <button class="btn ghost" id="clearBook" type="button">입력 지우기</button>
+        </div>
+      </div>
+      <form class="form" id="bookForm" novalidate onsubmit="return false">
+        <div class="field" data-f="series">
+          <label for="f-series">전집명 <em>*</em></label>
+          <input type="text" id="f-series" autocomplete="off">
+          <p class="err"></p>
+        </div>
+        <div class="field" data-f="title">
+          <label for="f-title">도서명 <em>*</em></label>
+          <input type="text" id="f-title" autocomplete="off">
+          <p class="err"></p>
+        </div>
+        <div class="field full" data-f="field">
+          <span class="lbl">분야 <em>*</em></span>
+          <div class="chips" id="fieldChips" role="radiogroup" aria-label="분야"></div>
+          <p class="err"></p>
+        </div>
+        <div class="field full" data-f="plot">
+          <label for="f-plot">줄거리 <em>*</em></label>
+          <textarea id="f-plot" rows="4"></textarea>
+          <p class="err"></p>
+        </div>
+        <div class="field full" data-f="scenes">
+          <span class="lbl">주요 장면 3개 <em>*</em> <small>일어난 순서대로</small></span>
+          <div class="scenes-in">
+            <div><b>1</b><input type="text" id="f-s0" aria-label="주요 장면 1" autocomplete="off"></div>
+            <div><b>2</b><input type="text" id="f-s1" aria-label="주요 장면 2" autocomplete="off"></div>
+            <div><b>3</b><input type="text" id="f-s2" aria-label="주요 장면 3" autocomplete="off"></div>
+          </div>
+          <p class="err"></p>
+        </div>
+        <div class="field" data-f="chars">
+          <label for="f-chars">등장인물 <em>*</em> <small>쉼표로 구분, 주인공을 맨 앞에</small></label>
+          <input type="text" id="f-chars" autocomplete="off">
+          <p class="err"></p>
+        </div>
+        <div class="field" data-f="vocab">
+          <label for="f-vocab">핵심 어휘 <em>*</em> <small>2~4개, 쉼표로 구분</small></label>
+          <input type="text" id="f-vocab" autocomplete="off">
+          <p class="err"></p>
+        </div>
+        <div class="field full" data-f="theme">
+          <label for="f-theme">주제 <em>*</em></label>
+          <input type="text" id="f-theme" autocomplete="off">
+          <p class="err"></p>
+        </div>
+        <p class="privacy">🔒 실제 아동의 이름·사진 등 개인정보는 입력하지 마세요. 입력값은 이 브라우저 안에만 저장되고 어디로도 전송되지 않습니다.</p>
+      </form>
+      <div class="err-summary" id="err1" hidden></div>
+      <div class="foot-bar">
+        <span></span>
+        <button class="btn primary" type="button" data-go="2">다음: 코칭 조건 →</button>
+      </div>
+    </section>
+
+    <!-- 2. 코칭 조건 -->
+    <section class="panel" id="step2" hidden>
+      <div class="panel-head">
+        <div>
+          <h2>② 코칭 조건 선택</h2>
+          <p class="hint">유형을 바꾸면 활동지 문항, 교사 발문, 부모 카드 질문이 모두 달라집니다.</p>
+        </div>
+      </div>
+      <div class="cond-block">
+        <h3>연령</h3>
+        <span class="fixed">6~7세 (고정)</span>
+      </div>
+      <div class="cond-block">
+        <h3>코칭 유형</h3>
+        <div class="type-grid" id="typeGrid"></div>
+      </div>
+      <div class="cond-block">
+        <h3>수업 방식</h3>
+        <div class="mode-grid" id="modeGrid"></div>
+      </div>
+      <div class="foot-bar">
+        <button class="btn ghost" type="button" data-go="1">← 도서정보</button>
+        <button class="btn primary lg" type="button" id="genBtn">✨ 데모 초안 생성</button>
+      </div>
+      <p class="hint" style="text-align:right">AI가 아닌 규칙 기반 데모 생성기입니다. 입력하신 도서정보만 조합하며, 교사 검토 후 사용하세요.</p>
+    </section>
+
+    <!-- 3. 생성 결과 -->
+    <section class="panel" id="step3" hidden>
+      <div class="panel-head">
+        <div>
+          <h2>③ 자료 생성 결과</h2>
+          <p class="gen-info" id="genInfo"></p>
+        </div>
+      </div>
+      <div class="quick" id="quick3"></div>
+      <div class="notice" id="stale3" hidden>
+        <span>⚠️ 도서정보나 코칭 조건이 바뀌었어요. 지금 보이는 자료는 이전 조건으로 만든 초안입니다.</span>
+        <button class="btn primary sm" type="button" id="regen3">다시 생성</button>
+      </div>
+      <div class="view-bar">
+        <div class="doc-tabs" id="docTabs3" style="margin:0"></div>
+        <button class="btn line sm" type="button" id="editThis">✏️ 이 자료 편집하기</button>
+      </div>
+      <div class="frame" id="viewFrame3"></div>
+      <div class="foot-bar">
+        <button class="btn ghost" type="button" data-go="2">← 코칭 조건</button>
+        <button class="btn primary" type="button" data-go="4">편집·인쇄 →</button>
+      </div>
+    </section>
+
+    <!-- 4. 편집 및 인쇄 -->
+    <section class="panel" id="step4" hidden>
+      <div class="panel-head">
+        <div>
+          <h2>④ 편집 및 인쇄</h2>
+          <p class="hint">오른쪽 자료의 글자를 눌러 바로 고치세요. 고친 내용은 자동 저장되고 미리보기·인쇄에 그대로 반영됩니다.</p>
+        </div>
+      </div>
+      <div class="edit-layout">
+        <aside class="edit-side">
+          <div class="side-box">
+            <h3>편집할 자료</h3>
+            <div class="doc-tabs" id="docTabs4"></div>
+            <button class="btn ghost sm" type="button" id="revertDoc">↺ 이 자료 처음 생성본으로</button>
+            <p class="save-state" id="saveState"></p>
+          </div>
+          <div class="side-box">
+            <h3>인쇄할 자료</h3>
+            <div class="checks" id="printChecks"></div>
+            <div class="row-btns" style="margin-top:10px">
+              <button class="btn line" type="button" id="previewBtn">🔍 A4 미리보기</button>
+              <button class="btn primary" type="button" id="printBtn">🖨️ 인쇄</button>
+            </div>
+            <p class="hint">A4 세로, 자료마다 1쪽. 인쇄 창에서 'PDF로 저장'도 할 수 있어요.</p>
+          </div>
+        </aside>
+        <div class="edit-main">
+          <p class="fit" id="fit4"></p>
+          <div class="frame editing" id="editFrame"></div>
+        </div>
+      </div>
+      <div class="foot-bar">
+        <button class="btn ghost" type="button" data-go="3">← 생성 결과</button>
+        <span></span>
+      </div>
+    </section>
+  </main>
+  <p class="app-foot">교육용 데모 · 규칙 기반 초안 생성 · 서버 전송 없음</p>
+</div>
+
+<div class="modal" id="pvModal" hidden role="dialog" aria-modal="true" aria-label="A4 미리보기">
+  <div class="modal-bar">
+    <b>A4 미리보기</b>
+    <span class="sp" id="pvInfo"></span>
+    <button class="btn primary sm" type="button" id="pvPrint">🖨️ 인쇄</button>
+    <button class="btn ghost sm" type="button" id="pvClose">닫기 ✕</button>
+  </div>
+  <div class="modal-body" id="pvBody"></div>
+</div>
+<div id="printArea" aria-hidden="true"></div>
+<div class="demo-corner">데모 버전 · 가짜 데이터</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= 기본 데이터 ================= */
+const KEY = 'greatbooks-coaching-studio:state';
+const TYPES = {
+  start: {label:'책친구 시작형', focus:'그림 고르기·가리키기', icon:'👉', desc:'인물·장면 그림을 고르고 손가락으로 가리키며 책과 친해져요.'},
+  talk:  {label:'말문 열기형', focus:'감정·행동 한 문장 말하기', icon:'💬', desc:'인물의 마음과 행동을 얼굴 그림과 한 문장으로 말해요.'},
+  vocab: {label:'어휘·이해 확장형', focus:'핵심 낱말·사건 순서', icon:'🔤', desc:'핵심 낱말을 찾고 따라 쓰고, 장면을 순서대로 놓아요.'},
+  think: {label:'생각 확장형', focus:'이유·비교·다른 결말', icon:'💡', desc:'왜 그랬는지 말하고, 인물을 비교하고, 다른 결말을 상상해요.'}
+};
+const MODES = {
+  online:  {label:'온라인(화상) 15분', short:'온라인 수업', min:15, icon:'💻', desc:'화면 공유로 보고 말·손가락으로 답해요. 활동지는 가정에서 완성해요.', plan:[2,4,6,3]},
+  offline: {label:'대면 30분', short:'대면 수업', min:30, icon:'🏫', desc:'책을 함께 넘기고 활동지를 직접 써요.', plan:[5,8,12,5]}
+};
+const DOCS = [
+  {k:'worksheet', label:'아동 활동지', icon:'🧒'},
+  {k:'guide', label:'교사 가이드', icon:'📋'},
+  {k:'parent', label:'부모 책대화 카드', icon:'👪'}
+];
+const FIELDS = ['창작','자연','지식','전래동화'];
+const SAMPLE = {
+  series:'전래동화 전집', title:'흥부와 놀부', field:'전래동화',
+  plot:'욕심 많은 형 놀부는 마음씨 착한 동생 흥부를 집에서 내보낸다. 가난하게 살던 흥부는 다리를 다친 제비를 정성껏 돌봐 준다. 이듬해 봄, 제비가 물어다 준 박씨를 심었더니 커다란 박이 열리고, 박을 타자 보물이 쏟아져 흥부네는 넉넉해진다. 이를 샘낸 놀부는 일부러 제비 다리를 다치게 해 박씨를 얻지만, 놀부의 박에서는 도깨비가 나와 혼쭐이 난다. 흥부는 어려워진 놀부를 따뜻하게 맞아 준다.',
+  scenes:['흥부가 다친 제비를 돌봐 줌','흥부의 박에서 보물이 나옴','놀부의 박에서 도깨비가 나옴'],
+  chars:'흥부, 놀부, 제비, 도깨비', vocab:'욕심, 정성, 형제, 우애',
+  theme:'착한 마음과 정성은 복으로 돌아온다'
+};
+const EMPTY = {series:'',title:'',field:'',plot:'',scenes:['','',''],chars:'',vocab:'',theme:''};
+const GLOSS = {
+  '욕심':'더 많이 가지고 싶어 하는 마음', '정성':'온 마음을 다해 정성스럽게 하는 것',
+  '형제':'한 부모에게서 태어난 형과 아우', '우애':'형제끼리 서로 아끼고 사랑하는 마음',
+  '반짝이다':'빛이 잠깐씩 빛나다', '망설이다':'이렇게 할까 저렇게 할까 정하지 못하다', '도와주다':'남의 일을 거들어 주다'
+};
+const EMOJI = [['도깨비','👹'],['제비','🐦'],['토끼','🐰'],['부엉이','🦉'],['별','⭐'],['보물','💰'],['박','🎃'],['호랑이','🐯'],['곰','🐻'],['여우','🦊'],['개구리','🐸'],['거북','🐢'],['할머니','👵'],['할아버지','👴'],['공주','👸'],['왕','🤴'],['나무','🌳'],['꽃','🌸'],['언덕','⛰️'],['하늘','🌌'],['친구','🧑‍🤝‍🧑'],['도움','🤝'],['돌봐','🤲']];
+const PICK_POOL = [['🐶','강아지'],['🐱','고양이'],['🐟','물고기'],['🐘','코끼리'],['🦒','기린'],['🚗','자동차']];
+const WORD_POOL = ['자동차','눈사람','바다','기차','우산','수영장'];
+const NUM = ['①','②','③','④'];
+const FACES = [['😊','기뻐요'],['😢','슬퍼요'],['😮','놀라요'],['😟','걱정돼요']];
+
+/* ================= 상태 ================= */
+const clone = o => JSON.parse(JSON.stringify(o));
+let S = {book:clone(SAMPLE), cond:{type:'start', mode:'offline'}, docs:null, orig:null, gen:null, edited:{}, step:1, doc3:'worksheet', doc4:'worksheet', print:{worksheet:true, guide:true, parent:true}};
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch(e) {}
+let saveT;
+function save(){ clearTimeout(saveT); saveT = setTimeout(()=>{ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }, 150); }
+
+/* ================= 유틸 ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const parseList = s => String(s||'').split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
+function hasJong(w){ const c = String(w).trim().slice(-1).charCodeAt(0); return c>=0xAC00 && c<=0xD7A3 && (c-0xAC00)%28!==0; }
+const JOSA = {'은':['은','는'],'이':['이','가'],'을':['을','를'],'과':['과','와'],'이라면':['이라면','라면']};
+const J = (w,t) => w + JOSA[t][hasJong(w)?0:1];
+function emojiFor(text, fb){ const hits=[]; for (const [k,v] of EMOJI){ if (text.includes(k) && !hits.includes(v)) hits.push(v); if (hits.length>=2) break; } return hits.length ? hits.join('') : fb; }
+let toastT;
+function toast(msg){ let t=$('.toast'); if(!t){ t=document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); document.body.appendChild(t);} t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
+
+/* ================= 생성기 (규칙 기반) ================= */
+function build(book, cond){
+  const raw = {series:book.series.trim(), title:book.title.trim(), field:book.field, plot:book.plot.trim(),
+    scenes:book.scenes.map(s=>s.trim()), chars:parseList(book.chars), vocab:parseList(book.vocab), theme:book.theme.trim()};
+  const c = {raw, series:esc(raw.series), title:esc(raw.title), field:esc(raw.field), scenes:raw.scenes.map(esc),
+    chars:raw.chars.map(esc), vocab:raw.vocab.map(esc), theme:esc(raw.theme)};
+  c.c0 = c.chars[0]; c.c1 = c.chars[1] || ''; c.v0 = c.vocab[0]; c.vL = c.vocab[c.vocab.length-1];
+  const T = TYPES[cond.type], M = MODES[cond.mode], online = cond.mode === 'online';
+  return {worksheet:worksheet(c, cond.type, T, M, online), guide:guide(c, cond.type, T, M, online), parent:parent(c, cond.type, T)};
+}
+// 줄거리·인물에 나오지 않는 것만 오답 보기로 사용
+function notInStory(c, name){ return !c.raw.plot.includes(name) && !c.raw.chars.some(a=>a.includes(name)||name.includes(a)) && !c.raw.vocab.includes(name); }
+function mix(a, d){ const out = a.slice(); if (d[0]) out.splice(1, 0, d[0]); if (d[1]) out.splice(Math.min(out.length, 4), 0, d[1]); return out; }
+const blank = w => `<span class="blank" style="width:${w}em"></span>`;
+const qb = (n, title, body) => `<section class="q"><div class="q-h"><span class="q-n">${n}</span><span>${title}</span></div><div class="q-b">${body}</div></section>`;
+const drawBox = (label, h) => `<div class="draw" style="height:${h}em"><span>${label}</span></div>`;
+const facesHTML = list => `<div class="faces">${list.map(([e,l])=>`<div class="face"><b>${e}</b>${l}</div>`).join('')}</div>`;
+const foot = c => `<footer class="pg-foot"><span>${c.series} · ${c.title}</span><span>좋은책 독서코칭 스튜디오 · 데모 초안</span></footer>`;
+
+function worksheet(c, type, T, M, online){
+  const head = `<header class="ws-head"><div class="ws-meta">${c.series} · ${c.field} · 6~7세</div>
+    <h1 class="ws-title">📖 ${c.title}</h1>
+    <div class="ws-sub"><span class="tag">${T.label}</span><span class="tag soft">${M.short}</span><span class="ws-name">이름 ${blank(7)}</span></div>
+    ${online ? '<p class="ws-tip">💻 화면을 보며 손가락으로 가리키거나 말로 답해도 좋아요. 나머지는 집에서 함께 해요.</p>' : ''}</header>`;
+  const sc = c.scenes, rs = c.raw.scenes;
+  const items = [];
+  if (type === 'start'){
+    const people = c.chars.map((n,i)=>[emojiFor(c.raw.chars[i],'🧑'), n]);
+    const ds = PICK_POOL.filter(p=>notInStory(c, p[1])).slice(0,2);
+    items.push(qb(1, '이야기에 나온 친구를 모두 찾아 ○ 하세요.',
+      `<div class="choices">${mix(people, ds).map(([e,l])=>`<div class="choice"><div class="em">${e}</div><div class="lb">${l}</div></div>`).join('')}</div>`));
+    items.push(qb(2, '선생님이 말하는 장면을 손가락으로 가리켜요.',
+      `<div class="scenes">${sc.map((s,i)=>`<div class="scene"><div class="em">${emojiFor(rs[i],'🖼️')}</div><div class="sn">${NUM[i]}</div><div class="st">${s}</div></div>`).join('')}</div>`));
+    items.push(qb(3, '가장 좋아하는 장면의 ☆에 색칠해요.',
+      `<div class="stars">${sc.map((s,i)=>`<span><span class="star">☆</span> 장면 ${NUM[i]}</span>`).join('')}</div>`));
+    if (!online) items.push(qb(4, '좋아하는 친구를 그려 보세요.', drawBox('여기에 그려요 ✏️', 11)));
+  }
+  if (type === 'talk'){
+    items.push(qb(1, '장면 속 인물의 마음에 맞는 얼굴에 ○ 하세요.',
+      sc.map((s,i)=>`<div class="feel-row"><div class="feel-scene">${NUM[i]} ${s}</div>${facesHTML(FACES)}</div>`).join('')));
+    items.push(qb(2, '누가 무엇을 했나요? 한 문장으로 말해요. 🗣️',
+      [1,2].map(i=>`<div class="say"><b>${NUM[i]} ${sc[i]}</b><div class="frame-sent">${blank(5)}(이)가 ${blank(10)} 했어요.</div></div>`).join('')));
+    if (!online) items.push(qb(3, `내가 ${J(c.c0,'이라면')} 어떻게 할까요? 그리고 말해요.`,
+      drawBox('내 모습을 그려요 ✏️', 8.5) + `<div class="frame-sent">나라면 ${blank(11)} 할 거예요.</div>`));
+  }
+  if (type === 'vocab'){
+    const dw = WORD_POOL.filter(w=>notInStory(c, w)).slice(0,2).map(esc);
+    items.push(qb(1, '이야기에 나온 낱말을 찾아 ○ 하세요.',
+      `<div class="chips-w">${mix(c.vocab, dw).map(w=>`<span class="wchip">${w}</span>`).join('')}</div>`));
+    items.push(qb(2, '일어난 순서대로 □에 번호(1, 2, 3)를 쓰세요.',
+      [2,0,1].map(i=>`<div class="order-row"><span class="box"></span><span class="em">${emojiFor(rs[i],'🖼️')}</span><span>${sc[i]}</span></div>`).join('')));
+    items.push(qb(3, '낱말을 소리 내어 읽고 따라 써요.',
+      c.vocab.map(v=>`<div class="trace-row"><span class="trace">${v}</span>${blank(7)}</div>`).join('')));
+    if (!online) items.push(qb(4, '낱말 하나를 골라 그림으로 그려요.',
+      `<div class="frame-sent" style="margin:0 0 .4em">내가 고른 낱말: ${blank(6)}</div>` + drawBox('그림 ✏️', 7.5)));
+  }
+  if (type === 'think'){
+    items.push(qb(1, '왜 그랬을까요? 🤔',
+      `<div class="say"><b>${NUM[1]} ${sc[1]}</b><div class="frame-sent">왜 이런 일이 일어났을까요?</div><div class="frame-sent">왜냐하면 ${blank(11)} 때문이에요.</div></div>`));
+    const cols = c.c1 ? [c.c0, c.c1] : [`처음의 ${c.c0}`, `마지막의 ${c.c0}`];
+    const f3 = FACES.slice(0,2).concat([['😠','화나요']]);
+    items.push(qb(2, c.c1 ? `${J(c.c0,'과')} ${J(c.c1,'을')} 비교해요.` : `처음과 마지막의 ${J(c.c0,'을')} 비교해요.`,
+      `<table class="cmp"><tr><th></th>${cols.map((n,i)=>`<th>${c.c1?emojiFor(c.raw.chars[i],'🧑')+' ':''}${n}</th>`).join('')}</tr>
+       <tr><td>어떤 마음이었을까요? (○)</td>${cols.map(()=>`<td>${facesHTML(f3)}</td>`).join('')}</tr>
+       <tr><td>닮고 싶은 쪽에 ☆</td>${cols.map(()=>'<td><span class="star">☆</span></td>').join('')}</tr></table>`));
+    items.push(qb(3, '다른 결말을 상상해요 (상상 활동)',
+      `<p class="small">만약 「${sc[2]}」 장면이 다르게 끝났다면 어떻게 되었을까요?</p>` +
+      (online ? `<div class="frame-sent">나는 ${blank(12)} 하고 끝나면 좋겠어요.</div>` : drawBox('내가 생각한 끝을 그려요 ✏️', 9))));
+  }
+  return head + items.join('') + foot(c);
+}
+
+function guide(c, type, T, M, online){
+  const goals = {
+    start:['책 속 인물과 장면 그림을 보고 손가락으로 가리킬 수 있다.','책에 관심을 갖고 즐겁게 반응한다.'],
+    talk:['인물의 마음을 얼굴 그림 중에서 고를 수 있다.','인물의 마음이나 행동을 한 문장으로 말할 수 있다.'],
+    vocab:[`핵심 낱말(${c.vocab.join(', ')})을 소리 내어 읽고 뜻을 안다.`,'주요 장면 3개를 일어난 순서대로 말할 수 있다.'],
+    think:['인물이 한 행동의 이유를 말할 수 있다.','인물을 비교하고, 다른 결말을 상상해 말할 수 있다.']
+  }[type];
+  const intro = {
+    start:`표지와 인물 그림을 함께 보며 ${J(c.c0,'을')} 손가락으로 가리켜요.`,
+    talk:`표지 속 ${c.c0}의 표정을 보고 "어떤 기분일까?" 이야기해요.`,
+    vocab:`핵심 낱말 카드(${c.vocab.join(', ')})를 소리 내어 읽어요.`,
+    think:`제목 「${c.title}」${hasJong(c.raw.title)?'을':'를'} 보고 어떤 이야기일지 예상해 말해요.`
+  }[type];
+  const read = (online ? '화면 공유로 ' : '책을 함께 넘기며 ') + '장면 ①②③을 차례로 보고 줄거리를 떠올려요.';
+  const act = (online ? {
+    start:'활동지 1~3번을 화면에 띄우고, 카메라 앞에서 손가락으로 가리키며 답해요.',
+    talk:'활동지 1~2번: 화면 속 얼굴을 가리키고, 문장 틀로 한 문장씩 말해요.',
+    vocab:'활동지 1~3번: 낱말 찾기·순서 맞히기는 말로 하고, 따라 쓰기는 가정에서 해요.',
+    think:'활동지 1~3번: 이유·비교·다른 결말을 모두 말로 나눠요.'
+  } : {
+    start:'활동지 1~4번: 인물 찾기 ○ → 장면 가리키기 → 좋아하는 장면 ☆ → 그리기',
+    talk:'활동지 1~3번: 장면별 마음 얼굴 고르기 → 한 문장 말하기 → "나라면?" 그리고 말하기',
+    vocab:'활동지 1~4번: 낱말 찾기 → 장면 순서 번호 → 따라 쓰기 → 낱말 그림',
+    think:'활동지 1~3번: 이유 말하기 → 인물 비교 → 다른 결말 그리기 (짝과 비교)'
+  })[type];
+  const wrap = {
+    start:'가장 좋아하는 장면을 한 번 더 가리키고 박수로 마무리해요.',
+    talk:'"나는 오늘 ~해서 ~했어요." 한 문장으로 마무리해요.',
+    vocab:`'${J(c.vL,'을')}' 넣어 한 문장 말하기로 마무리해요.`,
+    think:`주제 "${c.theme}"와 내 경험을 이어 말해요.`
+  }[type] + ' 부모 카드를 안내해요.';
+  const stages = [['도입',intro],['읽기·회상',read],['핵심 활동',act],['정리·연결',wrap]];
+  const qs = {
+    start:[
+      [`${J(c.c0,'은')} 어디 있나요? 손가락으로 가리켜 볼까요?`, `(교사가 그림을 가리키며) 여기 ${J(c.c0,'이')} 있네요. 같이 가리켜 볼까요?`],
+      [`「${c.scenes[0]}」 장면은 어디 있을까요? 찾아볼까요?`, `이 그림과 저 그림 중에 「${c.scenes[0]}」 장면은 어느 쪽일까요?`],
+      ['어떤 장면이 제일 좋았나요? 가리켜 주세요.', '이 장면 좋아요? 고개를 끄덕여 볼까요?']],
+    talk:[
+      [`「${c.scenes[0]}」 장면에서 ${J(c.c0,'은')} 어떤 마음이었을까요?`, '기뻤을까요, 슬펐을까요? 얼굴 그림에서 골라 볼까요?'],
+      [`「${c.scenes[1]}」 장면에서 누가 무엇을 했나요? 한 문장으로 말해 볼까요?`, '"___이(가) ___했어요." 선생님이 앞부분을 말하면 뒷부분을 이어 말해요.'],
+      [`내가 ${J(c.c0,'이라면')} 어떻게 했을까요?`, '나라면 똑같이 할까요, 다르게 할까요?']],
+    vocab:[
+      [`'${J(c.v0,'은')}' 무슨 뜻일까요? 이야기 어디에서 나왔을까요?`, `'${J(c.v0,'을')}' 몸짓으로 표현해 볼까요? (교사가 뜻을 먼저 들려줘요)`],
+      ['이야기에서 맨 처음 일어난 일은 무엇인가요? 그다음은요?', '그림 카드 세 장을 "처음-다음-마지막" 순서로 놓아 볼까요?'],
+      [`'${J(c.vL,'을')}' 넣어 문장을 만들어 볼까요?`, `선생님이 '${J(c.vL,'을')}' 넣어 말한 문장을 따라 말해 볼까요?`]],
+    think:[
+      [`「${c.scenes[1]}」 장면, 왜 이런 일이 일어났을까요?`, `그 전에 ${J(c.c0,'은')} 무엇을 했나요? 그래서 어떻게 되었나요?`],
+      c.c1 ? [`${J(c.c0,'과')} ${J(c.c1,'은')} 무엇이 달랐나요? 왜 그렇게 생각해요?`, `둘 중에 누구랑 친구 하고 싶어요? 왜요?`]
+           : [`처음의 ${J(c.c0,'과')} 마지막의 ${J(c.c0,'은')} 무엇이 달라졌나요?`, '처음에는 웃고 있었나요? 마지막에는요?'],
+      [`만약 「${c.scenes[2]}」 장면이 다르게 끝났다면 어떻게 되었을까요? (상상 질문)`, '행복하게 끝나는 게 좋을까요, 다르게 끝나는 게 좋을까요?']]
+  }[type];
+  const tip = {
+    start:'정답보다 반응을 칭찬하세요. 가리키기만 해도 충분해요.',
+    talk:'아이 말을 받아 완성된 문장으로 다시 들려 주세요(되말하기).',
+    vocab:'낱말 뜻은 몸짓·예시와 함께 알려 주고, 순서는 "처음-다음-마지막"으로 정리해요.',
+    think:'다른 결말은 상상 활동임을 알려 주고, 어떤 생각이든 "왜 그렇게 생각해?"라고 물어 주세요.'
+  }[type];
+  const modeTip = online ? '카메라 앞에서 손가락·표정으로 답하게 하고, 활동지는 수업 후 가정에서 완성해요.' : '활동지를 직접 쓰고, 짝과 서로의 답을 비교해요.';
+  const prep = (online ? '화면 공유용 책 표지·장면 이미지, 활동지 파일(가정 출력용)' : '책, 활동지, 색연필')
+    + (type==='vocab' ? (online?', 낱말 카드 이미지':', 낱말 카드') : '') + (type==='start' && !online ? ', 인물 그림 카드' : '');
+  const gloss = type === 'vocab' ? `<div class="g-sec"><h2>🔤 핵심 낱말 뜻</h2><table class="tbl"><thead><tr><th>낱말</th><th>아이 눈높이 뜻풀이</th></tr></thead><tbody>${
+    c.vocab.map((v,i)=>`<tr><td>${v}</td><td>${esc(GLOSS[c.raw.vocab[i]] || '(아이 눈높이 뜻풀이를 적어 주세요)')}</td></tr>`).join('')}</tbody></table></div>` : '';
+  return `<header class="doc-head"><div><div class="ws-meta">교사용 티칭가이드 · ${c.series} · ${c.field}</div><h1 class="doc-title">${c.title}</h1></div>
+    <div class="doc-tags"><span class="tag">${T.label}</span><span class="tag soft">${M.label}</span><span class="tag soft">6~7세</span></div></header>
+  <div class="g-sec"><h2>🎯 수업 목표</h2><ul>${goals.map(g=>`<li>${g}</li>`).join('')}</ul>
+    <p class="focus">활동 중심: <b>${T.focus}</b> · 주제: ${c.theme} · 핵심 어휘: ${c.vocab.join(', ')}</p></div>
+  <div class="g-sec"><h2>⏱️ 시간 배분 (${M.label})</h2><table class="tbl plan"><thead><tr><th>단계</th><th>시간</th><th>활동</th></tr></thead><tbody>${
+    stages.map(([s,a],i)=>`<tr><td>${s}</td><td>${M.plan[i]}분</td><td>${a}</td></tr>`).join('')}</tbody></table></div>
+  <div class="g-sec"><h2>💬 기본 질문 · 대체 질문</h2><table class="tbl"><thead><tr><th>#</th><th>기본 질문</th><th>대체 질문 (어려워할 때)</th></tr></thead><tbody>${
+    qs.map(([q,a],i)=>`<tr><td>${i+1}</td><td>${q}</td><td>${a}</td></tr>`).join('')}</tbody></table></div>
+  ${gloss}
+  <div class="g-sec g-two"><div><h2>🧺 준비물</h2><p>${prep}</p></div><div><h2>💡 지도 팁</h2><ul><li>${tip}</li><li>${modeTip}</li></ul></div></div>
+  <p class="g-note">※ 이 초안은 입력된 도서정보(줄거리·장면·인물·어휘·주제)만으로 만든 규칙 기반 데모입니다. 수업 전 원문과 대조해 확인하세요.</p>` + foot(c);
+}
+
+function parent(c, type, T){
+  const first = (c.raw.plot.split(/(?<=[.!?。])\s+/)[0] || '').slice(0, 80);
+  const s = c.scenes;
+  const think = (q,a,tip) => ({k:'think', q, a, tip});
+  const fact = (q,a,tip) => ({k:'fact', q, a, tip});
+  let qs, mission;
+  if (type === 'start'){
+    qs = [fact('이 책에 누가 나왔는지 그림에서 찾아볼까?', c.chars.join(', '), '그림을 가리키기만 해도 정답이에요.'),
+          think('제일 재미있었던 장면은 어디야? 가리켜 줄래?', `"「${s[0]}」 장면이 재미있었어."`, '어떤 장면이든 좋아요. 가리킨 장면 이름을 함께 말해 주세요.')];
+    mission = `책 그림 속 인물 찾기 놀이: 가족이 이름을 말하면 아이가 그림에서 가리키기 (3번)`;
+  } else if (type === 'talk'){
+    qs = [think(`「${s[0]}」 때 ${J(c.c0,'은')} 어떤 기분이었을까?`, '"기뻤을 것 같아", "놀랐을 것 같아"', '어떤 기분이든 "그랬구나" 하고 받아 주세요.'),
+          fact(`「${s[1]}」 장면에서 무슨 일이 있었지?`, `${s[1]} (아이 말로 한 문장이면 충분해요)`, ''),
+          think(`너라면 어떻게 했을 것 같아?`, '"나라면 ~했을 거야."', '"왜 그렇게 하고 싶어?"라고 한 번 더 물어 주세요.')];
+    mission = '잠들기 전, "나는 오늘 ~해서 ~했어." 한 문장으로 서로 기분 말하기';
+  } else if (type === 'vocab'){
+    const g = GLOSS[c.raw.vocab[0]];
+    qs = [fact('이야기에서 맨 처음 일어난 일은 뭐였지?', `① ${s[0]}`, ''),
+          fact('그다음에는? 마지막에는?', `② ${s[1]} → ③ ${s[2]}`, '"처음-다음-마지막" 말로 순서를 정리해 주세요.'),
+          g ? fact(`'${J(c.v0,'은')}' 무슨 뜻일까?`, esc(g), '책 속 장면과 이어서 설명해 주세요.')
+            : think(`'${J(c.v0,'은')}' 무슨 뜻일까?`, '아이가 말한 뜻을 먼저 들어 주세요.', '책 속 장면을 함께 보며 뜻을 찾아보세요.')];
+    mission = `'${J(c.vL,'을')}' 넣어 가족이 문장 하나씩 만들기`;
+  } else {
+    qs = [think(`「${s[1]}」 장면, 왜 이런 일이 일어났을까?`, '"~해서 그렇게 된 것 같아."', '"왜 그렇게 생각해?"라고 한 번 더 물어 주세요.'),
+          c.c1 ? think(`${J(c.c0,'과')} ${c.c1} 중에 누구랑 친구 하고 싶어? 왜?`, `"${c.c0}. 왜냐하면 ~"`, '어느 쪽을 골라도 괜찮아요. 이유를 말하면 칭찬해 주세요.')
+               : think(`처음과 마지막의 ${J(c.c0,'은')} 무엇이 달라졌을까?`, '"처음엔 ~했는데, 나중엔 ~했어."', '달라진 점을 하나만 말해도 충분해요.'),
+          think('이야기 끝이 바뀐다면 어떻게 되면 좋겠어?', '"~하고 끝나면 좋겠어."', '상상 질문이에요. 책 내용과 달라도 괜찮아요.')];
+    mission = `주제 "${c.theme}"에 대해 가족이 겪은 일 하나씩 이야기 나누기`;
+  }
+  const lab = q => `<span class="kind ${q.k}">${q.k==='fact'?'사실':'생각'}</span>`;
+  return `<div class="half q-card"><span class="pc-badge">부모용 5분 책대화 · 질문 카드</span>
+    <h1 class="pc-title">📖 ${c.title}</h1><p class="pc-intro">${esc(first)}</p>
+    <ol class="pc-qs">${qs.map(q=>`<li>${lab(q)} ${q.q}</li>`).join('')}</ol>
+    <div class="mission">🏠 <b>오늘의 가정 미션</b> · ${mission}</div>
+    <p class="pc-foot">${c.series} · ${T.label} · 답은 아래 정답 카드를 보세요 ✂</p></div>
+  <div class="half a-card"><span class="cut">✂ 자르는 선</span><span class="pc-badge alt">부모용 · 정답 카드</span>
+    <h1 class="pc-title sm">${c.title} — 이렇게 받아 주세요</h1>
+    <ol class="pc-as">${qs.map(q=>`<li><span class="kind ${q.k}">${q.k==='fact'?'정답':'예시 답변'}</span> ${q.a}${q.tip?`<div class="tip">💡 ${q.tip}</div>`:''}</li>`).join('')}</ol>
+    <p class="pc-foot">생각 질문에는 정해진 답이 없어요. 아이의 말을 그대로 받아 주세요.</p></div>`;
+}
+
+/* ================= A4 맞춤 · 축소 표시 ================= */
+function overflowing(p){
+  if (p.scrollHeight > p.clientHeight + 2) return true;
+  return [...p.querySelectorAll('.half')].some(h => h.scrollHeight > h.clientHeight + 2);
+}
+function fitPage(p){
+  p.classList.remove('multi');
+  let k = 1; p.style.setProperty('--k', k);
+  while (overflowing(p) && k > 0.77){ k = +(k - 0.04).toFixed(2); p.style.setProperty('--k', k); }
+  if (overflowing(p)) p.classList.add('multi');
+  return {k, multi:p.classList.contains('multi')};
+}
+function scaleFrame(fr){
+  const p = fr.firstElementChild; if (!p) return;
+  p.style.transform = 'none';
+  const s = Math.min(1, fr.clientWidth / p.offsetWidth);
+  p.style.transform = `scale(${s})`;
+  fr.style.height = (p.offsetHeight * s) + 'px';
+}
+function layout(fr){ const r = fitPage(fr.firstElementChild); scaleFrame(fr); return r; }
+function fitText(r){
+  if (r.multi) return ['warn', '⚠️ 내용이 많아 A4 1쪽을 넘습니다. 2쪽으로 인쇄되니 내용을 줄여 주세요.'];
+  if (r.k < 1) return ['shrink', `A4 1쪽에 맞추려고 글자를 ${Math.round(r.k*100)}%로 줄였어요.`];
+  return ['', '✓ A4 1쪽에 맞아요.'];
+}
+const pageHTML = (k, editable) => `<div class="page page-${k}${k==='parent'?' parent':''}"${editable?' contenteditable="true" spellcheck="false"':''}>${S.docs[k]}</div>`;
+
+/* ================= 1단계: 도서정보 ================= */
+$('#fieldChips').innerHTML = FIELDS.map(f=>`<label class="chip"><input type="radio" name="field" value="${f}"><span>${f}</span></label>`).join('');
+function writeForm(b){
+  $('#f-series').value = b.series; $('#f-title').value = b.title; $('#f-plot').value = b.plot;
+  $$('input[name=field]').forEach(r => r.checked = r.value === b.field);
+  b.scenes.forEach((s,i) => $('#f-s'+i).value = s);
+  $('#f-chars').value = b.chars; $('#f-vocab').value = b.vocab; $('#f-theme').value = b.theme;
+}
+function readForm(){
+  const f = $('input[name=field]:checked');
+  return {series:$('#f-series').value, title:$('#f-title').value, field:f?f.value:'', plot:$('#f-plot').value,
+    scenes:[0,1,2].map(i=>$('#f-s'+i).value), chars:$('#f-chars').value, vocab:$('#f-vocab').value, theme:$('#f-theme').value};
+}
+let errShown = false;
+function validate(show){
+  const b = S.book, e = {};
+  if (!b.series.trim()) e.series = '전집명을 입력해 주세요.';
+  if (!b.title.trim()) e.title = '도서명을 입력해 주세요.';
+  if (!b.field) e.field = '분야를 골라 주세요.';
+  if (!b.plot.trim()) e.plot = '줄거리를 입력해 주세요.';
+  const miss = b.scenes.map((s,i)=>s.trim()?0:i+1).filter(Boolean);
+  if (miss.length) e.scenes = `주요 장면 ${miss.join(', ')}번을 입력해 주세요.`;
+  if (!parseList(b.chars).length) e.chars = '등장인물을 1명 이상 입력해 주세요.';
+  const v = parseList(b.vocab).length;
+  if (v < 2 || v > 4) e.vocab = v ? `핵심 어휘는 2~4개여야 해요. (지금 ${v}개)` : '핵심 어휘를 2~4개 입력해 주세요.';
+  if (!b.theme.trim()) e.theme = '주제를 입력해 주세요.';
+  if (show) showErrors(e);
+  return e;
+}
+function showErrors(e){
+  $$('#bookForm .field').forEach(f => { const k = f.dataset.f; f.classList.toggle('invalid', !!e[k]); f.querySelector('.err').textContent = e[k] || ''; });
+  const n = Object.keys(e).length;
+  $('#err1').hidden = !n;
+  $('#err1').textContent = n ? `필수 항목 ${n}개를 확인해 주세요. 빨간 칸을 채우면 다음 단계로 갈 수 있어요.` : '';
+  errShown = n > 0;
+}
+$('#bookForm').addEventListener('input', () => { S.book = readForm(); save(); if (errShown) validate(true); updateNav(); });
+$('#bookForm').addEventListener('change', () => { S.book = readForm(); save(); if (errShown) validate(true); updateNav(); });
+$('#loadSample').onclick = () => { S.book = clone(SAMPLE); writeForm(S.book); showErrors({}); save(); updateNav(); toast('샘플 도서 〈흥부와 놀부〉를 불러왔어요.'); };
+$('#clearBook').onclick = () => { S.book = clone(EMPTY); writeForm(S.book); showErrors({}); save(); updateNav(); toast('입력을 지웠어요.'); };
+
+/* ================= 2단계: 코칭 조건 ================= */
+$('#typeGrid').innerHTML = Object.entries(TYPES).map(([k,t])=>`<label class="opt"><input type="radio" name="ctype" value="${k}"><div class="card"><div class="ic">${t.icon}</div><div class="t">${t.label}</div><div class="f">${t.focus}</div><div class="d">${t.desc}</div></div></label>`).join('');
+$('#modeGrid').innerHTML = Object.entries(MODES).map(([k,m])=>`<label class="opt"><input type="radio" name="cmode" value="${k}"><div class="card"><div class="ic">${m.icon}</div><div class="t">${m.label}</div><div class="d">${m.desc}</div></div></label>`).join('');
+function syncCond(){ $$('input[name=ctype]').forEach(r=>r.checked = r.value===S.cond.type); $$('input[name=cmode]').forEach(r=>r.checked = r.value===S.cond.mode); }
+$('#typeGrid').addEventListener('change', e => { S.cond.type = e.target.value; save(); });
+$('#modeGrid').addEventListener('change', e => { S.cond.mode = e.target.value; save(); });
+
+function isStale(){ return !!S.gen && (S.gen.type !== S.cond.type || S.gen.mode !== S.cond.mode || S.gen.book !== JSON.stringify(S.book)); }
+function generate(){
+  if (Object.keys(validate(true)).length){ showStep(1); toast('도서정보의 필수 항목을 먼저 채워 주세요.'); return false; }
+  if (S.docs && Object.values(S.edited).some(Boolean) && !confirm('편집한 내용이 있어요. 새 초안으로 바꿀까요?\n(편집한 내용은 사라집니다)')) return false;
+  S.docs = build(S.book, S.cond); S.orig = clone(S.docs);
+  S.gen = {type:S.cond.type, mode:S.cond.mode, book:JSON.stringify(S.book)}; S.edited = {}; save();
+  return true;
+}
+$('#genBtn').onclick = () => { if (generate()){ showStep(3); toast(`데모 초안을 만들었어요 · ${TYPES[S.cond.type].label} · ${MODES[S.cond.mode].label}`); } };
+
+/* ================= 3단계: 생성 결과 ================= */
+function docTabs(el, cur, onPick){
+  el.innerHTML = DOCS.map(d=>`<button type="button" class="doc-tab${d.k===cur?' on':''}" data-k="${d.k}">${d.icon} ${d.label}${S.edited[d.k]?'<span class="dot">편집됨</span>':''}</button>`).join('');
+  el.onclick = e => { const b = e.target.closest('.doc-tab'); if (b) onPick(b.dataset.k); };
+}
+function renderStep3(){
+  $('#genInfo').textContent = `〈${JSON.parse(S.gen.book).title.trim()}〉 · ${TYPES[S.gen.type].label} · ${MODES[S.gen.mode].label} · 6~7세`;
+  $('#quick3').innerHTML = `<div class="grp"><b>유형 바꿔 다시 생성</b>${Object.entries(TYPES).map(([k,t])=>`<button type="button" class="qchip${k===S.gen.type?' on':''}" data-t="${k}">${t.icon} ${t.label}</button>`).join('')}</div>
+    <div class="grp"><b>수업</b>${Object.entries(MODES).map(([k,m])=>`<button type="button" class="qchip${k===S.gen.mode?' on':''}" data-m="${k}">${m.icon} ${m.label}</button>`).join('')}</div>`;
+  $('#stale3').hidden = !isStale();
+  docTabs($('#docTabs3'), S.doc3, k => { S.doc3 = k; save(); renderStep3(); });
+  const fr = $('#viewFrame3'); fr.innerHTML = pageHTML(S.doc3, false); layout(fr);
+}
+$('#quick3').addEventListener('click', e => {
+  const b = e.target.closest('.qchip'); if (!b) return;
+  const prev = clone(S.cond);
+  if (b.dataset.t) S.cond.type = b.dataset.t; else S.cond.mode = b.dataset.m;
+  syncCond();
+  if (generate()){ renderStep3(); toast(`${TYPES[S.cond.type].label} · ${MODES[S.cond.mode].label}(으)로 다시 만들었어요.`); }
+  else { S.cond = prev; syncCond(); save(); }
+});
+$('#regen3').onclick = () => { if (generate()){ renderStep3(); toast('새 조건으로 다시 만들었어요.'); } };
+$('#editThis').onclick = () => { S.doc4 = S.doc3; showStep(4); };
+
+/* ================= 4단계: 편집·인쇄 ================= */
+let fitT;
+function setFit(r){ const [cls, txt] = fitText(r); const el = $('#fit4'); el.className = 'fit ' + cls; el.textContent = txt; }
+function renderStep4(){
+  docTabs($('#docTabs4'), S.doc4, k => { S.doc4 = k; save(); renderStep4(); });
+  const fr = $('#editFrame'); fr.innerHTML = pageHTML(S.doc4, true);
+  const p = fr.firstElementChild;
+  p.addEventListener('input', () => {
+    S.docs[S.doc4] = p.innerHTML;
+    if (!S.edited[S.doc4]){ S.edited[S.doc4] = true; docTabs($('#docTabs4'), S.doc4, k => { S.doc4 = k; save(); renderStep4(); }); }
+    save();
+    $('#saveState').textContent = '✓ 자동 저장됨 ' + new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    clearTimeout(fitT); fitT = setTimeout(() => setFit(layout(fr)), 300);
+  });
+  p.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain')); });
+  setFit(layout(fr));
+  $('#saveState').textContent = S.edited[S.doc4] ? '✓ 편집한 내용이 저장되어 있어요.' : '';
+  $('#printChecks').innerHTML = DOCS.map(d=>`<label><input type="checkbox" value="${d.k}"${S.print[d.k]?' checked':''}> ${d.icon} ${d.label}</label>`).join('');
+}
+$('#printChecks').addEventListener('change', e => { S.print[e.target.value] = e.target.checked; save(); });
+$('#revertDoc').onclick = () => {
+  if (!S.edited[S.doc4]){ toast('이 자료는 아직 편집하지 않았어요.'); return; }
+  if (!confirm('이 자료를 처음 생성본으로 되돌릴까요? 편집한 내용은 사라집니다.')) return;
+  S.docs[S.doc4] = S.orig[S.doc4]; S.edited[S.doc4] = false; save(); renderStep4(); toast('처음 생성본으로 되돌렸어요.');
+};
+const selected = () => DOCS.filter(d => S.print[d.k]);
+function openPreview(){
+  const sel = selected();
+  if (!sel.length){ toast('인쇄할 자료를 하나 이상 골라 주세요.'); return; }
+  $('#pvBody').innerHTML = sel.map(d=>`<p class="pv-label">${d.icon} ${d.label}<span data-st="${d.k}"></span></p><div class="frame" data-k="${d.k}">${pageHTML(d.k,false)}</div>`).join('');
+  $('#pvModal').hidden = false; document.body.style.overflow = 'hidden';
+  $$('#pvBody .frame').forEach(fr => { const r = layout(fr); $(`#pvBody [data-st="${fr.dataset.k}"]`).textContent = '· ' + fitText(r)[1]; });
+  $('#pvInfo').textContent = `${sel.length}개 자료 · A4 세로 · 인쇄 시 메뉴와 버튼은 숨겨집니다`;
+  $('#pvClose').focus();
+}
+function closePreview(){ $('#pvModal').hidden = true; document.body.style.overflow = ''; }
+function buildPrint(){
+  const pa = $('#printArea');
+  pa.innerHTML = S.docs ? selected().map(d => pageHTML(d.k, false)).join('') : '';
+  $$('#printArea .page').forEach(fitPage);
+}
+function doPrint(){
+  if (!S.docs){ toast('먼저 초안을 생성해 주세요.'); return; }
+  if (!selected().length){ toast('인쇄할 자료를 하나 이상 골라 주세요.'); return; }
+  buildPrint(); window.print();
+}
+$('#previewBtn').onclick = openPreview;
+$('#printBtn').onclick = doPrint;
+$('#pvPrint').onclick = doPrint;
+$('#pvClose').onclick = closePreview;
+window.addEventListener('beforeprint', buildPrint);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#pvModal').hidden) closePreview(); });
+
+/* ================= 단계 이동 ================= */
+function updateNav(){
+  const valid = !Object.keys(validate(false)).length;
+  $$('#steps button').forEach(b => {
+    const i = +b.dataset.step;
+    b.classList.toggle('active', i === S.step);
+    b.classList.toggle('done', i !== S.step && ((i === 1 && valid) || (i === 2 && !!S.docs) || (i === 3 && !!S.docs && S.step === 4)));
+  });
+}
+function showStep(n){
+  S.step = n; save();
+  [1,2,3,4].forEach(i => $('#step'+i).hidden = i !== n);
+  updateNav();
+  if (n === 2) syncCond();
+  if (n === 3) renderStep3();
+  if (n === 4) renderStep4();
+  window.scrollTo(0, 0);
+}
+function goTo(n){
+  if (n >= 2 && Object.keys(validate(true)).length){
+    showStep(1); toast('빨간 칸의 필수 항목을 채워 주세요.');
+    const f = $('#bookForm .field.invalid input, #bookForm .field.invalid textarea'); if (f) f.focus();
+    return;
+  }
+  if (n >= 3 && !S.docs){ showStep(2); toast('먼저 [데모 초안 생성]을 눌러 주세요.'); return; }
+  showStep(n);
+}
+$('#steps').addEventListener('click', e => { const b = e.target.closest('button'); if (b) goTo(+b.dataset.step); });
+document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) goTo(+b.dataset.go); });
+$('#resetAll').onclick = () => {
+  if (!confirm('입력·생성·편집한 내용을 모두 지우고 예시 데이터(흥부와 놀부)가 들어 있는 처음 상태로 돌아갈까요?')) return;
+  try { localStorage.removeItem(KEY); } catch(e) {}
+  location.reload();
+};
+let rzT;
+window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => $$('.frame').forEach(fr => { if (fr.offsetParent) scaleFrame(fr); }), 120); });
+
+/* ================= 시작 ================= */
+writeForm(S.book); syncCond();
+if (S.step >= 3 && !S.docs) S.step = 2;
+showStep(S.step || 1);
+})();
+</script>
+</body>
+</html>
