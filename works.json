@@ -44,6 +44,15 @@
       "liveUrl": "",
       "prompt": "",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "06",
+      "title": "프로그램 참여관리 매니저",
+      "author": "EDU002",
+      "summary": "프로그램 신청 수요 집계부터 미참석 기업 파악까지, 가상 샘플 70개 기업으로 직접 눌러 보는 데모",
+      "liveUrl": "",
+      "prompt": "",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }

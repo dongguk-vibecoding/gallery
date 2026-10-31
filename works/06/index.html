@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프로그램 신청·출석 관리</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --text: #1d2330; --muted: #6a7385;
+    --line: #dfe3ea; --accent: #2b5fd9; --accent-soft: #e8eefc;
+    --warn: #b4540a; --warn-soft: #fdeede; --ok: #1d7a46; --ok-soft: #e1f3e8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171d; --surface: #1d222b; --text: #e7eaf0; --muted: #98a1b3;
+      --line: #2e3542; --accent: #7aa2ff; --accent-soft: #232d47;
+      --warn: #f0a15c; --warn-soft: #3a2b1b; --ok: #6fd39a; --ok-soft: #1d3326;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 -apple-system, "Segoe UI", "Malgun Gothic", sans-serif; }
+  header.bar { position: sticky; top: 0; z-index: 5; background: var(--surface);
+    border-bottom: 1px solid var(--line); }
+  .bar-in { max-width: 960px; margin: 0 auto; padding: 10px 16px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .bar h1 { font-size: 16px; margin: 0; flex: 1 1 auto; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg button { border: 0; background: transparent; color: var(--text); padding: 7px 14px;
+    font: inherit; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  main { max-width: 960px; margin: 0 auto; padding: 20px 16px 48px; }
+  h2 { font-size: 18px; margin: 0 0 12px; }
+  .muted { color: var(--muted); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  input[type="search"], input[type="number"], input[type="text"], textarea, select { padding: 8px 12px; font: inherit; color: var(--text);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  input[type="search"] { width: 100%; }
+  input[type="number"] { width: 90px; }
+  input:disabled { opacity: .5; }
+  .list { margin-top: 12px; max-height: 460px; overflow: auto; border: 1px solid var(--line);
+    border-radius: 8px; background: var(--surface); }
+  .list > button, .list > label { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--text);
+    padding: 10px 12px; font: inherit; cursor: pointer; }
+  .list > :last-child { border-bottom: 0; }
+  .list > button:hover, .list > button:focus-visible, .list > label:hover { background: var(--accent-soft); }
+  .list input[type="checkbox"] { width: 20px; height: 20px; }
+  .list .grow { flex: 1; }
+  .empty { padding: 16px; color: var(--muted); }
+  .who { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .who strong { font-size: 17px; }
+  .linkbtn { border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    border-radius: 8px; padding: 6px 12px; font: inherit; cursor: pointer; }
+  .primary { border: 0; background: var(--accent); color: #fff; border-radius: 8px;
+    padding: 9px 18px; font: inherit; cursor: pointer; }
+  .primary:disabled { opacity: .45; cursor: not-allowed; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); }
+  .prog h3 { margin: 0 0 4px; font-size: 16px; }
+  .tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent); margin-bottom: 8px; }
+  .prog p { margin: 0 0 10px; }
+  .meta { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 14px; }
+  .meta dt { color: var(--muted); }
+  .meta dd { margin: 0; }
+  .pick { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 8px; }
+  .pick label.chk { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; }
+  .pick label.chk input { width: 20px; height: 20px; }
+  .pick .head { display: flex; align-items: center; gap: 8px; }
+  .prog.picked { border-color: var(--accent); }
+  .progress { padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; }
+  .progress.ok { background: var(--ok-soft); color: var(--ok); }
+  .progress.warn { background: var(--warn-soft); color: var(--warn); }
+  .actions { margin-top: 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .notice { color: var(--warn); font-size: 14px; margin: 0; }
+  .okmsg { color: var(--ok); font-size: 14px; margin: 0; font-weight: 600; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tabs button { border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    border-radius: 999px; padding: 6px 14px; font: inherit; cursor: pointer; }
+  .tabs button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tools { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 0 0 12px; }
+  .tools input[type="search"] { flex: 1 1 200px; width: auto; }
+  .tools label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .summary { margin: 0 0 8px; color: var(--muted); }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; white-space: nowrap; background: var(--bg); }
+  tr:last-child td { border-bottom: 0; }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .badge.ok { background: var(--ok-soft); color: var(--ok); }
+  .badge.warn { background: var(--warn-soft); color: var(--warn); }
+  .stats { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); margin: 0 0 20px; }
+  .stat b { display: block; font-size: 26px; line-height: 1.2; }
+  .stat small { display: block; color: var(--muted); margin-top: 2px; }
+  .section { margin-bottom: 20px; }
+  .section h3 { margin: 0 0 10px; font-size: 16px; }
+  .demo-badge { position: fixed; right: 8px; bottom: 8px; z-index: 20; font-size: 11px; padding: 2px 8px;
+    border-radius: 999px; background: var(--surface); color: var(--muted); border: 1px solid var(--line);
+    opacity: .9; pointer-events: none; }
+  .overlay { position: fixed; inset: 0; z-index: 30; background: rgba(0, 0, 0, .45);
+    display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .dialog { background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px; max-width: 420px; width: 100%; }
+  .dialog p { margin: 0 0 16px; white-space: pre-line; }
+  .dialog .actions { margin-top: 0; justify-content: flex-end; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .form { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .field { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+  .field span { color: var(--muted); }
+  .field input, .field textarea { width: 100%; }
+  .field.wide { grid-column: 1 / -1; }
+  textarea { resize: vertical; min-height: 60px; }
+  footer { max-width: 960px; margin: 0 auto; padding: 0 16px 32px; font-size: 13px; color: var(--muted);
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <h1>참여기업 프로그램 관리</h1>
+    <div class="seg" role="group" aria-label="모드 전환">
+      <button type="button" id="mode-company">기업 모드</button>
+      <button type="button" id="mode-admin">운영자 모드</button>
+    </div>
+  </div>
+</header>
+<main id="view"></main>
+<div class="demo-badge">데모 버전 · 가짜 데이터</div>
+<footer>
+  <span>샘플 데이터입니다. 데이터는 이 브라우저 안에만 저장됩니다.</span>
+  <button type="button" class="linkbtn" id="reset">샘플 데이터로 초기화</button>
+</footer>
+
+<script>
+(function () {
+  var KEY = 'program-mgmt-demo:v1';
+
+  // ---------- 샘플 데이터 (가상) ----------
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  function buildSample() {
+    var companies = [];
+    for (var i = 1; i <= 70; i++) companies.push({ id: 'C' + (i < 100 ? '0' : '') + pad(i), name: '샘플기업 ' + pad(i) });
+
+    var programs = [
+      { id: 'P1', name: '샘플 교육 A', category: '교육', schedule: '11월 중',
+        desc: '창업 초기 기업을 위한 기본 교육 과정입니다.', sessions: 4, hours: 2 },
+      { id: 'P2', name: '샘플 멘토링 B', category: '멘토링', schedule: '11~12월',
+        desc: '분야별 멘토와 1:1로 진행하는 상담형 프로그램입니다.', sessions: 6, hours: 1 },
+      { id: 'P3', name: '샘플 네트워킹 C', category: '네트워킹', schedule: '12월 중',
+        desc: '참여기업 간 교류를 위한 모임입니다.', sessions: 2, hours: 3 },
+      { id: 'P4', name: '샘플 교육 D', category: '교육', schedule: '12월 중',
+        desc: '실무 중심의 심화 교육 과정입니다.', sessions: 3, hours: 2 }
+    ];
+
+    // 시드 신청·출석: 7의 배수 기업은 미신청, 3의 배수는 1개, 나머지는 2~3개
+    var applications = [], attendance = [];
+    companies.forEach(function (c, idx) {
+      var n = idx + 1, picks = [];
+      if (n % 7 === 0) picks = [];
+      else if (n % 3 === 0) picks = [programs[n % 4]];
+      else picks = programs.filter(function (_, p) { return (n + p) % 4 !== 0; }).slice(0, n % 2 ? 3 : 2);
+      picks.forEach(function (p, k) {
+        applications.push({ companyId: c.id, programId: p.id, headcount: 1 + ((n + k) % 4) });
+        // 일부 기업은 1회차에 참석, 나머지는 신청만 하고 미참석
+        if ((n + k) % 5 !== 0) attendance.push({ companyId: c.id, programId: p.id, session: 1 });
+      });
+    });
+
+    return {
+      companies: companies, programs: programs,
+      settings: { required: 2, open: true },
+      applications: applications, attendance: attendance,
+      ui: { mode: 'company', companyId: null, tab: 'dash', att: { programId: 'P1', session: 1 } }
+    };
+  }
+
+  // ---------- 저장 ----------
+  var memory = null;
+  function normalize(d) {
+    d.ui = d.ui || {};
+    d.ui.mode = d.ui.mode || 'company';
+    d.ui.tab = d.ui.tab || 'dash';
+    d.ui.att = d.ui.att || { programId: d.programs[0] ? d.programs[0].id : null, session: 1 };
+    d.settings = d.settings || { required: 2, open: true };
+    d.applications = d.applications || [];
+    d.attendance = d.attendance || [];
+    return d;
+  }
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) { var d = JSON.parse(raw); if (d && d.companies && d.programs) return normalize(d); }
+    } catch (e) {}
+    return memory || buildSample();
+  }
+  function save() {
+    memory = state;
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  var state = load();
+
+  // ---------- 데이터 도우미 ----------
+  function companyById(id) { return state.companies.filter(function (c) { return c.id === id; })[0] || null; }
+  function programById(id) { return state.programs.filter(function (p) { return p.id === id; })[0] || null; }
+  function appsOf(cid) { return state.applications.filter(function (a) { return a.companyId === cid; }); }
+  function appsFor(pid) { return state.applications.filter(function (a) { return a.programId === pid; }); }
+  function getApp(cid, pid) {
+    return state.applications.filter(function (a) { return a.companyId === cid && a.programId === pid; })[0] || null;
+  }
+  function isPresent(cid, pid, s) {
+    return state.attendance.some(function (r) { return r.companyId === cid && r.programId === pid && r.session === s; });
+  }
+  function presentCount(cid, pid) {
+    return state.attendance.filter(function (r) { return r.companyId === cid && r.programId === pid; }).length;
+  }
+  function setPresent(cid, pid, s, on) {
+    state.attendance = state.attendance.filter(function (r) {
+      return !(r.companyId === cid && r.programId === pid && r.session === s);
+    });
+    if (on) state.attendance.push({ companyId: cid, programId: pid, session: s });
+  }
+
+  // ---------- DOM 도우미 ----------
+  var view = document.getElementById('view');
+  var flash = '';
+
+  function el(tag, attrs, children) {
+    var e = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      if (k === 'text') e.textContent = attrs[k];
+      else if (k === 'class') e.className = attrs[k];
+      else if (k.indexOf('on') === 0) e.addEventListener(k.slice(2), attrs[k]);
+      else e.setAttribute(k, attrs[k]);
+    });
+    (children || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function badge(text, kind) { return el('span', { class: 'badge ' + kind, text: text }); }
+
+  function table(headers, rows) {
+    if (!rows.length) return el('div', { class: 'empty', text: '해당하는 항목이 없습니다.' });
+    var thead = el('thead', {}, [el('tr', {}, headers.map(function (h) { return el('th', { text: h }); }))]);
+    var tbody = el('tbody', {}, rows.map(function (r) {
+      return el('tr', {}, r.map(function (cell) {
+        var td = el('td');
+        if (cell && cell.nodeType) td.appendChild(cell); else td.textContent = String(cell);
+        return td;
+      }));
+    }));
+    return el('div', { class: 'tablewrap' }, [el('table', {}, [thead, tbody])]);
+  }
+
+  // 검색창(과 추가 체크박스)이 바뀔 때마다 draw(검색어)를 다시 그린다
+  function searchable(draw, extras) {
+    var input = el('input', { type: 'search', placeholder: '기업명 검색', 'aria-label': '기업명 검색' });
+    var holder = el('div');
+    function redraw() { holder.textContent = ''; holder.appendChild(draw(input.value.trim().toLowerCase())); }
+    input.addEventListener('input', redraw);
+    (extras || []).forEach(function (x) { x.addEventListener('change', redraw); });
+    redraw();
+    return { input: input, holder: holder };
+  }
+
+  function nameMatches(c, q) { return !q || c.name.toLowerCase().indexOf(q) !== -1; }
+
+  // ---------- 기업 모드 ----------
+  function renderPicker() {
+    var input = el('input', { type: 'search', placeholder: '기업명 검색 (예: 샘플기업 07)', 'aria-label': '기업명 검색' });
+    var list = el('div', { class: 'list' });
+    function draw() {
+      var q = input.value.trim().toLowerCase();
+      var found = state.companies.filter(function (c) { return nameMatches(c, q); });
+      list.textContent = '';
+      if (!found.length) { list.appendChild(el('div', { class: 'empty', text: '검색 결과가 없습니다.' })); return; }
+      found.forEach(function (c) {
+        list.appendChild(el('button', { type: 'button', text: c.name, onclick: function () {
+          state.ui.companyId = c.id; save(); render();
+        } }));
+      });
+    }
+    input.addEventListener('input', draw);
+    draw();
+    return el('section', {}, [
+      el('h2', { text: '기업을 선택하세요' }),
+      el('p', { class: 'muted', text: '참여기업 ' + state.companies.length + '개 중 우리 기업을 찾아 선택합니다.' }),
+      input, list
+    ]);
+  }
+
+  function programCard(p, extra, picked) {
+    return el('article', { class: 'card prog' + (picked ? ' picked' : '') }, [
+      el('h3', { text: p.name }),
+      el('span', { class: 'tag', text: p.category }),
+      el('p', { text: p.desc }),
+      el('dl', { class: 'meta' }, [
+        el('dt', { text: '일정' }), el('dd', { text: p.schedule }),
+        el('dt', { text: '총 회차' }), el('dd', { text: p.sessions + '회' }),
+        el('dt', { text: '회당 시간' }), el('dd', { text: p.hours + '시간' })
+      ]),
+      extra
+    ]);
+  }
+
+  function renderCompany() {
+    var c = companyById(state.ui.companyId);
+    if (!c) { state.ui.companyId = null; return renderPicker(); }
+    var required = state.settings.required, open = state.settings.open;
+    var savedCount = appsOf(c.id).length;
+    var done = savedCount >= required;
+
+    var progress = el('div', {
+      class: 'progress ' + (done ? 'ok' : 'warn'), role: 'status',
+      text: done
+        ? '필수 ' + required + '개 중 ' + savedCount + '개 선택 · 필수 선택을 완료했습니다.'
+        : '필수 ' + required + '개 중 ' + savedCount + '개 선택 · ' + (required - savedCount) + '개 더 선택해 주세요.'
+    });
+
+    var msg = el('p', { class: flash ? 'okmsg' : 'notice', role: 'status', text: flash });
+    flash = '';
+    var controls = [];
+
+    var cards = state.programs.map(function (p) {
+      var a = getApp(c.id, p.id);
+      var cb = el('input', { type: 'checkbox', id: 'cb-' + p.id });
+      cb.checked = !!a; cb.disabled = !open;
+      var num = el('input', { type: 'number', min: '1', step: '1', id: 'n-' + p.id, 'aria-label': p.name + ' 예상 인원' });
+      num.value = a ? String(a.headcount) : '';
+      num.disabled = !open || !a;
+      cb.addEventListener('change', function () {
+        num.disabled = !cb.checked;
+        if (cb.checked && !num.value) num.value = '1';
+        if (!cb.checked) num.value = '';
+        card.classList.toggle('picked', cb.checked);
+      });
+      controls.push({ program: p, cb: cb, num: num });
+      var extra = el('div', { class: 'pick' }, [
+        el('label', { class: 'chk', for: 'cb-' + p.id }, [cb, el('span', { text: '이 프로그램에 참가' })]),
+        el('div', { class: 'head' }, [
+          el('label', { for: 'n-' + p.id, text: '예상 인원' }), num, el('span', { class: 'muted', text: '명' })
+        ])
+      ]);
+      var card = programCard(p, extra, !!a);
+      return card;
+    });
+
+    var save_ = el('button', { type: 'button', class: 'primary', text: '저장', onclick: function () {
+      var errors = [], next = [];
+      controls.forEach(function (x) {
+        if (!x.cb.checked) return;
+        var v = x.num.value.trim(), n = Number(v);
+        if (v === '' || !isFinite(n) || n < 1 || Math.floor(n) !== n) {
+          errors.push(x.program.name + ': 예상 인원을 1 이상의 정수로 입력해 주세요.');
+          return;
+        }
+        next.push({ companyId: c.id, programId: x.program.id, headcount: n });
+      });
+      if (errors.length) { msg.className = 'notice'; msg.textContent = errors.join(' '); return; }
+      state.applications = state.applications.filter(function (a) { return a.companyId !== c.id; }).concat(next);
+      save();
+      flash = '저장되었습니다. (' + next.length + '개 프로그램)';
+      render();
+    } });
+    save_.disabled = !open;
+
+    var actions = el('div', { class: 'actions' }, [save_, msg]);
+    if (!open) actions.appendChild(el('p', { class: 'notice', text: '신청 기간이 닫혀 있어 조회만 가능합니다.' }));
+
+    return el('section', {}, [
+      el('div', { class: 'who' }, [
+        el('strong', { text: c.name }),
+        el('button', { type: 'button', class: 'linkbtn', text: '기업 변경', onclick: function () {
+          state.ui.companyId = null; save(); render();
+        } })
+      ]),
+      progress,
+      el('h2', { text: '프로그램 선택' }),
+      el('div', { class: 'grid' }, cards),
+      actions
+    ]);
+  }
+
+  // ---------- 운영자 모드 ----------
+  var TABS = [['dash', '대시보드'], ['program', '프로그램별'], ['company', '기업별'], ['gap', '미신청·미달'],
+    ['absent', '미참석'], ['att', '출석 체크'], ['manage', '설정·등록']];
+
+  // F3-① 프로그램별 신청 현황
+  function tabProgram() {
+    var rows = state.programs.map(function (p) {
+      var apps = appsFor(p.id);
+      var total = apps.reduce(function (s, a) { return s + a.headcount; }, 0);
+      return [p.name, apps.length + '개 기업', total + '명', p.sessions + '회'];
+    });
+    return el('div', {}, [
+      el('p', { class: 'summary', text: '신청 기업 수와 예상 인원 합계입니다. (수요 조사용)' }),
+      table(['프로그램', '신청 기업 수', '예상 인원 합계', '총 회차'], rows)
+    ]);
+  }
+
+  // F3-② 기업별 선택 현황
+  function tabCompany() {
+    var s = searchable(function (q) {
+      var rows = state.companies.filter(function (c) { return nameMatches(c, q); }).map(function (c) {
+        var apps = appsOf(c.id), att = 0, total = 0;
+        apps.forEach(function (a) {
+          var p = programById(a.programId);
+          att += presentCount(c.id, a.programId);
+          total += p ? p.sessions : 0;
+        });
+        var names = apps.map(function (a) { var p = programById(a.programId); return p ? p.name : a.programId; });
+        return [c.name, names.length ? names.join(', ') : '-',
+          badge(apps.length >= state.settings.required ? '충족' : '미달', apps.length >= state.settings.required ? 'ok' : 'warn'),
+          total ? att + ' / ' + total + '회' : '-'];
+      });
+      return table(['기업', '선택 프로그램', '필수 선택', '참석 횟수'], rows);
+    });
+    return el('div', {}, [el('div', { class: 'tools' }, [s.input]), s.holder]);
+  }
+
+  // F3-③ 미신청·필수 미달 기업
+  function tabGap() {
+    var required = state.settings.required;
+    var s = searchable(function (q) {
+      var rows = state.companies
+        .map(function (c) { return { c: c, n: appsOf(c.id).length }; })
+        .filter(function (x) { return x.n < required && nameMatches(x.c, q); })
+        .sort(function (a, b) { return a.n - b.n; })
+        .map(function (x) {
+          return [x.c.name, x.n + '개', (required - x.n) + '개',
+            x.n === 0 ? badge('미신청', 'warn') : badge('필수 미달', 'warn')];
+        });
+      var wrap = el('div');
+      wrap.appendChild(el('p', { class: 'summary', text: '필수 ' + required + '개 기준, 해당 기업 ' + rows.length + '개' }));
+      wrap.appendChild(table(['기업', '선택한 개수', '부족한 개수', '상태'], rows));
+      return wrap;
+    });
+    return el('div', {}, [el('div', { class: 'tools' }, [s.input]), s.holder]);
+  }
+
+  // F3-④ 신청 대비 미참석
+  function tabAbsent() {
+    var partial = el('input', { type: 'checkbox' });
+    var s = searchable(function (q) {
+      var show = partial.checked;
+      var rows = [];
+      state.applications.forEach(function (a) {
+        var c = companyById(a.companyId), p = programById(a.programId);
+        if (!c || !p || !nameMatches(c, q)) return;
+        var n = presentCount(a.companyId, a.programId);
+        if (show ? n >= p.sessions : n > 0) return;
+        rows.push({ c: c, p: p, n: n });
+      });
+      rows.sort(function (a, b) { return a.n - b.n || (a.c.id < b.c.id ? -1 : 1); });
+      var wrap = el('div');
+      wrap.appendChild(el('p', { class: 'summary', text: (show ? '일부 회차를 빠진' : '한 번도 참석하지 않은') + ' 신청 ' + rows.length + '건' }));
+      wrap.appendChild(table(['기업', '프로그램', '참석 / 총 회차'], rows.map(function (r) {
+        return [r.c.name, r.p.name, r.n + ' / ' + r.p.sessions + '회'];
+      })));
+      return wrap;
+    }, [partial]);
+    var lab = el('label', {}, [partial, el('span', { text: '일부 회차만 참석한 경우도 보기' })]);
+    return el('div', {}, [el('div', { class: 'tools' }, [s.input, lab]), s.holder]);
+  }
+
+  // F2 회차별 출석 체크
+  function tabAtt() {
+    var att = state.ui.att;
+    if (!programById(att.programId) && state.programs.length) att.programId = state.programs[0].id;
+    var progSel = el('select', { 'aria-label': '프로그램 선택' }, state.programs.map(function (p) {
+      return el('option', { value: p.id, text: p.name });
+    }));
+    var sesSel = el('select', { 'aria-label': '회차 선택' });
+    var onlyOpen = el('input', { type: 'checkbox' });
+    var search = el('input', { type: 'search', placeholder: '기업명 검색', 'aria-label': '기업명 검색' });
+    var summary = el('p', { class: 'summary', role: 'status' });
+    var list = el('div', { class: 'list' });
+
+    function fillSessions() {
+      var p = programById(att.programId);
+      sesSel.textContent = '';
+      for (var s = 1; p && s <= p.sessions; s++) sesSel.appendChild(el('option', { value: String(s), text: s + '회차' }));
+      if (att.session > (p ? p.sessions : 1) || att.session < 1) att.session = 1;
+      sesSel.value = String(att.session);
+    }
+    function draw() {
+      var apps = appsFor(att.programId).slice().sort(function (a, b) { return a.companyId < b.companyId ? -1 : 1; });
+      var presentN = apps.filter(function (a) { return isPresent(a.companyId, att.programId, att.session); }).length;
+      summary.textContent = '참석 ' + presentN + ' / 신청 ' + apps.length + '개 기업';
+      var q = search.value.trim().toLowerCase();
+      list.textContent = '';
+      var shown = 0;
+      apps.forEach(function (a) {
+        var c = companyById(a.companyId);
+        if (!c || !nameMatches(c, q)) return;
+        var on = isPresent(a.companyId, att.programId, att.session);
+        if (onlyOpen.checked && on) return;
+        shown++;
+        var cb = el('input', { type: 'checkbox', 'aria-label': c.name + ' 참석' });
+        cb.checked = on;
+        cb.addEventListener('change', function () {
+          setPresent(a.companyId, att.programId, att.session, cb.checked); save(); draw();
+        });
+        list.appendChild(el('label', {}, [cb, el('span', { class: 'grow', text: c.name }),
+          el('span', { class: 'muted', text: a.headcount + '명' })]));
+      });
+      if (!shown) list.appendChild(el('div', { class: 'empty', text: apps.length ? '해당하는 기업이 없습니다.' : '이 프로그램에 신청한 기업이 없습니다.' }));
+    }
+
+    progSel.value = att.programId;
+    fillSessions();
+    progSel.addEventListener('change', function () { att.programId = progSel.value; att.session = 1; save(); fillSessions(); draw(); });
+    sesSel.addEventListener('change', function () { att.session = Number(sesSel.value); save(); draw(); });
+    search.addEventListener('input', draw);
+    onlyOpen.addEventListener('change', draw);
+    draw();
+
+    return el('div', {}, [
+      el('div', { class: 'tools' }, [progSel, sesSel]),
+      el('div', { class: 'tools' }, [search, el('label', {}, [onlyOpen, el('span', { text: '미체크만 보기' })])]),
+      summary, list
+    ]);
+  }
+
+  // ---------- CSV 내보내기 (F7) ----------
+  function csvCell(v) {
+    v = (v === null || v === undefined) ? '' : String(v);
+    return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  }
+  function toCsv(rows) { return rows.map(function (r) { return r.map(csvCell).join(','); }).join('\r\n'); }
+  // 화면 안의 확인·안내 창 (브라우저 기본 confirm 대신 사용)
+  function askDialog(message, buttons) {
+    var prev = document.activeElement;
+    var overlay = el('div', { class: 'overlay' });
+    function close() {
+      overlay.remove();
+      if (prev && prev.focus) { try { prev.focus(); } catch (e) {} }
+    }
+    var box = el('div', { class: 'dialog', role: 'dialog', 'aria-modal': 'true' }, [
+      el('p', { text: message }),
+      el('div', { class: 'actions' }, buttons.map(function (b) {
+        return el('button', { type: 'button', class: b.primary ? 'primary' : 'linkbtn', text: b.label, onclick: function () {
+          close(); if (b.onclick) b.onclick();
+        } });
+      }))
+    ]);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    (box.querySelector('.primary') || box.querySelector('button')).focus();
+  }
+  function askConfirm(message, onYes, onNo) {
+    askDialog(message, [{ label: '취소', onclick: onNo }, { label: '계속', primary: true, onclick: onYes }]);
+  }
+  function showNotice(message) { askDialog(message, [{ label: '확인', primary: true }]); }
+
+  function downloadCsv(name, rows) {
+    try { downloadCsvRaw(name, rows); }
+    catch (e) { showNotice('이 환경에서는 파일 내려받기가 막혀 있습니다.'); }
+  }
+  function downloadCsvRaw(name, rows) {
+    var blob = new Blob(['﻿' + toCsv(rows)], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  function exportStatus() {
+    var N = state.settings.required;
+    var rows = [['기업ID', '기업명', '프로그램', '예상 인원', '참석 횟수', '총 회차', '참석 회차', '필수 충족']];
+    state.companies.forEach(function (c) {
+      var apps = appsOf(c.id), met = apps.length >= N ? '충족' : '미달';
+      if (!apps.length) { rows.push([c.id, c.name, '(미신청)', '', '', '', '', met]); return; }
+      state.programs.forEach(function (p) {
+        var a = getApp(c.id, p.id);
+        if (!a) return;
+        var sessions = state.attendance.filter(function (r) { return r.companyId === c.id && r.programId === p.id; })
+          .map(function (r) { return r.session; }).sort(function (x, y) { return x - y; });
+        rows.push([c.id, c.name, p.name, a.headcount, sessions.length, p.sessions, sessions.join(', '), met]);
+      });
+    });
+    downloadCsv('신청출석현황_' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '.csv', rows);
+  }
+
+  // ---------- 대시보드 (F6) ----------
+  function pct(n, d) { return d ? Math.round(n / d * 100) + '%' : '-'; }
+
+  function tabDash() {
+    var N = state.settings.required, total = state.companies.length;
+    var applied = 0, met = 0, headcount = 0, att = 0, sess = 0;
+    state.companies.forEach(function (c) {
+      var n = appsOf(c.id).length;
+      if (n > 0) applied++;
+      if (n >= N) met++;
+    });
+    var perProgram = state.programs.map(function (p) {
+      var a = 0, s = 0, apps = appsFor(p.id);
+      apps.forEach(function (x) { a += Math.min(presentCount(x.companyId, p.id), p.sessions); s += p.sessions; headcount += x.headcount; });
+      att += a; sess += s;
+      return [p.name, apps.length + '개 기업', a + ' / ' + s + '회', pct(a, s)];
+    });
+    function stat(label, big, small) {
+      return el('div', { class: 'card stat' }, [el('b', { text: big }), el('span', { text: label }), el('small', { text: small })]);
+    }
+    return el('div', {}, [
+      el('div', { class: 'row' }, [
+        el('span', { class: 'muted', text: '전체 요약입니다. 숫자는 현황 탭과 같은 데이터로 계산됩니다.' }),
+        el('button', { type: 'button', class: 'linkbtn', text: '엑셀(CSV) 내보내기', onclick: exportStatus })
+      ]),
+      el('div', { class: 'stats' }, [
+        stat('신청률', pct(applied, total), '1개 이상 신청한 기업 ' + applied + ' / ' + total),
+        stat('필수 충족률', pct(met, total), '필수 ' + N + '개 이상 선택한 기업 ' + met + ' / ' + total),
+        stat('평균 참석률', pct(att, sess), '신청한 프로그램 전체 회차 중 참석 ' + att + ' / ' + sess + '회'),
+        stat('예상 인원 합계', headcount + '명', '신청 ' + state.applications.length + '건 합산')
+      ]),
+      el('h2', { text: '프로그램별 참석률' }),
+      table(['프로그램', '신청 기업 수', '참석 / 전체 회차', '참석률'], perProgram)
+    ]);
+  }
+
+  // ---------- 설정·등록 (F4, F5) ----------
+  var editingId = null;
+  var manageMsg = null;
+
+  function setManageMsg(text, ok) { manageMsg = { text: text, ok: !!ok }; }
+
+  function parseCsv(text) {
+    text = text.replace(/^﻿/, '');
+    var rows = [], row = [], cur = '', q = false;
+    for (var i = 0; i < text.length; i++) {
+      var ch = text.charAt(i);
+      if (q) {
+        if (ch === '"') { if (text.charAt(i + 1) === '"') { cur += '"'; i++; } else q = false; }
+        else cur += ch;
+      } else if (ch === '"') q = true;
+      else if (ch === ',') { row.push(cur); cur = ''; }
+      else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && text.charAt(i + 1) === '\n') i++;
+        row.push(cur); cur = ''; rows.push(row); row = [];
+      } else cur += ch;
+    }
+    if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+    return rows;
+  }
+
+  function decodeCsv(buf) {
+    try { return new TextDecoder('utf-8', { fatal: true }).decode(buf); }
+    catch (e) { return new TextDecoder('euc-kr').decode(buf); }   // 한국어 엑셀의 기본 CSV
+  }
+
+  function importCompanies(text) {
+    var rows = parseCsv(text).filter(function (r) { return r.some(function (c) { return c.trim() !== ''; }); });
+    if (!rows.length) return { error: '파일이 비어 있습니다.' };
+    var head = rows[0].map(function (h) { return h.trim(); });
+    var ni = head.indexOf('기업명'), ii = head.indexOf('기업ID');
+    if (ni < 0) return { error: '첫 줄에 "기업명" 열이 필요합니다. 양식을 내려받아 확인해 주세요.' };
+
+    var existingByName = {}, reserved = {}, used = {}, maxNum = 0;
+    state.companies.forEach(function (c) {
+      existingByName[c.name] = c.id;
+      var m = /^C(\d+)$/.exec(c.id); if (m) maxNum = Math.max(maxNum, Number(m[1]));
+    });
+    if (ii >= 0) rows.slice(1).forEach(function (r) { var id = (r[ii] || '').trim(); if (id) reserved[id] = true; });
+
+    var list = [], names = {}, dup = 0;
+    rows.slice(1).forEach(function (r) {
+      var name = (r[ni] || '').trim();
+      if (!name) return;
+      if (names[name]) { dup++; return; }
+      names[name] = true;
+      var id = ii >= 0 ? (r[ii] || '').trim() : '';
+      if (!id || used[id]) {
+        id = existingByName[name];
+        if (!id || used[id] || (reserved[id] && ii >= 0)) {
+          do { maxNum++; id = 'C' + (maxNum < 100 ? '0' : '') + pad(maxNum); } while (used[id] || reserved[id]);
+        }
+      }
+      used[id] = true;
+      list.push({ id: id, name: name });
+    });
+    if (!list.length) return { error: '등록할 기업명이 없습니다.' };
+    return { companies: list, dup: dup };
+  }
+
+  function renderManage() {
+    var N = state.settings.required, open = state.settings.open;
+    var msgEl = el('p', { class: manageMsg && manageMsg.ok ? 'okmsg' : 'notice', role: 'status', text: manageMsg ? manageMsg.text : '' });
+    manageMsg = null;
+
+    // 설정
+    var nInput = el('input', { type: 'number', min: '1', step: '1', id: 'req-n', 'aria-label': '필수 선택 개수' });
+    nInput.value = String(N);
+    nInput.addEventListener('change', function () {
+      var v = Number(nInput.value);
+      if (nInput.value.trim() === '' || !isFinite(v) || v < 1 || Math.floor(v) !== v) {
+        setManageMsg('필수 선택 개수는 1 이상의 정수로 입력해 주세요.', false);
+      } else { state.settings.required = v; save(); setManageMsg('필수 선택 개수를 ' + v + '개로 바꿨습니다.', true); }
+      render();
+    });
+    var settings = el('div', { class: 'card section' }, [
+      el('h3', { text: '설정' }),
+      el('div', { class: 'row' }, [
+        el('label', { for: 'req-n', text: '필수 선택 개수 N' }), nInput, el('span', { class: 'muted', text: '개 (바꾸면 모든 화면에 바로 반영됩니다)' })
+      ]),
+      N > state.programs.length
+        ? el('p', { class: 'notice', text: '등록된 프로그램이 ' + state.programs.length + '개뿐이라 모든 기업이 필수 개수를 채울 수 없습니다.' })
+        : null,
+      el('div', { class: 'row' }, [
+        el('span', { text: '신청 기간' }), badge(open ? '열림' : '닫힘', open ? 'ok' : 'warn'),
+        el('button', { type: 'button', class: 'linkbtn', id: 'toggle-open', text: open ? '신청 기간 닫기' : '신청 기간 열기', onclick: function () {
+          state.settings.open = !state.settings.open; save();
+          setManageMsg(state.settings.open ? '신청 기간을 열었습니다. 기업이 선택을 변경할 수 있습니다.' : '신청 기간을 닫았습니다. 기업은 조회만 가능합니다.', true);
+          render();
+        } })
+      ])
+    ]);
+
+    // 프로그램 등록·수정
+    var ep = editingId ? programById(editingId) : null;
+    if (editingId && !ep) editingId = null;
+    function field(label, input, wide) { return el('label', { class: 'field' + (wide ? ' wide' : '') }, [el('span', { text: label }), input]); }
+    var f = {
+      name: el('input', { type: 'text', 'aria-label': '프로그램 이름' }),
+      category: el('input', { type: 'text', 'aria-label': '분류' }),
+      schedule: el('input', { type: 'text', 'aria-label': '대략적 일정' }),
+      sessions: el('input', { type: 'number', min: '1', step: '1', 'aria-label': '총 회차' }),
+      hours: el('input', { type: 'number', min: '0.5', step: '0.5', 'aria-label': '회당 시간' }),
+      desc: el('textarea', { 'aria-label': '설명' })
+    };
+    if (ep) { f.name.value = ep.name; f.category.value = ep.category; f.schedule.value = ep.schedule;
+      f.sessions.value = String(ep.sessions); f.hours.value = String(ep.hours); f.desc.value = ep.desc; }
+    var formMsg = el('p', { class: 'notice', role: 'status' });
+    function submitProgram() {
+      var name = f.name.value.trim(), sessions = Number(f.sessions.value), hours = Number(f.hours.value);
+      if (!name) { formMsg.textContent = '프로그램 이름을 입력해 주세요.'; return; }
+      if (f.sessions.value.trim() === '' || !isFinite(sessions) || sessions < 1 || Math.floor(sessions) !== sessions) {
+        formMsg.textContent = '총 회차는 1 이상의 정수로 입력해 주세요.'; return; }
+      if (f.hours.value.trim() === '' || !isFinite(hours) || hours <= 0) {
+        formMsg.textContent = '회당 시간은 0보다 큰 숫자로 입력해 주세요.'; return; }
+      var data = { name: name, category: f.category.value.trim() || '기타', schedule: f.schedule.value.trim() || '미정',
+        desc: f.desc.value.trim(), sessions: sessions, hours: hours };
+      if (ep) {
+        var cut = state.attendance.filter(function (r) { return r.programId === ep.id && r.session > sessions; });
+        var applyEdit = function () {
+          state.attendance = state.attendance.filter(function (r) { return !(r.programId === ep.id && r.session > sessions); });
+          Object.keys(data).forEach(function (k) { ep[k] = data[k]; });
+          setManageMsg('"' + name + '" 정보를 수정했습니다.', true);
+          editingId = null; save(); render();
+        };
+        if (cut.length) {
+          askConfirm('회차를 ' + sessions + '회로 줄이면 ' + (sessions + 1) + '회차 이후 출석 기록 ' + cut.length + '건이 삭제됩니다. 계속할까요?', applyEdit);
+        } else { applyEdit(); }
+        return;
+      } else {
+        var max = 0; state.programs.forEach(function (p) { var m = /^P(\d+)$/.exec(p.id); if (m) max = Math.max(max, Number(m[1])); });
+        data.id = 'P' + (max + 1); state.programs.push(data);
+        setManageMsg('"' + name + '" 프로그램을 추가했습니다.', true);
+      }
+      editingId = null; save(); render();
+    }
+    var programRows = state.programs.map(function (p) {
+      return [p.name, p.category, p.schedule, p.sessions + '회 × ' + p.hours + '시간',
+        el('button', { type: 'button', class: 'linkbtn', text: '수정', 'aria-label': p.name + ' 수정', onclick: function () { editingId = p.id; render(); } })];
+    });
+    var programs = el('div', { class: 'card section' }, [
+      el('h3', { text: '프로그램 관리' }),
+      table(['이름', '분류', '일정', '회차 × 시간', ''], programRows),
+      el('h3', { text: ep ? '"' + ep.name + '" 수정' : '새 프로그램 추가', style: 'margin-top:16px' }),
+      el('div', { class: 'form' }, [
+        field('이름', f.name), field('분류', f.category), field('대략적 일정', f.schedule),
+        field('총 회차', f.sessions), field('회당 시간(시간)', f.hours), field('설명', f.desc, true)
+      ]),
+      el('div', { class: 'actions' }, [
+        el('button', { type: 'button', class: 'primary', id: 'program-submit', text: ep ? '수정 저장' : '프로그램 추가', onclick: submitProgram }),
+        ep ? el('button', { type: 'button', class: 'linkbtn', text: '취소', onclick: function () { editingId = null; render(); } }) : null,
+        formMsg
+      ])
+    ]);
+
+    // 기업 명단 CSV
+    var file = el('input', { type: 'file', accept: '.csv,text/csv', id: 'company-csv', 'aria-label': '기업 명단 CSV 파일' });
+    file.addEventListener('change', function () {
+      var chosen = file.files && file.files[0];
+      if (!chosen) return;
+      var reader = new FileReader();
+      reader.onerror = function () { setManageMsg('파일을 읽지 못했습니다.', false); render(); };
+      reader.onload = function () {
+        var res;
+        try { res = importCompanies(decodeCsv(reader.result)); } catch (e) { res = { error: '파일 형식을 읽을 수 없습니다.' }; }
+        if (res.error) { setManageMsg(res.error, false); render(); return; }
+        var keep = {}; res.companies.forEach(function (c) { keep[c.id] = true; });
+        var dropApps = state.applications.filter(function (a) { return !keep[a.companyId]; }).length;
+        var dropAtt = state.attendance.filter(function (r) { return !keep[r.companyId]; }).length;
+        var applyImport = function () {
+          state.companies = res.companies;
+          state.applications = state.applications.filter(function (a) { return keep[a.companyId]; });
+          state.attendance = state.attendance.filter(function (r) { return keep[r.companyId]; });
+          if (!keep[state.ui.companyId]) state.ui.companyId = null;
+          save();
+          setManageMsg('기업 ' + res.companies.length + '개를 등록했습니다.' + (res.dup ? ' (중복 이름 ' + res.dup + '건은 제외)' : ''), true);
+          render();
+        };
+        askConfirm('기업 명단을 ' + res.companies.length + '개로 교체합니다.' +
+          (dropApps || dropAtt ? '\n새 명단에 없는 기업의 신청 ' + dropApps + '건, 출석 ' + dropAtt + '건이 삭제됩니다.' : '') + '\n계속할까요?',
+          applyImport, function () { file.value = ''; });
+      };
+      reader.readAsArrayBuffer(chosen);
+    });
+    var companies = el('div', { class: 'card section' }, [
+      el('h3', { text: '참여기업 명단' }),
+      el('p', { class: 'muted', text: '현재 ' + state.companies.length + '개 기업이 등록되어 있습니다. CSV를 올리면 명단이 교체됩니다. 첫 줄에 "기업명" 열이 필요하고, "기업ID" 열은 선택입니다. 같은 이름의 기업은 기존 신청·출석 기록을 유지합니다.' }),
+      el('div', { class: 'row' }, [
+        file,
+        el('button', { type: 'button', class: 'linkbtn', text: '양식 내려받기', onclick: function () {
+          downloadCsv('기업명단_양식.csv', [['기업명'], ['예시기업 A'], ['예시기업 B']]);
+        } })
+      ])
+    ]);
+
+    var exportBox = el('div', { class: 'card section' }, [
+      el('h3', { text: '데이터 내보내기' }),
+      el('p', { class: 'muted', text: '이 브라우저에만 저장되므로 주기적으로 내려받아 보관하세요.' }),
+      el('button', { type: 'button', class: 'linkbtn', text: '엑셀(CSV) 내보내기', onclick: exportStatus })
+    ]);
+
+    return el('div', {}, [msgEl, settings, programs, companies, exportBox]);
+  }
+
+  function renderAdmin() {
+    var tab = state.ui.tab;
+    var tabBar = el('div', { class: 'tabs', role: 'group', 'aria-label': '운영자 화면' }, TABS.map(function (t) {
+      return el('button', { type: 'button', 'aria-pressed': String(tab === t[0]), text: t[1], onclick: function () {
+        state.ui.tab = t[0]; save(); render();
+      } });
+    }));
+    var body = { dash: tabDash, program: tabProgram, company: tabCompany, gap: tabGap, absent: tabAbsent,
+      att: tabAtt, manage: renderManage }[tab] || tabDash;
+    // 모든 운영자 탭 위에서 바로 필수 선택 프로그램 수를 바꾼다
+    function stepRequired(delta) {
+      var v = state.settings.required + delta;
+      if (v < 1 || v > state.programs.length) return;
+      state.settings.required = v; save(); render();
+    }
+    var reqNow = state.settings.required;
+    var minus = el('button', { type: 'button', class: 'linkbtn', text: '−', 'aria-label': '필수 선택 프로그램 수 줄이기', onclick: function () { stepRequired(-1); } });
+    var plus = el('button', { type: 'button', class: 'linkbtn', text: '+', 'aria-label': '필수 선택 프로그램 수 늘리기', onclick: function () { stepRequired(1); } });
+    minus.disabled = reqNow <= 1;
+    plus.disabled = reqNow >= state.programs.length;
+    var topBar = el('div', { class: 'row' }, [
+      el('span', { text: '필수 선택 프로그램 수' }), minus,
+      el('strong', { id: 'req-n-top', text: reqNow + '개' }), plus,
+      el('span', { class: 'muted', text: '· 신청 기간 ' + (state.settings.open ? '열림' : '닫힘') })
+    ]);
+    return el('section', {}, [
+      el('h2', { text: '운영자 모드' }),
+      topBar,
+      tabBar, body()
+    ]);
+  }
+
+  function render() {
+    var company = state.ui.mode === 'company';
+    document.getElementById('mode-company').setAttribute('aria-pressed', String(company));
+    document.getElementById('mode-admin').setAttribute('aria-pressed', String(!company));
+    view.textContent = '';
+    view.appendChild(company ? renderCompany() : renderAdmin());
+  }
+
+  document.getElementById('mode-company').addEventListener('click', function () {
+    state.ui.mode = 'company'; save(); render();
+  });
+  document.getElementById('mode-admin').addEventListener('click', function () {
+    state.ui.mode = 'admin'; save(); render();
+  });
+  document.getElementById('reset').addEventListener('click', function () {
+    askConfirm('모든 데이터를 샘플 상태로 되돌립니다. 계속할까요?', function () {
+      state = buildSample(); save(); render();
+    });
+  });
+
+  save();
+  render();
+})();
+</script>
+</body>
+</html>
