@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>기업여신 사후관리 EWS</title>
+<style>
+:root{
+  --bg:#f5f6f8;--card:#fff;--text:#1d2330;--muted:#667085;--border:#e1e4ea;--accent:#2b5fd9;
+  --g0:#2e7d32;--g0b:#e6f4e7;--g1:#8a6d00;--g1b:#fff4cc;--g2:#b45309;--g2b:#ffe6cc;--g3:#b42318;--g3b:#fde4e1;
+  --line:#2b5fd9;--prev:#98a2b3;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#12151c;--card:#1b2029;--text:#e8ebf1;--muted:#9aa4b5;--border:#2d3441;--accent:#7aa2ff;
+  --g0:#7ddc83;--g0b:#1d3322;--g1:#f0cf5a;--g1b:#3a3213;--g2:#f4a45a;--g2b:#3d2a14;--g3:#ff8f84;--g3b:#43201c;
+  --line:#7aa2ff;--prev:#6b7589;}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+header{padding:20px 16px 8px;max-width:1280px;margin:0 auto}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13px}
+main{max-width:1280px;margin:0 auto;padding:8px 16px 40px}
+.banner{background:var(--g1b);color:var(--g1);border-radius:8px;padding:8px 12px;font-size:12.5px;margin:8px 0 14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.card .k{font-size:12px;color:var(--muted)}
+.card .v{font-size:24px;font-weight:700;margin-top:2px}
+.card .s{font-size:12px;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.controls label{font-size:12px;color:var(--muted)}
+.asof{display:flex;align-items:center;gap:8px;flex:1 1 280px}
+.asof input[type=range]{flex:1;min-width:120px}
+.asof b{min-width:62px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:3px 10px;font-size:12.5px;cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+select,input[type=search],textarea,button.btn{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 8px}
+button.btn{cursor:pointer}
+.tablewrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:auto}
+table{border-collapse:collapse;width:100%;min-width:900px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card)}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+td.reason{white-space:normal;min-width:220px;color:var(--muted);font-size:13px}
+.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+.b0{background:var(--g0b);color:var(--g0)}.b1{background:var(--g1b);color:var(--g1)}.b2{background:var(--g2b);color:var(--g2)}.b3{background:var(--g3b);color:var(--g3)}
+.bar{display:inline-block;width:60px;height:6px;border-radius:3px;background:var(--border);vertical-align:middle;margin-right:6px;overflow:hidden}
+.bar i{display:block;height:100%}
+.neg{color:var(--g3)}.pos{color:var(--g0)}
+.up{color:var(--g3);font-weight:600}.down{color:var(--g0)}
+details.def{margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px}
+details.def summary{cursor:pointer;font-weight:600}
+details.def li{margin:4px 0}
+/* drawer */
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:10}
+#ov.on{display:block}
+#dr{position:absolute;right:0;top:0;bottom:0;width:min(720px,100%);background:var(--bg);overflow:auto;padding:16px;box-shadow:-8px 0 24px rgba(0,0,0,.25)}
+#dr h2{margin:0;font-size:18px}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.sec{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.sec h3{margin:0 0 8px;font-size:14px}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.chart h4{margin:0 0 2px;font-size:12.5px;font-weight:600}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-size:10px}
+.legend{font-size:11.5px;color:var(--muted);margin-bottom:6px}
+.legend span{display:inline-block;width:14px;height:0;border-top:2px solid var(--line);vertical-align:middle;margin:0 4px 0 0}
+.legend span.p{border-top:2px dashed var(--prev);margin-left:10px}
+.tl{display:flex;gap:3px;flex-wrap:wrap}
+.tl div{width:34px;text-align:center;font-size:10.5px;border-radius:4px;padding:3px 0}
+.tl div.fut{opacity:.25}
+.mt{width:100%;min-width:0;font-size:13px}
+.mt td,.mt th{padding:5px 8px;white-space:normal;cursor:default;position:static}
+.conn{display:flex;gap:8px;flex-wrap:wrap}
+.conn div{border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12.5px}
+.conn .ok b{color:var(--g0)}.conn .bad{background:var(--g3b)}.conn .bad b{color:var(--g3)}.conn .na{opacity:.55}
+ul.rec{margin:0;padding-left:18px}
+.muted{color:var(--muted)}
+.row2{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+textarea{width:100%;min-height:70px}
+@media (max-width:600px){header{padding-top:14px}}
+.demo-tag{position:fixed;right:8px;bottom:8px;z-index:20;background:var(--g1b);color:var(--g1);border:1px solid var(--border);border-radius:999px;padding:2px 10px;font-size:11px;opacity:.92;pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>기업여신 사후관리 조기경보(EWS)</h1>
+  <div class="sub">차주 동의 기반 자동 수집 데이터의 다중 기간 동태 변화로 이상 징후를 포착하는 프로토타입</div>
+</header>
+<main>
+  <div class="banner">모든 데이터는 <b>무작위로 만든 모의 데이터</b>이며 차주명도 가상입니다. 임계값과 점수는 가설이므로 현업 인터뷰와 백테스트로 조정이 필요합니다.</div>
+  <div class="cards" id="cards"></div>
+  <div class="controls">
+    <div class="asof"><label for="asof">기준월</label><input type="range" id="asof"><b id="asofLabel"></b></div>
+    <div class="chips" id="chips"></div>
+    <select id="ind" aria-label="업종"></select>
+    <input type="search" id="q" placeholder="차주명 검색" aria-label="차주명 검색">
+    <button class="btn" id="csv">CSV 내보내기</button>
+    <button class="btn" id="reset">예시 데이터로 초기화</button>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr id="thead"></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <details class="def">
+    <summary>지표 정의와 점수 규칙 (가설)</summary>
+    <ul>
+      <li><b>영업(세금계산서 매출, 최대 30점)</b>: 3·6·12개월 합계를 전년 동기와 비교. 전 구간(-10% 이하) 동반 악화 30점, 두 구간 18점, 단기만 6점. 단기 -30% 이하는 최소 20점. 전년 동기 비교로 계절성이 상쇄됩니다.</li>
+      <li><b>카드·PG 매출(최대 15점)</b>: 위와 같은 규칙의 절반 점수. 소매·음식점·서비스에 적용.</li>
+      <li><b>계좌 잔액(최대 18점)</b>: 최근 3개월 평균잔액을 직전 12개월 평균과 비교. -10% 4점, -20% 10점, -35% 18점.</li>
+      <li><b>전력 사용량(제조업, 최대 14점)</b>: 3개월 합계의 전년 동기 대비. -8% 3점, -15% 8점, -30% 14점.</li>
+      <li><b>4대보험 인원(최대 10점)</b>: 6개월 전 대비. -10% 6점, -20% 10점.</li>
+      <li><b>가동 종합(8점)</b>: 전력과 인원이 동시에 악화되면 가산. 매출 하락에 선행하는 가동 저하 포착용.</li>
+      <li><b>제출자료 교차검증(최대 18점)</b>: 차주가 제출한 결산 매출과 세금계산서 합계의 괴리가 15% 초과 12점, 30% 초과 18점. (결산 제출은 2026-03 이후 가능하다고 가정)</li>
+      <li><b>데이터 수집 중단(최대 55점)</b>: 연동이 끊긴 개월 수. 1개월 10점, 2개월 25점, 3~5개월 40점, 6개월 이상 55점.</li>
+      <li><b>등급</b>: 15점 미만 정상 · 15~29 관찰 · 30~49 주의 · 50 이상 위험 (합계 상한 100점)</li>
+    </ul>
+  </details>
+</main>
+<div class="demo-tag">데모 버전 · 가짜 데이터</div>
+<div id="ov"><div id="dr" role="dialog" aria-modal="true"></div></div>
+
+<script>
+"use strict";
+/* ---------- 기본 설정 ---------- */
+const N=36, FIRST=23, LAST=N-1, START_Y=2023, START_M=9; // idx0 = 2023-10
+const GRADES=['정상','관찰','주의','위험'];
+const monthLabel=t=>{const m=START_M+t;return (START_Y+Math.floor(m/12))+'-'+String(m%12+1).padStart(2,'0');};
+const calMonth=t=>(START_M+t)%12;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const rng=mulberry32(20261031);
+const rnd=(a,b)=>a+(b-a)*rng();
+const gauss=()=>{let u=0;while(!u)u=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*rng());};
+
+/* ---------- 모의 데이터 생성 ---------- */
+const INDS=[
+  {n:'금속가공',mfg:true,card:0,amp:.05,s:[300,1500],h:[25,90],sfx:['정밀','금속']},
+  {n:'플라스틱',mfg:true,card:0,amp:.06,s:[250,1200],h:[20,70],sfx:['플라스텍','화학']},
+  {n:'식품제조',mfg:true,card:0,amp:.10,s:[300,1400],h:[25,80],sfx:['푸드','식품']},
+  {n:'전자부품',mfg:true,card:0,amp:.05,s:[400,1800],h:[30,100],sfx:['전자','테크']},
+  {n:'도소매',mfg:false,card:.5,amp:.12,s:[150,900],h:[8,35],sfx:['유통','상사']},
+  {n:'음식점',mfg:false,card:.85,amp:.14,s:[60,250],h:[6,25],sfx:['식당','외식']},
+  {n:'건설',mfg:false,card:0,amp:.10,s:[400,2500],h:[15,60],sfx:['건설','개발']},
+  {n:'서비스',mfg:false,card:.3,amp:.06,s:[100,700],h:[8,40],sfx:['서비스','솔루션']}
+];
+const PREFIX=['한빛','대성','동진','새롬','미래','태양','청솔','은하','다온','보람','우진','해든','가람','나래','누리','도담','마루','소담','아름','온누리'];
+const SPEC=[];
+const add=(sc,n)=>{for(let i=0;i<n;i++)SPEC.push(sc);};
+add('healthy',22);add('gradual',5);add('crash',3);add('idle',3);add('disconnect',3);add('mismatch',3);add('seasonal',1);
+for(let i=SPEC.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[SPEC[i],SPEC[j]]=[SPEC[j],SPEC[i]];}
+const SCN_LABEL={healthy:'정상 유지',gradual:'점진적 악화',crash:'급락',idle:'가동 저하 선행',disconnect:'연동 중단',mismatch:'제출자료 불일치',seasonal:'강한 계절성(정상)'};
+
+function sumWin(a,from,to){let s=0;for(let i=from;i<=to;i++){if(a[i]==null)return null;s+=a[i];}return s;}
+function build(i,sc){
+  const mfgInds=INDS.filter(x=>x.mfg);
+  const ind=sc==='idle'?mfgInds[i%mfgInds.length]:INDS[i%INDS.length];
+  const base=rnd(ind.s[0],ind.s[1]);
+  const b={id:'C'+String(1001+i),sc,ind,name:'(가상) '+PREFIX[i%20]+ind.sfx[Math.floor(i/20)%2],
+    base,baseBal:base*rnd(.5,1.2),loan:Math.round(base*rnd(3,8)),baseHead:Math.round(rnd(ind.h[0],ind.h[1])),
+    baseKwh:base*rnd(40,80),g:sc==='healthy'?rnd(-.04,.08):rnd(0,.05),
+    amp:sc==='seasonal'?.45:ind.amp,phase:rnd(0,12),sev:rnd(.35,.55)};
+  let s0,e0,infl=rnd(-.03,.03);
+  if(sc==='gradual')s0=Math.floor(rnd(14,19));
+  if(sc==='crash')s0=Math.floor(rnd(24,30));
+  if(sc==='idle')s0=Math.floor(rnd(22,27));
+  if(sc==='disconnect')e0=Math.floor(rnd(28,33));
+  if(sc==='mismatch')infl=rnd(.25,.45);
+  const f=t=>{ // 영업 시나리오 계수
+    t=Math.max(0,t);
+    if(sc==='gradual')return t<s0?1:1-b.sev*Math.min(1,(t-s0)/(LAST-s0));
+    if(sc==='crash')return t<s0?1:t===s0?.8:t===s0+1?.6:1-b.sev;
+    if(sc==='idle')return t<s0+5?1:1-b.sev*Math.min(1,(t-s0-5)/10);
+    return 1;
+  };
+  const tax=[],card=[],bal=[],pow=[],head=[];
+  for(let t=0;t<N;t++){
+    const cm=calMonth(t);
+    const seas=1+b.amp*Math.sin(2*Math.PI*(cm-b.phase)/12);
+    const trend=1+b.g*t/12;
+    const sales=base*trend*seas*(1+.04*gauss())*f(t);
+    const bf=Math.pow(f(t-1),1.4);
+    let pf=Math.sqrt(f(t)), hf=1;
+    if(sc==='idle'){pf=t<s0?1:1-b.sev*Math.min(1,(t-s0)/3);hf=t<s0+2?1:.8;}
+    if(sc==='gradual'||sc==='crash'){const s=s0+6;hf=t<s?1:1-.15*Math.min(1,(t-s)/6);}
+    tax.push(sales);
+    card.push(ind.card>0?sales*ind.card*(1+.05*gauss()):null);
+    bal.push(b.baseBal*(1+.05*Math.sin(2*Math.PI*(cm-b.phase)/12))*(1+.08*gauss())*bf);
+    pow.push(ind.mfg?b.baseKwh*(1+.15*Math.sin(2*Math.PI*(cm-6)/12))*(1+.05*gauss())*pf:null);
+    head.push(Math.round(b.baseHead*(1+b.g*t/24)*hf));
+  }
+  // idle: 전력 계수 고정(시리즈별 난수 한 번만 쓰이도록 위에서 처리). 연동 중단 반영
+  if(sc==='disconnect'){for(let t=e0+1;t<N;t++){tax[t]=card[t]=bal[t]=pow[t]=head[t]=null;}}
+  b.s={tax,card,bal,pow,head};
+  b.submitted=sumWin(tax,15,26)*(1+infl); // 차주 제출 FY2025 결산 매출
+  b.scores={};
+  for(let t=22;t<N;t++)b.scores[t]=score(b,t);
+  return b;
+}
+
+/* ---------- 지표·점수 ---------- */
+const pct=x=>x==null?'—':(x>=0?'+':'')+(x*100).toFixed(1)+'%';
+function yoy(a,asOf,w){const from=asOf-w+1;const c=sumWin(a,from,asOf),p=sumWin(a,from-12,asOf-12);return(c==null||p==null||p===0)?null:c/p-1;}
+function winPts(s,m,l){
+  const ns=[s,m,l].filter(v=>v!=null&&v<=-.10).length;
+  let p=ns===3?30:ns===2?18:ns===1?6:0;
+  if(s!=null&&s<=-.30)p=Math.max(p,20);
+  return p;
+}
+function lastIdx(a,asOf){for(let t=asOf;t>=0;t--)if(a[t]!=null)return t;return -1;}
+function score(b,asOf){
+  const S=b.s,items=[];
+  const put=(key,label,value,pts,max)=>items.push({key,label,value,pts,max});
+  // 데이터 수집 중단
+  const li=lastIdx(S.tax,asOf),gap=li<0?asOf+1:asOf-li;
+  const gp=gap>=6?55:gap>=3?40:gap===2?25:gap===1?10:0;
+  put('gap','데이터 수집 상태',gap?`수집 중단 ${gap}개월 (마지막 수신 ${li<0?'없음':monthLabel(li)})`:'정상 수신',gp,55);
+  // 영업
+  const a=[3,6,12].map(w=>yoy(S.tax,asOf,w));
+  put('sales','영업(세금계산서 매출, 전년 동기 대비)',`3개월 ${pct(a[0])} · 6개월 ${pct(a[1])} · 12개월 ${pct(a[2])}`,winPts(...a),30);
+  // 카드·PG
+  if(b.ind.card>0){const c=[3,6,12].map(w=>yoy(S.card,asOf,w));
+    put('card','카드·PG 매출(전년 동기 대비)',`3개월 ${pct(c[0])} · 6개월 ${pct(c[1])} · 12개월 ${pct(c[2])}`,Math.round(winPts(...c)/2),15);}
+  // 계좌 잔액
+  const cur=sumWin(S.bal,asOf-2,asOf),prv=sumWin(S.bal,asOf-14,asOf-3);
+  const br=(cur==null||prv==null)?null:(cur/3)/(prv/12)-1;
+  put('bal','계좌 잔액(최근 3개월 평균 vs 직전 12개월 평균)',pct(br),br==null?0:br<=-.35?18:br<=-.20?10:br<=-.10?4:0,18);
+  // 전력·인원
+  let pp=0,hp=0;
+  if(b.ind.mfg){const pr=yoy(S.pow,asOf,3);pp=pr==null?0:pr<=-.30?14:pr<=-.15?8:pr<=-.08?3:0;
+    put('pow','전력 사용량(3개월, 전년 동기 대비)',pct(pr),pp,14);}
+  const h0=S.head[asOf],h1=S.head[asOf-6];
+  const hr=(h0==null||h1==null||h1===0)?null:h0/h1-1;
+  hp=hr==null?0:hr<=-.20?10:hr<=-.10?6:0;
+  put('head','4대보험 인원(6개월 전 대비)',pct(hr),hp,10);
+  if(b.ind.mfg)put('idle','가동 종합(전력·인원 동반 악화)',pp>=8&&hp>=6?'동반 악화':'해당 없음',pp>=8&&hp>=6?8:0,8);
+  // 교차검증
+  if(asOf>=29){const ts=sumWin(S.tax,15,26);const d=ts?b.submitted/ts-1:null;
+    put('cross','제출 결산 매출 vs 세금계산서 합계(2025년)',`괴리 ${pct(d)}`,d==null?0:Math.abs(d)>.30?18:Math.abs(d)>.15?12:0,18);}
+  else put('cross','제출 결산 매출 vs 세금계산서 합계(2025년)','결산 자료 미제출',0,18);
+  const total=Math.min(100,items.reduce((s,x)=>s+x.pts,0));
+  const grade=total>=50?3:total>=30?2:total>=15?1:0;
+  return{total,grade,items,gap,m:{s3:a[0],s6:a[1],s12:a[2]}};
+}
+
+/* ---------- 상태 ---------- */
+const B=SPEC.map((sc,i)=>build(i,sc));
+const state={asOf:LAST,grade:null,ind:'',q:'',sort:{k:'total',d:-1}};
+let acts={};
+try{acts=JSON.parse(localStorage.getItem('ews-demo:acts-v1')||'{}');}catch(e){acts={};}
+const saveActs=()=>{try{localStorage.setItem('ews-demo:acts-v1',JSON.stringify(acts));}catch(e){}};
+const STATUS=['미확인','점검 예정','점검 중','조치 완료'];
+const $=id=>document.getElementById(id);
+const cur=b=>b.scores[state.asOf];
+const prev=b=>b.scores[state.asOf-1];
+const fmtM=v=>v==null?'—':v>=10000?(v/10000).toFixed(1)+'억':Math.round(v).toLocaleString()+'백만';
+function topReason(b){
+  const s=cur(b);const it=s.items.filter(x=>x.pts>0).sort((x,y)=>y.pts-x.pts)[0];
+  return it?`${it.label.split('(')[0]}: ${it.value}`:'특이사항 없음';
+}
+
+/* ---------- 목록 렌더 ---------- */
+const COLS=[
+  {k:'grade',t:'등급'},{k:'total',t:'위험점수'},{k:'name',t:'차주'},{k:'ind',t:'업종'},{k:'loan',t:'대출잔액'},
+  {k:'s3',t:'매출 3m'},{k:'s6',t:'6m'},{k:'s12',t:'12m'},{k:'chg',t:'전월 대비'},{k:'reason',t:'주요 사유'},{k:'act',t:'조치'}
+];
+function val(b,k){
+  const s=cur(b);
+  switch(k){
+    case 'grade':case 'total':return s.total;
+    case 'name':return b.name;case 'ind':return b.ind.n;case 'loan':return b.loan??0;
+    case 's3':return s.m.s3??-9;case 's6':return s.m.s6??-9;case 's12':return s.m.s12??-9;
+    case 'chg':return s.grade-prev(b).grade;
+    case 'reason':return topReason(b);
+    case 'act':return STATUS.indexOf((acts[b.id]||{}).status||'미확인');
+  }
+}
+function visible(){
+  return B.filter(b=>{
+    if(state.grade!==null&&cur(b).grade!==state.grade)return false;
+    if(state.ind&&b.ind.n!==state.ind)return false;
+    if(state.q&&!b.name.includes(state.q.trim()))return false;
+    return true;
+  }).sort((x,y)=>{const a=val(x,state.sort.k),c=val(y,state.sort.k);
+    const r=typeof a==='string'?a.localeCompare(c,'ko'):a-c;return (r||(cur(y).total-cur(x).total))*state.sort.d;});
+}
+function renderCards(){
+  const cnt=[0,0,0,0],loan=[0,0,0,0];let worse=0,gaps=0;
+  B.forEach(b=>{const s=cur(b);cnt[s.grade]++;loan[s.grade]+=b.loan||0;if(s.grade>prev(b).grade)worse++;if(s.gap>0)gaps++;});
+  const c=(k,v,s)=>`<div class="card"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+  $('cards').innerHTML=
+    c('관리 차주',B.length+'곳','대출잔액 '+fmtM(loan.reduce((a,x)=>a+x,0)))+
+    c('위험 등급',`<span class="neg">${cnt[3]}</span>곳`,'대출잔액 '+fmtM(loan[3]))+
+    c('주의 등급',cnt[2]+'곳','대출잔액 '+fmtM(loan[2]))+
+    c('관찰 등급',cnt[1]+'곳','대출잔액 '+fmtM(loan[1]))+
+    c('전월 대비 등급 악화',worse+'곳','기준월 '+monthLabel(state.asOf))+
+    c('데이터 수집 중단',gaps+'곳','연동 해제·지연 차주');
+}
+function renderTable(){
+  $('thead').innerHTML=COLS.map(c=>`<th data-k="${c.k}">${c.t}${state.sort.k===c.k?(state.sort.d>0?' ▲':' ▼'):''}</th>`).join('');
+  $('tbody').innerHTML=visible().map(b=>{
+    const s=cur(b),d=s.grade-prev(b).grade;
+    const col=['var(--g0)','var(--g1)','var(--g2)','var(--g3)'][s.grade];
+    const sv=['s3','s6','s12'].map(k=>{const v=s.m[k];return `<td class="${v==null?'':v<=-.10?'neg':v>=.05?'pos':''}">${pct(v)}</td>`;}).join('');
+    const st=(acts[b.id]||{}).status||'미확인';
+    return `<tr data-id="${b.id}"><td><span class="badge b${s.grade}">${GRADES[s.grade]}</span></td>
+      <td><span class="bar"><i style="width:${s.total}%;background:${col}"></i></span>${s.total}</td>
+      <td><b>${b.name}</b> <span class="muted">${b.id}</span></td><td>${b.ind.n}</td><td>${fmtM(b.loan)}</td>${sv}
+      <td>${d>0?`<span class="up">▲ ${GRADES[prev(b).grade]}→${GRADES[s.grade]}</span>`:d<0?`<span class="down">▼ ${GRADES[prev(b).grade]}→${GRADES[s.grade]}</span>`:'<span class="muted">—</span>'}</td>
+      <td class="reason">${topReason(b)}</td><td>${st}</td></tr>`;
+  }).join('')||'<tr><td colspan="11" class="muted">조건에 맞는 차주가 없습니다.</td></tr>';
+}
+function render(){renderCards();renderTable();$('asofLabel').textContent=monthLabel(state.asOf);}
+
+/* ---------- 상세 ---------- */
+function chart(title,arr,asOf,fmt){
+  const W=300,H=140,L=44,R=8,T=8,Bt=20,x0=12;
+  const vals=[];for(let t=x0;t<=asOf;t++){if(arr[t]!=null)vals.push(arr[t]);if(arr[t-12]!=null)vals.push(arr[t-12]);}
+  if(!vals.length)return `<div class="chart"><h4>${title}</h4><div class="muted">수집된 데이터 없음</div></div>`;
+  const max=Math.max(...vals)*1.1;
+  const xs=t=>L+(t-x0)/(asOf-x0)*(W-L-R), ys=v=>T+(H-T-Bt)*(1-v/max);
+  const path=fn=>{let d='',pen=false;for(let t=x0;t<=asOf;t++){const v=fn(t);if(v==null){pen=false;continue;}d+=(pen?'L':'M')+xs(t).toFixed(1)+' '+ys(v).toFixed(1)+' ';pen=true;}return d;};
+  const li=lastIdx(arr,asOf);
+  let g='';
+  [0,.5,1].forEach(f=>{const v=max*f,y=ys(v);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="var(--border)"/><text x="${L-4}" y="${y+3}" text-anchor="end">${fmt(v)}</text>`;});
+  const xl=[x0,Math.round((x0+asOf)/2),asOf].map((t,i)=>`<text x="${xs(t)}" y="${H-5}" text-anchor="${i===0?'start':i===2?'end':'middle'}">${monthLabel(t)}</text>`).join('');
+  const brk=li<asOf?`<line x1="${xs(li)}" x2="${xs(li)}" y1="${T}" y2="${H-Bt}" stroke="var(--g3)" stroke-dasharray="3 3"/><text x="${xs(li)-3}" y="${T+10}" text-anchor="end" style="fill:var(--g3)">수집 중단</text>`:'';
+  return `<div class="chart"><h4>${title}</h4><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${title} 추이">${g}${xl}
+    <path d="${path(t=>arr[t-12])}" fill="none" stroke="var(--prev)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <path d="${path(t=>arr[t])}" fill="none" stroke="var(--line)" stroke-width="2"/>${brk}</svg></div>`;
+}
+function recs(b,s){
+  const r=[],has=k=>s.items.find(x=>x.key===k&&x.pts>0);
+  if(s.grade===3)r.push('담당 RM 즉시 면담 및 현장 점검, 추가 자료(시산표·거래처 현황) 요청');
+  else if(s.grade===2)r.push('담당 RM 전화 점검, 주요 거래처·재고·자금 상황 확인');
+  else if(s.grade===1)r.push('다음 달 재평가, 추세가 이어지면 등급 상향');
+  else r.push('정기 모니터링 유지');
+  if(has('gap'))r.push('연동 재인증 요청 및 중단 사유 확인(해지·오류·의도적 차단 구분)');
+  if(has('cross'))r.push('제출 결산 매출과 원천자료(세금계산서) 불일치에 대한 소명 요청');
+  if(has('idle'))r.push('설비 가동·인력 감축 여부 확인(매출 하락에 선행하는 신호)');
+  if(has('bal'))r.push('계좌 잔액 감소 원인(운전자금 소진, 단기 차입 상환) 확인');
+  return r;
+}
+function openDetail(id){
+  const b=B.find(x=>x.id===id),s=cur(b),a=state.asOf;
+  const nm={tax:'세금계산서',card:'카드·PG',bal:'계좌 거래',pow:'전력',head:'4대보험'};
+  const conn=Object.keys(nm).map(k=>{
+    if(b.s[k].every(v=>v==null))return `<div class="na">${nm[k]}<br><b>해당 없음</b></div>`;
+    const li=lastIdx(b.s[k],a);
+    return li===a?`<div class="ok">${nm[k]}<br><b>정상 수신</b></div>`:`<div class="bad">${nm[k]}<br><b>중단 (${monthLabel(li)} 이후)</b></div>`;
+  }).join('');
+  const tl=[];for(let t=FIRST;t<=LAST;t++){const g=b.scores[t].grade;tl.push(`<div class="b${g}${t>a?' fut':''}" title="${monthLabel(t)} ${b.scores[t].total}점">${monthLabel(t).slice(2)}<br>${b.scores[t].total}</div>`);}
+  const act=acts[b.id]||{};
+  const unit=v=>v>=10000?(v/10000).toFixed(1)+'억':Math.round(v)+'';
+  const charts=[chart('세금계산서 매출(백만원)',b.s.tax,a,unit),b.ind.card>0?chart('카드·PG 매출(백만원)',b.s.card,a,unit):'',chart('계좌 잔액(백만원)',b.s.bal,a,unit),
+    b.ind.mfg?chart('전력 사용량(kWh)',b.s.pow,a,v=>v>=1000?Math.round(v/1000)+'k':Math.round(v)+''):'',chart('4대보험 인원(명)',b.s.head,a,v=>Math.round(v)+'')].join('');
+  const naive=(b.s.tax[a]!=null&&b.s.tax[a-1])?b.s.tax[a]/b.s.tax[a-1]-1:null;
+  $('dr').innerHTML=`
+    <div class="dh"><div><h2>${b.name} <span class="badge b${s.grade}">${GRADES[s.grade]} ${s.total}점</span></h2>
+      <div class="muted">${b.id} · ${b.ind.n} · 대출잔액 ${fmtM(b.loan)} · 기준월 ${monthLabel(a)}</div></div>
+      <button class="btn" id="close">닫기</button></div>
+    <div class="sec"><h3>데이터 연동 현황</h3><div class="conn">${conn}</div></div>
+    <div class="sec"><h3>동태 변화 추이</h3>
+      <div class="legend"><span></span>당월 <span class="p"></span>전년 동월 (두 선의 간격이 전년 동기 대비 변화)</div>
+      <div class="charts">${charts}</div>
+      <div class="muted" style="margin-top:6px">참고: 전월 대비 매출 변화는 ${pct(naive)}로, 계절성을 보정하지 않아 오탐이 많습니다. EWS는 전년 동기·다중 기간 비교를 사용합니다.</div></div>
+    <div class="sec"><h3>등급 추이(백테스트 관점)</h3><div class="tl">${tl.join('')}</div>
+      <div class="muted" style="margin-top:6px">흐린 칸은 기준월 이후입니다. 기준월 슬라이더를 과거로 옮기면 그 시점에 알 수 있었던 정보만으로 계산됩니다.</div></div>
+    <div class="sec"><h3>지표 현황</h3><table class="mt"><thead><tr><th>지표</th><th>값</th><th>점수</th></tr></thead><tbody>
+      ${s.items.map(x=>`<tr><td>${x.label}</td><td>${x.value}</td><td>${x.max?x.pts+'/'+x.max:'참고'}</td></tr>`).join('')}</tbody></table></div>
+    <div class="sec"><h3>권고 조치</h3><ul class="rec">${recs(b,s).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    <div class="sec"><h3>조치 기록</h3>
+      <div class="row2"><label for="st">상태</label><select id="st">${STATUS.map(x=>`<option>${x}</option>`).join('')}</select></div>
+      <textarea id="memo" placeholder="점검 내용, 면담 결과 등을 기록"></textarea></div>
+    <div class="muted">모의 데이터 시나리오: ${SCN_LABEL[b.sc]}</div>`;
+  $('st').value=act.status||'미확인';$('memo').value=act.memo||'';
+  const upd=()=>{acts[b.id]={status:$('st').value,memo:$('memo').value};saveActs();renderTable();};
+  $('st').onchange=upd;$('memo').oninput=upd;
+  $('close').onclick=closeDetail;
+  $('ov').classList.add('on');$('dr').scrollTop=0;
+}
+function closeDetail(){$('ov').classList.remove('on');}
+
+/* ---------- 이벤트 ---------- */
+(function init(){
+  const r=$('asof');r.min=FIRST;r.max=LAST;r.value=LAST;
+  r.oninput=()=>{state.asOf=+r.value;render();};
+  const chips=$('chips');
+  chips.innerHTML=['전체',...GRADES].map((g,i)=>`<button class="chip${i===0?' on':''}" data-g="${i-1}">${g}</button>`).join('');
+  chips.onclick=e=>{const t=e.target.closest('.chip');if(!t)return;const g=+t.dataset.g;state.grade=g<0?null:g;
+    [...chips.children].forEach(c=>c.classList.toggle('on',c===t));renderTable();};
+  $('ind').innerHTML='<option value="">전체 업종</option>'+INDS.map(x=>`<option>${x.n}</option>`).join('');
+  $('ind').onchange=e=>{state.ind=e.target.value;renderTable();};
+  $('q').oninput=e=>{state.q=e.target.value;renderTable();};
+  $('thead').onclick=e=>{const t=e.target.closest('th');if(!t)return;const k=t.dataset.k;
+    state.sort=state.sort.k===k?{k,d:-state.sort.d}:{k,d:(k==='name'||k==='ind'||k==='reason')?1:-1};renderTable();};
+  $('tbody').onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)openDetail(tr.dataset.id);};
+  $('ov').onclick=e=>{if(e.target.id==='ov')closeDetail();};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
+  $('csv').onclick=()=>{
+    const rows=[['차주ID','차주','업종','대출잔액(백만원)','기준월','등급','위험점수','주요 사유','조치 상태']];
+    visible().forEach(b=>{const s=cur(b);rows.push([b.id,b.name,b.ind.n,b.loan??'',monthLabel(state.asOf),GRADES[s.grade],s.total,topReason(b),(acts[b.id]||{}).status||'미확인']);});
+    const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='ews_'+monthLabel(state.asOf)+'.csv';a.click();
+  };
+  $('reset').onclick=()=>{
+    acts={};saveActs();
+    state.asOf=LAST;state.grade=null;state.ind='';state.q='';state.sort={k:'total',d:-1};
+    r.value=LAST;$('ind').value='';$('q').value='';
+    [...chips.children].forEach((c,i)=>c.classList.toggle('on',i===0));
+    closeDetail();render();
+  };
+  render();
+})();
+</script>
+</body>
+</html>

@@ -134,6 +134,15 @@
       "liveUrl": "https://happylist-ahiy.vercel.app/",
       "prompt": "",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "17",
+      "title": "여신관리 조기경보 솔루션",
+      "author": "전호근",
+      "summary": "기업과 은행간에 수작업으로 실시되고 있는 부분을 실시간으로 관리할 수 있는 방법을 모색",
+      "liveUrl": "",
+      "prompt": "",
+      "thumb": "gallery-thumb.jpg"
     }
   ]
 }
