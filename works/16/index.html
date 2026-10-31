@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>우리의 버킷리스트 10</title>
+<style>
+:root{--bg:#fff7f0;--card:#fff;--ink:#4a3b36;--pink:#ff8fab;--mint:#8fd9c2;--yellow:#ffe08a;--line:#f1dfd2}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Malgun Gothic",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:860px;margin:0 auto;padding-block:24px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{text-align:center;margin:8px 0 4px;font-size:30px}
+.sub{text-align:center;opacity:.7;margin:0 0 20px}
+.names{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.names input{width:120px;text-align:center;border:2px dashed var(--line);border-radius:999px;padding:6px;background:#fff;font:inherit}
+select{border:2px solid var(--line);border-radius:10px;padding:6px;font:inherit;background:#fff}
+.x{border:0;background:transparent;cursor:pointer;opacity:.5;font-size:14px}.x:hover{opacity:1}
+.dform{background:#fff;border:2px solid var(--line);border-radius:18px;padding:14px;margin-bottom:20px;display:flex;flex-direction:column;gap:8px}
+.dform input,.dform textarea{border:2px solid var(--line);border-radius:10px;padding:8px;font:inherit;width:100%}
+.drow{display:flex;gap:8px;flex-wrap:wrap}.drow input{width:auto}
+.dh{display:flex;align-items:center;gap:8px}.dh h3{flex:1;margin:0}.mood{font-size:26px}
+.crow{display:flex;gap:6px;margin-top:8px}.crow input{flex:1;border:2px solid var(--line);border-radius:10px;padding:6px;font:inherit}
+.fcard{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px}
+.fcard h3{margin:0 0 10px}.fcard h3 small{font-weight:normal;font-size:12px;opacity:.6}
+.fcard .big{font-size:28px;font-weight:bold;color:var(--pink);margin:4px 0 8px}.fcard .big small{font-size:14px;color:var(--ink);opacity:.6;font-weight:normal}
+.fcard .bar{margin-bottom:8px}
+.frow{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.frow label{display:flex;flex-direction:column;font-size:12px;gap:3px;flex:1;min-width:130px}
+.frow input{border:2px solid var(--line);border-radius:10px;padding:8px;font:inherit;min-width:0;flex:1}
+.plan{background:var(--bg);border-radius:12px;padding:8px 12px;margin:6px 0;font-size:14px}.plan b{color:#d6457a}
+.ft{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}.ft th,.ft td{border-bottom:1px solid var(--line);padding:6px;text-align:center}
+.brow{display:flex;gap:6px;align-items:center;margin-bottom:6px}.brow input[type=text],.brow input:not([type]){flex:1;min-width:0}
+.brow input{border:2px solid var(--line);border-radius:10px;padding:6px;font:inherit}.brow input[type=number]{width:120px}.brow input[type=checkbox]{accent-color:var(--mint);width:20px;height:20px}
+.fwho{display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
+.tips{padding-left:20px;line-height:1.7;font-size:14px;margin:0}
+body.locked #app>*:not(h1):not(.sub):not(#sync):not(#auth){display:none}
+.pick{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px 0}.pick a{text-decoration:none;display:inline-block}
+.rec{background:var(--bg);border-radius:12px;padding:8px 10px;margin:8px 0}.rec p{margin:4px 0;white-space:pre-wrap}
+.recform{border-top:2px dashed var(--line);margin-top:10px;padding-top:6px}
+dialog{max-height:90vh;overflow:auto}
+.album{margin-bottom:24px}.album h3{margin:0 0 10px}.album h3 small{font-weight:normal;font-size:13px;opacity:.6}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}.agrid figure{margin:0;min-width:0}
+.agrid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;cursor:pointer;border:4px solid var(--card);box-shadow:0 2px 6px #0003}
+.agrid figcaption{font-size:11px;opacity:.7;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sec{text-align:center;margin:34px 0 16px}.sec small{font-size:13px;opacity:.6;font-weight:normal}
+.own{display:block;font-size:11px;margin-top:8px;opacity:.7}
+.own.fr{color:#d6457a}
+.card input.t:placeholder-shown{border-bottom:2px dashed var(--pink)}
+.since{text-align:center;margin-bottom:14px}
+.since input{border:2px dashed var(--line);border-radius:999px;padding:4px 10px;font:inherit;background:#fff}
+.since b{display:block;font-size:22px;color:var(--pink);margin-top:6px}
+.ms{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.ms div{background:#fff;border:2px solid var(--line);border-radius:16px;padding:8px 14px;text-align:center;min-width:130px;font-size:13px}
+.ms div b{display:block;font-size:18px}
+.ms .past{background:#f0fbf6;border-color:var(--mint)}
+.ms .now{background:var(--yellow);border-color:var(--yellow)}
+.bar{height:18px;background:#fff;border:2px solid var(--line);border-radius:999px;overflow:hidden}
+.bar>div{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--yellow));transition:width .5s}
+.pct{text-align:center;margin:8px 0 20px;font-weight:bold}
+.tabs{display:flex;gap:8px;justify-content:center;margin-bottom:18px}
+.tabs button,.tools button,.btn{border:0;border-radius:999px;padding:8px 16px;font:inherit;cursor:pointer;background:#fff;border:2px solid var(--line);color:var(--ink)}
+.tabs button.on{background:var(--pink);border-color:var(--pink);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:14px;position:relative;box-shadow:0 3px 0 var(--line)}
+.card.done{background:#f0fbf6;border-color:var(--mint);box-shadow:0 3px 0 var(--mint)}
+.num{position:absolute;top:-10px;left:-6px;background:var(--yellow);border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-weight:bold;transform:rotate(-8deg)}
+.card input.t{width:100%;border:0;background:transparent;font:inherit;font-weight:bold;font-size:16px;margin:6px 0 8px;padding:2px 0;border-bottom:1px dashed var(--line)}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;font-size:13px}
+.chk{width:22px;height:22px;accent-color:var(--mint);cursor:pointer}
+.thumb{width:100%;height:120px;object-fit:cover;border-radius:10px;margin-top:8px;cursor:pointer}
+.d{font-size:12px;opacity:.7}
+.timeline{display:none}
+.tl{display:flex;gap:14px;margin-bottom:18px;background:#fff;border:2px solid var(--line);border-radius:18px;padding:14px}
+.tlp{display:flex;flex-wrap:wrap;gap:10px;width:200px;flex:none;align-content:flex-start}
+.tl img{width:90px;height:90px;object-fit:cover;border:5px solid #fff;box-shadow:0 2px 8px #0003;transform:rotate(-2deg)}
+.tlp img:first-child{width:190px;height:190px;border-width:8px}
+.strip{display:flex;gap:6px;margin-top:8px;align-items:center;flex-wrap:wrap}
+.strip img{width:56px;height:56px;object-fit:cover;border-radius:10px;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px #0003}
+.more{background:var(--yellow);border-radius:10px;width:56px;height:56px;display:grid;place-items:center;font-weight:bold;cursor:pointer}
+.addph{width:100%;border:2px dashed var(--line);background:transparent;border-radius:12px;padding:12px;cursor:pointer;font:inherit;color:var(--ink);opacity:.7}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:8px}
+.gal div{position:relative}.gal img{width:100%;height:90px;object-fit:cover;border-radius:10px}
+.gal button{position:absolute;top:2px;right:2px;border:0;border-radius:50%;width:22px;height:22px;background:#000a;color:#fff;cursor:pointer;line-height:1}
+.tl h3{margin:0 0 4px}.tl p{white-space:pre-wrap;margin:6px 0}
+.cm{font-size:13px;background:var(--bg);border-radius:10px;padding:6px 10px;margin-top:6px}
+.empty{text-align:center;opacity:.6;padding:40px}
+.tools{display:flex;gap:8px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+dialog{border:0;border-radius:20px;padding:20px;max-width:440px;width:92%;box-shadow:0 10px 40px #0005}
+dialog::backdrop{background:#0006}
+dialog label{display:block;font-size:13px;margin:10px 0 3px}
+dialog input,dialog textarea{width:100%;border:2px solid var(--line);border-radius:10px;padding:8px;font:inherit}
+dialog .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.btn.p{background:var(--pink);color:#fff;border-color:var(--pink)}
+.pv{max-width:100%;max-height:160px;border-radius:10px;margin-top:6px}
+@media(max-width:560px){.tl{flex-direction:column}.tlp{width:100%}}
+canvas#cf{position:fixed;inset:0;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="wrap" style="max-width:860px;margin:0 auto" id="picker" hidden></div>
+<div class="wrap" id="app">
+  <h1>💌 우리의 버킷리스트 10</h1>
+  <p class="sub">같이 해보고 싶은 10가지, 하나씩 지워가며 추억 쌓기<span id="spn"></span></p>
+  <div class="names"><input id="n1" placeholder="나"><span>♥</span><input id="n2" placeholder="친구"></div>
+  <div id="sync" class="d" style="text-align:center;margin-bottom:12px"></div>
+  <div id="auth" hidden style="text-align:center;margin-bottom:14px;font-size:13px"></div>
+  <div class="since">시작한 날 <input type="date" id="start"> <b id="dday"></b></div>
+  <div class="ms" id="ms"></div>
+  <div class="bar"><div id="fill"></div></div>
+  <div class="pct" id="pct"></div>
+  <div id="fchip" class="pct" style="cursor:pointer;margin-top:0" title="여행통장 보기"></div>
+  <div class="tabs"><button id="t1" class="on">체크리스트</button><button id="t2">추억 타임라인</button><button id="t3">📔 다이어리</button><button id="t4">💰 여행통장</button></div>
+  <div id="lists">
+    <div class="grid" id="grid"></div>
+    <h2 class="sec">✈️ 여행 활동 <small>(1~5 나 / 6~10 친구)</small></h2>
+    <div class="grid" id="tgrid"></div>
+  </div>
+  <div class="timeline" id="tl"></div>
+  <div id="diary" style="display:none">
+    <div class="dform">
+      <div class="drow"><input type="date" id="ddt"><select id="dwho"></select>
+        <select id="dmood"><option>😊</option><option>🥰</option><option>😆</option><option>😢</option><option>😴</option><option>😡</option></select></div>
+      <input id="dtitle" placeholder="제목 (예: 오늘 같이 먹은 떡볶이)">
+      <textarea id="dbody" rows="5" placeholder="오늘 하루는 어땠어? 우리만의 다이어리 ✍️"></textarea>
+      <button class="btn p" id="dadd">📝 일기 저장</button>
+    </div>
+    <div id="dlist"></div>
+  </div>
+  <div id="fund" style="display:none">
+    <div class="fcard" id="fsum"></div>
+    <div class="fcard"><h3>🎯 저축 계획</h3>
+      <div class="frow">
+        <label>목표 날짜<input type="date" id="ftarget"></label>
+        <label>예비비(%)<input type="number" id="fbuf" min="0" max="100"></label>
+        <label>1인 월 납입액(원)<input type="number" id="fmon" min="0" step="1000" placeholder="비우면 추천액"></label>
+      </div>
+      <div id="fplan"></div>
+    </div>
+    <div class="fcard"><h3>🧾 여행 예산 <small>(1인 기준 · 대략적인 예상치, 직접 수정하세요)</small></h3><div id="fbud"></div></div>
+    <div class="fcard"><h3>💵 입금 기록</h3>
+      <div class="frow"><input type="date" id="fdate"><select id="fwho"></select><input type="number" id="famt" placeholder="금액(원)" step="1000"><input id="fmemo" placeholder="메모 (예: 11월분)"><button class="btn p" id="fadd">입금 기록</button></div>
+      <div id="fnote" class="d" style="margin:4px 0"></div>
+      <div id="ftot" class="plan"></div>
+      <div id="fdep"></div>
+    </div>
+    <div class="fcard"><h3>💡 우리만의 모으기 방법</h3>
+      <ol class="tips">
+        <li><b>공용 통장 1개</b>를 정해요. 둘 중 한 명 명의나 모임통장 모두 괜찮고, 입금하면 여기에 바로 기록해요.</li>
+        <li><b>매달 같은 날 자동이체</b>를 걸어요. 용돈·월급이 들어온 다음 날이 가장 안 빠져요.</li>
+        <li><b>같은 금액을 반반</b> 넣어요. 위 "저축 계획"에서 목표일에 맞는 금액을 정하면 돼요.</li>
+        <li>이번 달에 못 넣으면 <b>다음 달에 두 배로 넣지 말고</b> 목표일을 한 달 미뤄요. 부담이 쌓이지 않아요.</li>
+        <li>활동은 <b>비용이 작은 것부터</b> (패러글라이딩, 청도, 다이빙) 하고, 가장 큰 일본투어는 마지막으로 잡아요.</li>
+        <li>일본투어는 <b>출발 3~4개월 전</b>에 항공·숙소 가격을 확인하고 예산을 실제 가격으로 고쳐요.</li>
+        <li>10% 예비비로 환전 차이, 식비, 기념품에 대비해요.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="tools">
+    <button id="exp">📤 데이터 복사 (친구에게 보내기)</button>
+    <button id="pst">📋 붙여넣어 불러오기</button>
+    <button id="imp">📥 파일로 불러오기</button>
+    <input type="file" id="impf" accept=".json" hidden>
+    <div id="xbox" hidden style="flex-basis:100%"><textarea id="xta" rows="4" style="width:100%;border:2px solid var(--line);border-radius:10px;padding:8px;font:inherit;background:var(--card);color:var(--ink)"></textarea><button class="btn p" id="xok" style="margin-top:6px">적용</button></div>
+    <div id="xmsg" class="d" style="flex-basis:100%;text-align:center"></div>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <h2 id="dt" style="margin-top:0"></h2>
+  <div id="reclist"></div>
+  <div class="recform">
+    <div id="rhead" class="d" style="font-weight:bold"></div>
+    <label>한 줄 후기 / 추억</label><textarea id="dtext" rows="3" placeholder="그날 어땠어?"></textarea>
+    <label>날짜</label><input type="date" id="ddate">
+    <label>시간</label><input type="time" id="dtime">
+    <label>장소</label><input id="dplace" placeholder="어디서?">
+    <label>관련 사진 (여러 장 가능)</label><input type="file" id="dphoto" accept="image/*" multiple><div class="gal" id="gal"></div>
+    <div class="acts" style="justify-content:flex-start"><button class="btn p" id="rsave">기록 추가</button><button class="btn" id="rcancel" hidden>수정 취소</button></div>
+  </div>
+  <div id="cmbox" style="margin-top:12px"></div>
+  <label>💬 댓글</label>
+  <div style="display:flex;gap:6px"><select id="cwho" style="width:auto"></select><input id="cin" placeholder="댓글 남기기"><button class="btn" id="cadd">등록</button></div>
+  <div class="acts"><button class="btn p" id="dcancel">닫기</button></div>
+</dialog>
+<dialog id="lb" style="max-width:92vw;padding:8px;background:transparent;box-shadow:none"><img id="lbimg" style="max-width:100%;max-height:85vh;border-radius:12px;display:block;margin:auto" onclick="document.getElementById('lb').close()"></dialog>
+<canvas id="cf"></canvas>
+
+<script>
+const SPACES=["friend1","friend2","friend3"];   /* 공간 이름: 바꾸면 supabase-setup.sql 도 같이 바꿔요 */
+const SPACE=(new URLSearchParams(location.search).get("space")||"").trim();
+const KEY="bucket10"+(SPACE?"-"+SPACE:"");
+const defaults=["같이 여행 가기","맛집 투어 하기","놀이공원 가기","커플템(우정템) 맞추기","영화관 가서 영화 보기","인생네컷 찍기","캠핑/피크닉 가기","같이 요리해 먹기","콘서트/전시 보러 가기","1박 2일 놀러 가기"];
+const TR=["패러글라이딩","다이빙","청도투어","기차투어","일본투어","","","","",""];
+const mk=(id,t)=>({id,title:t,done:false,records:[],comments:[]});
+const MAXREC=10;
+const rid=()=>Date.now()+Math.floor(Math.random()*1000);
+const phs=it=>it.records.flatMap(r=>r.photos||[]);
+function norm(it){if(!it.records){it.records=[];const L=it.photos||(it.photo?[it.photo]:[]);
+    if(it.text||it.date||it.place||L.length)it.records.push({id:rid(),date:it.date||"",time:it.time||"",place:it.place||"",text:it.text||"",photos:L})}
+  ["text","date","time","place","photos","photo"].forEach(k=>delete it[k])}
+let S={names:["",""],items:defaults.map((t,i)=>mk(i,t))};
+const PH={};
+if(!S.travel)S.travel=TR.map((t,i)=>mk(100+i,t));
+if(!S.diary)S.diary=[];
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const plusMonths=n=>{const d=new Date();d.setMonth(d.getMonth()+n);return ymd(d)};
+const FB=[["패러글라이딩",120000],["다이빙",150000],["청도투어",100000],["기차투어",150000],["일본투어",800000]];
+const mkFund=()=>({buffer:10,target:plusMonths(12),monthly:0,budget:FB.map(([name,cost],i)=>({id:i+1,name,cost,on:true})),deposits:[]});
+if(!S.fund)S.fund=mkFund();
+const nm=i=>S.names[i]||(i==1?"친구":"나");
+function opts(sel){const v=sel.value;sel.innerHTML=`<option value="0">${esc(nm(0))}</option><option value="1">${esc(nm(1))}</option>`;sel.value=v||S.last||"0"}
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const utc=s=>{const [y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d)};
+const dayN=s=>s&&S.start?Math.floor((utc(s)-utc(S.start))/864e5)+1:0;
+const dayTxt=s=>{const n=dayN(s);return n>=1?`💗 ${n}일째`:n<1&&s&&S.start?"시작 전":""};
+if(!S.start)S.start=today();
+const pid=()=>"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function fixPhotos(d){[...d.items,...d.travel].forEach(it=>{norm(it);
+  it.records.forEach(r=>{r.photos=(r.photos||[]).map(p=>{if(typeof p==="string"&&p.startsWith("data:")){const id=pid();PH[id]=p;return id}return p})})})}
+fixPhotos(S);
+const $=id=>document.getElementById(id);
+const msg=t=>{const m=$("xmsg");if(m)m.textContent=t};
+/* ---- 저장: 공유 저장소(db)가 있으면 실시간 공유, 없으면 이 브라우저에만 저장 ---- */
+const SUPA_URL="",SUPA_KEY="";   /* 배포 전에 Supabase 프로젝트 값 입력 (DEPLOY.md 참고) */
+let supaMode=false,authUser=null,isEditor=false,sbc=null;
+let db=null,ready=false,readOnly=false,synced={},stimer=null,slowT=null,busy=false,again=false;
+const cj=o=>JSON.stringify(o,(k,v)=>v&&typeof v==="object"&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,x)=>(a[x]=v[x],a),{}):v);
+const clean=o=>JSON.parse(JSON.stringify(o));
+function setSync(k){const m={live:"🟢 실시간 공유 중",wait:"🟡 공유 저장소에 연결 중…",slow:"🟡 연결이 느려요. 잠시만 기다려 주세요",local:"⚪ 이 브라우저에만 저장돼요",ro:supaMode?(authUser?"🔒 이 계정은 이 공간에 허용되지 않았어요. 다른 이메일로 로그인해 보세요":"🔒 이 공간은 허용된 사람만 볼 수 있어요. 아래에서 로그인해 주세요"):"🔒 읽기 전용이에요. 공유 설정에서 편집 권한(Contributor 이상)을 받아야 해요",err:"🔴 저장에 실패했어요. 잠시 뒤 다시 해 주세요"};const e=$("sync");if(e)e.textContent=m[k]||""}
+function persistLocal(){try{const used=new Set([...S.items,...S.travel].flatMap(phs)),P2={};used.forEach(i=>{if(PH[i])P2[i]=PH[i]});
+  localStorage.setItem(KEY,JSON.stringify({S,PH:P2}))}catch(e){msg("저장 공간이 부족해요. 사진을 줄이거나 데이터를 복사해 두세요.")}}
+function loadLocal(){try{const d=JSON.parse(localStorage.getItem(KEY));if(!d)return;const s=d.S||d;if(!s.items)return;if(d.PH)Object.assign(PH,d.PH);
+  if(!s.travel)s.travel=TR.map((t,i)=>mk(100+i,t));if(!s.diary)s.diary=[];if(!s.fund)s.fund=mkFund();if(!s.start)s.start=today();
+  S=s;fixPhotos(S)}catch(e){}}
+function save(){if(!db){persistLocal();return}if(readOnly){msg("🔒 보기 전용이라 저장되지 않아요.");return}if(!ready){msg("연결 중이에요. 잠시 뒤에 다시 해 주세요.");return}clearTimeout(stimer);stimer=setTimeout(flush,500)}
+function toDocs(){const f=S.fund,d={};
+  d["app/meta"]={names:S.names,start:S.start,buffer:f.buffer,target:f.target,monthly:f.monthly,budget:f.budget};
+  [...S.items,...S.travel].forEach(it=>d["items/"+it.id]=it);
+  S.diary.forEach(e=>d["diary/"+e.id]=e);
+  f.deposits.forEach(x=>d["deposits/"+x.id]=x);
+  return d}
+async function flush(){
+  if(busy){again=true;return}busy=true;
+  try{
+    const docs=toDocs(),ops=[];
+    for(const p in docs){const j=cj(docs[p]);if(synced[p]!==j)ops.push([p,j,docs[p]])}
+    for(const p of Object.keys(synced)){if(!(p in docs)&&(p.startsWith("diary/")||p.startsWith("deposits/")))ops.push([p,null])}
+    new Set([...S.items,...S.travel].flatMap(phs)).forEach(id=>{if(PH[id]&&!synced["photos/"+id])ops.push(["photos/"+id,"ph",{d:PH[id]}])});
+    for(const [p,j,o] of ops){
+      const ref=db.doc(p);
+      if(j===null){await ref.delete();delete synced[p]}
+      else{await ref.set(clean(o));synced[p]=j}
+    }
+    setSync("live")
+  }catch(e){setSync("err")}
+  busy=false;if(again){again=false;flush()}
+}
+let rtimer=null;
+function softRender(){clearTimeout(rtimer);const a=document.activeElement;
+  if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.id!=="xta"){rtimer=setTimeout(softRender,1500);return}render()}
+function applyDoc(p,local,remote,assign){const rj=cj(remote);if(synced[p]===rj)return false;
+  if(synced[p]!==undefined&&cj(local)!==synced[p])return false;assign(remote);synced[p]=rj;return true}
+function applyMeta(r){if(r.names)S.names=r.names;if(r.start)S.start=r.start;const f=S.fund;["buffer","target","monthly","budget"].forEach(k=>{if(r[k]!==undefined)f[k]=r[k]})}
+function onItems(snap){let ch=false;snap.docs.forEach(d=>{const it=[...S.items,...S.travel].find(x=>x.id==d.id);if(!it)return;
+  ch=applyDoc("items/"+d.id,it,clean(d.data()),x=>{Object.keys(it).forEach(k=>delete it[k]);Object.assign(it,x);norm(it)})||ch});if(ch)softRender()}
+function onList(prefix,get,snap){const arr=get();let ch=false;const seen=new Set();
+  snap.docs.forEach(d=>{const p=prefix+"/"+d.id;seen.add(p);const r=clean(d.data()),i=arr.findIndex(x=>x.id==d.id);
+    if(i<0){if(synced[p]===undefined){arr.push(r);synced[p]=cj(r);ch=true}}
+    else ch=applyDoc(p,arr[i],r,x=>{arr[i]=x})||ch});
+  for(const p of Object.keys(synced)){if(!p.startsWith(prefix+"/")||seen.has(p))continue;
+    const id=p.split("/")[1],i=arr.findIndex(x=>x.id==id);
+    if(i>=0&&cj(arr[i])===synced[p]){arr.splice(i,1);delete synced[p];ch=true}else if(i<0)delete synced[p]}
+  if(ch)softRender()}
+const got=new Set();
+function mark(n,snap){if(!snap.metadata.fromCache)got.add(n);
+  if(!ready&&got.size>=4){ready=true;clearTimeout(slowT);setSync(readOnly?"ro":"live");if(!readOnly)flush()}}
+function showPicker(){
+  $("app").hidden=true;
+  const p=$("picker");p.hidden=false;
+  p.innerHTML=`<h1>💌 우리의 버킷리스트</h1><p class="sub">들어갈 공간을 골라 주세요</p><div class="pick">${SPACES.map(s=>`<a class="btn p" href="?space=${encodeURIComponent(s)}">${esc(s)}</a>`).join("")}</div><p class="d" style="text-align:center">각 공간은 허용된 사람만 볼 수 있어요.</p>`;
+}
+function drawAuth(){const a=$("auth");if(!a)return;a.hidden=false;
+  if(authUser&&isEditor)a.innerHTML=`✏️ ${esc(authUser.email||"")} 로그인됨 <button class="btn" id="alo">로그아웃</button>`;
+  else if(authUser)a.innerHTML=`${esc(authUser.email||"")} 은(는) 편집이 허용되지 않은 이메일이에요. <button class="btn" id="alo">로그아웃</button>`;
+  else a.innerHTML=`<input id="aem" type="email" placeholder="허용된 이메일 주소" style="border:2px solid var(--line);border-radius:999px;padding:6px 12px;font:inherit;background:var(--card);color:var(--ink)"> <button class="btn p" id="alg">로그인 링크 받기</button><div class="d" id="amsg" style="margin-top:4px"></div>`;
+  const lo=$("alo");if(lo)lo.onclick=async()=>{await sbc.auth.signOut();location.reload()};
+  const lg=$("alg");if(lg)lg.onclick=async()=>{const email=$("aem").value.trim();if(!email)return;
+    const r=await sbc.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname+location.search}});
+    $("amsg").textContent=r.error?"메일을 보내지 못했어요. 이메일을 확인해 주세요.":"메일로 보낸 링크를 눌러 주세요. 링크를 누르면 이 사이트로 돌아와요."}}
+async function makeSupa(){
+  await new Promise((ok,no)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js";s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+  const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);sbc=sb;supaMode=true;
+  const ses=await sb.auth.getSession();authUser=ses.data.session?ses.data.session.user:null;
+  if(authUser){const r=await sb.rpc("is_editor",{sp:SPACE});isEditor=r.data===true}
+  if(!isEditor)document.body.classList.add("locked");
+  $("spn").textContent=" · 공간: "+SPACE;
+  readOnly=!isEditor;drawAuth();
+  const cache={},fns={},loading={};
+  const emit=(c,only)=>{const m=cache[c];if(!m)return;const snap={docs:[...m].map(([id,d])=>({id,data:()=>d,exists:true})),metadata:{fromCache:false}};(only?[only]:[...(fns[c]||[])]).forEach(f=>f(snap))};
+  const load=async c=>{const r=await sb.from("docs").select("path,data").like("path",SPACE+"/"+c+"/%");if(r.error)throw r.error;cache[c]=new Map(r.data.map(x=>[x.path.slice(SPACE.length+c.length+2),x.data]));emit(c)};
+  const sub=(c,f,err)=>{(fns[c]=fns[c]||new Set()).add(f);
+    if(cache[c])emit(c,f);else if(!loading[c]){loading[c]=true;load(c).catch(e=>{loading[c]=false;err&&err({code:"unavailable"})})}
+    return()=>fns[c].delete(f)};
+  sb.channel("docs").on("postgres_changes",{event:"*",schema:"public",table:"docs"},p=>{
+    const row=p.eventType==="DELETE"?p.old:p.new;if(!row||!row.path)return;
+    if(!row.path.startsWith(SPACE+"/"))return;const rp=row.path.slice(SPACE.length+1);
+    const i=rp.indexOf("/"),c=rp.slice(0,i),id=rp.slice(i+1);if(!cache[c])return;
+    if(p.eventType==="DELETE")cache[c].delete(id);else cache[c].set(id,p.new.data);emit(c)}).subscribe();
+  setInterval(()=>Object.keys(cache).forEach(c=>{if(c!=="photos")load(c).catch(()=>{})}),30000);
+  return{
+    doc:path=>{const i=path.indexOf("/"),c=path.slice(0,i),id=path.slice(i+1);return{
+      set:async v=>{const r=await sb.from("docs").upsert({path:SPACE+"/"+path,data:v,updated_at:new Date().toISOString()});if(r.error)throw r.error},
+      delete:async()=>{const r=await sb.from("docs").delete().eq("path",SPACE+"/"+path);if(r.error)throw r.error},
+      onSnapshot:(n,err)=>sub(c,snap=>{const d=snap.docs.find(x=>x.id===id);n({exists:!!d,data:()=>d?d.data():undefined,metadata:snap.metadata})},err)}},
+    collection:c=>({onSnapshot:(n,err)=>sub(c,n,err)})
+  }}
+async function startDb(){
+  let c=null;try{c=await window.claude?.use("db")}catch(e){}
+  if(!c&&SUPA_URL&&SUPA_KEY){
+    if(!SPACES.includes(SPACE)){showPicker();return}
+    try{c=await makeSupa()}catch(e){c=null;supaMode=false}}
+  if(!c){loadLocal();setSync("local");render();return}
+  db=c;setSync(supaMode&&readOnly?"ro":"wait");
+  try{const u=await window.claude.use("user");if(u&&u.can&&u.can("data.write")===false)readOnly=true}catch(e){}
+  slowT=setTimeout(()=>{if(!ready)setSync(readOnly?"ro":"slow")},10000);
+  const er=e=>{setSync("err")};
+  db.doc("app/meta").onSnapshot(s=>{if(s.exists&&applyDoc("app/meta",toDocs()["app/meta"],clean(s.data()),applyMeta))softRender();mark("meta",s)},er);
+  db.collection("items").onSnapshot(s=>{onItems(s);mark("items",s)},er);
+  db.collection("diary").onSnapshot(s=>{onList("diary",()=>S.diary,s);mark("diary",s)},er);
+  db.collection("deposits").onSnapshot(s=>{onList("deposits",()=>S.fund.deposits,s);mark("deposits",s)},er);
+  db.collection("photos").onSnapshot(s=>{let ch=false;s.docs.forEach(d=>{const v=d.data().d;if(PH[d.id]!==v){PH[d.id]=v;ch=true}synced["photos/"+d.id]="ph"});if(ch)softRender()},er);
+}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let cur=null,photos=[];
+function album(){
+  const all=[...S.items,...S.travel].flatMap(it=>it.records.flatMap(r=>(r.photos||[]).map(id=>({id,t:it.title||"제목 없음",d:r.date||""})))).filter(x=>PH[x.id]);
+  if(!all.length)return `<div class="album"><h3>📷 사진 보관함</h3><div class="empty" style="padding:14px">체크리스트 카드에서 사진을 등록하면 여기에 모여요.</div></div>`;
+  return `<div class="album"><h3>📷 사진 보관함 <small>${all.length}장</small></h3><div class="agrid">${all.map(x=>`<figure><img src="${PH[x.id]}" data-z="1"><figcaption>${esc(x.t)}${x.d?" · "+x.d:""}</figcaption></figure>`).join("")}</div></div>`}
+function drawGal(){$("gal").innerHTML=photos.map((p,i)=>`<div><img src="${PH[p]||""}" data-z="1"><button data-del="${i}" title="삭제">×</button></div>`).join("")}
+
+function render(){
+  $("n1").value=S.names[0];$("n2").value=S.names[1];
+  $("start").value=S.start;
+  const dn0=dayN(today());$("dday").textContent=dn0>=1?`함께한 지 ${dn0}일째`:`D-${1-dn0}`;
+  $("ms").innerHTML=[100,500,1000].map(n=>{
+    const t=new Date(utc(S.start)+(n-1)*864e5),ds=t.getUTCFullYear()+"-"+String(t.getUTCMonth()+1).padStart(2,"0")+"-"+String(t.getUTCDate()).padStart(2,"0");
+    const left=n-dn0,cls=left<0?"past":left==0?"now":"";
+    return `<div class="${cls}">🎉 ${n}일<b>${left<0?"달성! ✅":left==0?"오늘이에요! 🎂":"D-"+left}</b>${ds}</div>`}).join("");
+  const done=S.items.filter(i=>i.done).length;
+  $("fill").style.width=done*10+"%";
+  $("pct").textContent=`${done} / 10 완료 ${done==10?"🎉":""}`;
+  const card=(it,k,tr)=>`<div class="card ${it.done?"done":""}">
+    <div class="num">${k+1}</div>
+    ${tr?`<span class="own ${k>=5?"fr":""}">${k>=5?"👫 "+(S.names[1]||"친구")+"의 여행 활동":"🙋 "+(S.names[0]||"나")+"의 여행 활동"}</span>`:""}
+    <input class="t" value="${esc(it.title)}" data-id="${it.id}" placeholder="${tr&&k>=5?"친구가 적어주세요 ✏️":"하고 싶은 일"}">
+    <div class="row"><label><input type="checkbox" class="chk" data-c="${it.id}" ${it.done?"checked":""}> ${it.done?"완료!":"아직"}</label>
+    <button class="btn" data-m="${it.id}" style="padding:4px 12px">기록 ${it.records.length}/${MAXREC}</button></div>
+    ${it.comments.length?`<div class="d" style="margin-top:6px">💬 댓글 ${it.comments.length} · ${esc(it.comments[it.comments.length-1].who)}: ${esc(it.comments[it.comments.length-1].msg.slice(0,18))}</div>`:""}
+    <div class="strip">${phs(it).slice(0,3).map(p=>`<img src="${PH[p]||""}" data-z="1" data-m="${it.id}">`).join("")}
+    ${phs(it).length>3?`<span class="more" data-m="${it.id}">+${phs(it).length-3}</span>`:""}
+    ${phs(it).length?"":`<button class="addph" data-m="${it.id}">📷 관련 사진 추가</button>`}</div>
+    ${(()=>{const r=[...it.records].sort((a,b)=>(a.date||"").localeCompare(b.date||"")||a.id-b.id).pop();
+      return it.records.length?`<div class="d" style="margin-top:6px">📝 기록 ${it.records.length}/${MAXREC}${r&&r.date?` · 최근 📅 ${r.date} ${r.time||""} · ${dayTxt(r.date)}${r.place?" · 📍"+esc(r.place):""}`:""}</div>`:""})()}</div>`;
+  $("grid").innerHTML=S.items.map((it,k)=>card(it,k,false)).join("");
+  $("tgrid").innerHTML=S.travel.map((it,k)=>card(it,k,true)).join("");
+  const ents=[];[...S.items,...S.travel].forEach(it=>{if(it.records.length)it.records.forEach(r=>ents.push({it,r}));else if(it.done)ents.push({it,r:null})});
+  ents.sort((a,b)=>((a.r&&a.r.date)||"9").localeCompare((b.r&&b.r.date)||"9")||((a.r&&a.r.time)||"").localeCompare((b.r&&b.r.time)||""));
+  $("tl").innerHTML=album()+(ents.length?ents.map(({it,r})=>`<div class="tl">${r&&r.photos&&r.photos.length?`<div class="tlp">${r.photos.map(p=>`<img src="${PH[p]||""}" data-z="1">`).join("")}</div>`:""}<div><h3>${esc(it.title||"제목 없음")}</h3>
+    <div class="d">📅 ${r&&r.date?r.date+" "+(r.time||"")+" · "+dayTxt(r.date):"날짜 미정"} ${r&&r.place?"· 📍"+esc(r.place):""}</div><p>${esc(r?r.text:"")}</p></div></div>`).join(""):`<div class="empty">아직 기록이 없어요. 카드에서 첫 번째 추억을 기록해 보세요 🌱</div>`);
+  renderDiary();renderFund();
+}
+const find=id=>[...S.items,...S.travel].find(i=>i.id==id);
+
+let editId=null;
+function openM(id){
+  cur=find(id);
+  $("dt").textContent=cur.title||"(아직 비어 있어요)";
+  resetForm();drawRecs();
+  opts($("cwho"));
+  drawCm();$("dlg").showModal();
+}
+function resetForm(rec){
+  editId=rec?rec.id:null;photos=rec?[...(rec.photos||[])]:[];
+  $("dtext").value=rec?rec.text:"";$("ddate").value=(rec&&rec.date)||today();
+  $("dtime").value=rec?(rec.time||""):new Date().toTimeString().slice(0,5);$("dplace").value=rec?(rec.place||""):"";
+  $("dphoto").value="";drawGal();
+  const full=!rec&&cur.records.length>=MAXREC;
+  $("rhead").textContent=rec?"✏️ 기록 수정 중":full?"기록은 10개까지 추가할 수 있어요. 기존 기록을 수정하거나 지워 주세요.":`➕ 새 기록 (${cur.records.length}/${MAXREC})`;
+  $("rsave").textContent=rec?"수정 저장":"기록 추가";$("rsave").disabled=full;$("rcancel").hidden=!rec;
+}
+function drawRecs(){
+  $("reclist").innerHTML=cur.records.length?cur.records.map((r,i)=>`<div class="rec"><div class="d">#${i+1} · 📅 ${r.date||"날짜 없음"} ${r.time||""} ${r.place?"· 📍"+esc(r.place):""}</div><p>${esc(r.text)}</p>${(r.photos||[]).length?`<div class="strip">${r.photos.map(p=>`<img src="${PH[p]||""}" data-z="1">`).join("")}</div>`:""}<div><button class="x" data-redit="${r.id}">✏️ 수정</button> <button class="x" data-rdel="${r.id}">🗑 삭제</button></div></div>`).join(""):`<div class="d" style="margin:8px 0">아직 기록이 없어요. 아래에서 첫 기록을 추가해 보세요.</div>`;
+}
+$("reclist").addEventListener("click",e=>{const d=e.target.dataset;
+  if(d.redit){resetForm(cur.records.find(r=>r.id==d.redit));$("dtext").focus()}
+  if(d.rdel){if(d.sure!=="1"){e.target.dataset.sure="1";e.target.textContent="정말 삭제?";return}
+    cur.records=cur.records.filter(r=>r.id!=d.rdel);save();drawRecs();resetForm();render()}});
+function drawCm(){$("cmbox").innerHTML=cur.comments.map((c,i)=>`<div class="cm"><b>${esc(c.who)}</b> ${esc(c.msg)} <button class="x" data-cdel="${i}" title="삭제">×</button></div>`).join("")}
+$("cmbox").addEventListener("click",e=>{if(e.target.dataset.cdel!==undefined){cur.comments.splice(e.target.dataset.cdel,1);drawCm();save()}});
+function renderDiary(){
+  ["cwho","dwho"].forEach(i=>opts($(i)));
+  if(!$("ddt").value)$("ddt").value=today();
+  const L=[...S.diary].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  $("dlist").innerHTML=L.length?L.map(e=>`<div class="tl" style="flex-direction:column"><div class="dh"><span class="mood">${e.mood}</span><h3>${esc(e.title||"제목 없음")}</h3><button class="x" data-ddel="${e.id}" title="삭제">🗑</button></div>
+    <div class="d">📅 ${e.date} · ${dayTxt(e.date)} · ✍️ ${esc(nm(e.who))}</div><p>${esc(e.text)}</p>
+    ${e.comments.map((c,i)=>`<div class="cm"><b>${esc(c.who)}</b> ${esc(c.msg)} <button class="x" data-dcdel="${e.id}:${i}" title="삭제">×</button></div>`).join("")}
+    <div class="crow"><select id="dcw-${e.id}"></select><input id="dci-${e.id}" placeholder="💬 댓글 남기기"><button class="btn" data-dc="${e.id}">등록</button></div></div>`).join(""):`<div class="empty">${supaMode&&!isEditor?"🔒 일기는 로그인한 사람만 볼 수 있어요":"아직 일기가 없어요. 오늘의 첫 일기를 써볼까요? 📔"}</div>`;
+  L.forEach(e=>opts($("dcw-"+e.id)));
+}
+$("dadd").onclick=()=>{const t=$("dbody").value.trim();if(!t)return;
+  S.diary.push({id:Date.now(),date:$("ddt").value||today(),who:+$("dwho").value,mood:$("dmood").value,title:$("dtitle").value.trim(),text:t,comments:[]});
+  $("dbody").value="";$("dtitle").value="";save();render()};
+$("dlist").addEventListener("click",e=>{const d=e.target.dataset;
+  if(d.ddel){if(e.target.dataset.sure!=="1"){e.target.dataset.sure="1";e.target.textContent="정말 삭제?";return}S.diary=S.diary.filter(x=>x.id!=d.ddel);save();render()}
+  if(d.dc){const m=$("dci-"+d.dc).value.trim();if(!m)return;S.diary.find(x=>x.id==d.dc).comments.push({who:nm(+$("dcw-"+d.dc).value),msg:m});save();render()}
+  if(d.dcdel){const [id,i]=d.dcdel.split(":");S.diary.find(x=>x.id==id).comments.splice(i,1);save();render()}});
+document.addEventListener("change",e=>{if(/^(cwho|dwho|dcw-)/.test(e.target.id||"")){S.last=e.target.value;save()}});
+
+const won=n=>Math.round(n).toLocaleString("ko-KR")+"원";
+function renderFund(){
+  const f=S.fund;opts($("fwho"));
+  if(!f.target)f.target=plusMonths(12);
+  $("ftarget").value=f.target;$("fbuf").value=f.buffer;$("fmon").value=f.monthly||"";
+  if(!$("fdate").value)$("fdate").value=ymd(new Date());
+  const base=f.budget.filter(b=>b.on).reduce((a,b)=>a+(+b.cost||0),0)*2;
+  const goal=Math.round(base*(1+f.buffer/100));
+  const amt=d=>Number(d.amt)||0;
+  const saved=f.deposits.reduce((a,d)=>a+amt(d),0);
+  const cum={};let run=0;[...f.deposits].sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id).forEach(d=>{run+=amt(d);cum[d.id]=run});
+  const left=Math.max(0,goal-saved);
+  const months=Math.max(1,Math.ceil((new Date(f.target+"T00:00:00")-new Date())/(30.44*864e5)));
+  const up=n=>Math.ceil(n/1000)*1000;
+  const rec=up(left/months/2);
+  const mon=f.monthly>0?f.monthly:rec;
+  const need=mon>0?Math.ceil(left/(mon*2)):0;
+  const eta=left==0?"🎉 목표 달성!":mon>0?`${plusMonths(need)} 쯤 완료 (약 ${need}개월)`:"-";
+  const per=[0,1].map(i=>f.deposits.filter(d=>d.who==i).reduce((a,d)=>a+amt(d),0));
+  $("fchip").innerHTML=`💰 여행통장 <b>${won(saved)}</b> / ${won(goal)} (${goal?Math.min(100,Math.round(saved/goal*100)):0}%)`;
+  $("ftot").innerHTML=`입금 <b>${f.deposits.length}건</b> · 합계 <b>${won(saved)}</b> · ${esc(nm(0))} ${won(per[0])} / ${esc(nm(1))} ${won(per[1])}`;
+  const ym=ymd(new Date()).slice(0,7);
+  const paid=[0,1].map(i=>f.deposits.some(d=>d.who==i&&d.date.startsWith(ym)));
+  $("fsum").innerHTML=`<h3>✈️ 우리의 여행통장</h3>
+    <div class="big">${won(saved)} <small>/ 목표 ${won(goal)}</small></div>
+    <div class="bar"><div style="width:${goal?Math.min(100,saved/goal*100):0}%"></div></div>
+    <div class="d">남은 금액 ${won(left)} · 목표일까지 약 ${months}개월</div>
+    <div class="fwho" style="margin-top:8px">${[0,1].map(i=>`<div>${paid[i]?"✅":"⬜"} ${esc(nm(i))} ${won(per[i])} <span class="d">(이번 달 ${paid[i]?"입금 완료":"아직"})</span></div>`).join("")}</div>`;
+  $("fplan").innerHTML=`<div class="plan">📌 <b>추천</b>: ${f.target}까지 한 사람당 매달 <b>${won(rec)}</b> (둘이 합쳐 ${won(rec*2)})</div>
+    <div class="plan">⏱ 지금 계획(1인 월 ${won(mon)}) → ${eta}</div>
+    <table class="ft"><tr><th>기간</th><th>1인 월</th><th>둘 합계</th><th>완료일</th></tr>
+    ${[6,9,12].map(m=>`<tr><td>${m}개월</td><td>${won(up(left/m/2))}</td><td>${won(up(left/m/2)*2)}</td><td>${plusMonths(m)}</td></tr>`).join("")}</table>`;
+  $("fbud").innerHTML=f.budget.map(b=>`<div class="brow"><input type="checkbox" data-bo="${b.id}" ${b.on?"checked":""} title="예산에 포함"><input type="text" data-bn="${b.id}" value="${esc(b.name)}"><input type="number" data-bc="${b.id}" value="${b.cost}" step="10000"><span>원</span><button class="x" data-bdel="${b.id}" title="삭제">×</button></div>`).join("")
+    +`<button class="btn" data-badd="1">+ 항목 추가</button>
+    <div class="plan" style="margin-top:10px">1인 합계 <b>${won(base/2)}</b> · 둘 합계 ${won(base)} · 예비비 ${f.buffer}% 포함 목표 <b>${won(goal)}</b></div>`;
+  $("fdep").innerHTML=f.deposits.length?[...f.deposits].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).map(d=>`<div class="cm"><b>${esc(nm(d.who))}</b> ${d.date} · +${won(amt(d))} ${esc(d.memo||"")} <span class="d">(누적 ${won(cum[d.id]||0)})</span> <button class="x" data-fdel="${d.id}" title="삭제">×</button></div>`).join(""):`<div class="empty" style="padding:14px">${supaMode&&!isEditor?"🔒 입금 기록은 로그인한 사람만 볼 수 있어요":"아직 입금 기록이 없어요. 첫 입금을 기록해 볼까요? 🐷"}</div>`;
+}
+$("ftarget").onchange=e=>{if(e.target.value){S.fund.target=e.target.value;save();renderFund()}};
+$("fbuf").onchange=e=>{S.fund.buffer=Math.max(0,Math.min(100,+e.target.value||0));save();renderFund()};
+$("fmon").onchange=e=>{S.fund.monthly=Math.max(0,+e.target.value||0);save();renderFund()};
+$("fbud").addEventListener("change",e=>{const d=e.target.dataset,b=k=>S.fund.budget.find(x=>x.id==k);
+  if(d.bo)b(d.bo).on=e.target.checked;if(d.bn)b(d.bn).name=e.target.value;if(d.bc)b(d.bc).cost=Math.max(0,+e.target.value||0);save();renderFund()});
+$("fbud").addEventListener("click",e=>{const d=e.target.dataset;
+  if(d.badd){S.fund.budget.push({id:Date.now(),name:"새 항목",cost:0,on:true});save();renderFund()}
+  if(d.bdel){S.fund.budget=S.fund.budget.filter(x=>x.id!=d.bdel);save();renderFund()}});
+$("fchip").onclick=()=>showTab("t4");
+$("fadd").onclick=()=>{const a=Number(String($("famt").value).replace(/[^0-9.]/g,""));if(!(a>0)){$("fnote").textContent="금액을 숫자로 입력해 주세요.";return}
+  S.fund.deposits.push({id:Date.now(),date:$("fdate").value||ymd(new Date()),who:+$("fwho").value,amt:a,memo:$("fmemo").value.trim()});
+  const who=+$("fwho").value,tot=S.fund.deposits.reduce((s,d)=>s+(Number(d.amt)||0),0);
+  $("famt").value="";$("fmemo").value="";save();renderFund();
+  $("fnote").textContent=readOnly&&db?"🔒 보기 전용이라 저장되지 않았어요.":`✅ ${nm(who)}님 ${won(a)} 입금! 지금까지 모인 돈 ${won(tot)}`};
+$("fdep").addEventListener("click",e=>{if(e.target.dataset.fdel){S.fund.deposits=S.fund.deposits.filter(x=>x.id!=e.target.dataset.fdel);save();renderFund()}});
+
+$("lists").addEventListener("change",e=>{
+  if(e.target.dataset.c){const it=find(e.target.dataset.c);it.done=e.target.checked;save();render();
+    if(it.done){confetti();openM(it.id)}}
+});
+$("lists").addEventListener("input",e=>{if(e.target.dataset.id){find(e.target.dataset.id).title=e.target.value;save()}});
+$("lists").addEventListener("click",e=>{if(e.target.dataset.m)openM(e.target.dataset.m)});
+$("start").onchange=e=>{if(e.target.value){S.start=e.target.value;save();render()}};
+$("n1").oninput=e=>{S.names[0]=e.target.value;save()};
+$("n2").oninput=e=>{S.names[1]=e.target.value;save()};
+$("dphoto").onchange=e=>{
+  [...e.target.files].forEach(f=>{
+    const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
+      const s=Math.min(1,640/Math.max(im.width,im.height)),c=document.createElement("canvas");
+      c.width=im.width*s;c.height=im.height*s;c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+      let q=.6,u=c.toDataURL("image/jpeg",q);while(u.length>230000&&q>.2){q-=.1;u=c.toDataURL("image/jpeg",q)}
+      const id=pid();PH[id]=u;photos.push(id);drawGal()};im.src=r.result};r.readAsDataURL(f);
+  });
+};
+$("gal").addEventListener("click",e=>{if(e.target.dataset.del){photos.splice(e.target.dataset.del,1);drawGal()}});
+document.addEventListener("click",e=>{if(e.target.tagName=="IMG"&&e.target.dataset.z&&!e.target.dataset.m){$("lbimg").src=e.target.src;$("lb").showModal()}});
+$("cadd").onclick=()=>{const m=$("cin").value.trim();if(!m)return;
+  cur.comments.push({who:nm(+$("cwho").value),msg:m});$("cin").value="";drawCm();save()};
+$("rsave").onclick=()=>{
+  const text=$("dtext").value.trim();
+  if(!text&&!photos.length){$("rhead").textContent="내용이나 사진을 하나는 넣어 주세요.";return}
+  const data={date:$("ddate").value,time:$("dtime").value,place:$("dplace").value.trim(),text,photos:[...photos]};
+  if(editId){Object.assign(cur.records.find(r=>r.id==editId),data)}
+  else{if(cur.records.length>=MAXREC)return;cur.records.push({id:rid(),...data})}
+  save();drawRecs();resetForm();render()};
+$("rcancel").onclick=()=>resetForm();
+$("dcancel").onclick=()=>{$("dlg").close();render()};
+const TABS=[["t1","lists"],["t2","tl"],["t3","diary"],["t4","fund"]];
+function showTab(id){TABS.forEach(([b,p])=>{$(b).className=b==id?"on":"";$(p).style.display=b==id?"block":"none"})}
+TABS.forEach(([b])=>$(b).onclick=()=>showTab(b));
+function loadData(t){try{const d=JSON.parse(t);if(!d.items)throw 0;if(!d.diary)d.diary=[];if(!d.fund)d.fund=mkFund();if(!d.travel)d.travel=TR.map((x,i)=>mk(100+i,x));
+  fixPhotos(d);S=d;save();render();msg("불러왔어요!");$("xbox").hidden=true}catch(x){msg("올바른 데이터가 아니에요")}}
+$("exp").onclick=async()=>{const c=clean(S);[...c.items,...c.travel].forEach(it=>it.records.forEach(r=>r.photos=(r.photos||[]).map(i=>PH[i]||i)));const t=JSON.stringify(c);$("xbox").hidden=false;$("xta").value=t;$("xta").select();
+  try{await navigator.clipboard.writeText(t);msg("복사했어요. 친구에게 메신저로 붙여넣어 보내세요.")}catch(e){msg("복사 권한이 없어요. 아래 글자를 전체 선택해서 직접 복사해 주세요.")}};
+$("pst").onclick=()=>{$("xbox").hidden=false;$("xta").value="";$("xta").focus();msg("친구가 보낸 데이터를 붙여넣고 '적용'을 눌러요. 지금 내용은 덮어써져요.")};
+$("xok").onclick=()=>loadData($("xta").value);
+$("imp").onclick=()=>$("impf").click();
+$("impf").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{
+  try{const d=JSON.parse(r.result);if(!d.items)throw 0;if(!d.diary)d.diary=[];if(!d.fund)d.fund=mkFund();if(!d.travel)d.travel=TR.map((t,i)=>mk(100+i,t));fixPhotos(d);S=d;save();render()}catch(x){msg("올바른 파일이 아니에요")}};r.readAsText(f)};
+
+function confetti(){
+  const c=$("cf"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+  const P=Array.from({length:120},()=>({x:Math.random()*c.width,y:-20,v:2+Math.random()*4,s:4+Math.random()*6,h:Math.random()*360}));
+  let n=0;(function f(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.v;x.fillStyle=`hsl(${p.h},90%,65%)`;x.fillRect(p.x,p.y,p.s,p.s)});
+  if(++n<120)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height)})();
+}
+render();
+startDb();
+</script>
+</body>
+</html>

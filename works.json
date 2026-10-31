@@ -125,6 +125,15 @@
       "liveUrl": "",
       "prompt": "",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "16",
+      "title": "우리의 버킷리스트10",
+      "author": "happylist",
+      "summary": "친구와 같이 하고싶은것을 정하여 우정쌓기",
+      "liveUrl": "https://happylist-ahiy.vercel.app/",
+      "prompt": "",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }
