@@ -98,6 +98,15 @@
       "liveUrl": "",
       "prompt": "",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "12",
+      "title": "웹 프로그래밍 입문",
+      "author": "최지원",
+      "summary": "여러 자료를 오가지 않고, 이론 학습부터 실습 진행까지 한 페이지에서 진행하는 프로그램.",
+      "liveUrl": "",
+      "prompt": "/grill-me 내 아이디어를 구체화할 질문을 해 줘. 오늘 만들 수 있는 작은 웹 프로토타입으로 범위를 정하고 싶어.",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }
