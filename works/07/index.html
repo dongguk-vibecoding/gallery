@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내 자산 관리 (데모)</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--text:#1d2330;--sub:#6b7385;--line:#e3e6ec;--accent:#2f6bff;--up:#e5484d;--down:#2f6bff;--ok:#2bb673}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--card:#1b1f29;--text:#e8ebf2;--sub:#98a0b3;--line:#2c3240;--accent:#6c97ff;--up:#ff6b6f;--down:#6c97ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Malgun Gothic",system-ui,sans-serif}
+header{padding:20px 16px 0;max-width:1000px;margin:0 auto}
+h1{margin:0 0 4px;font-size:22px}h3{margin:0 0 10px;font-size:16px}
+.note{color:var(--sub);font-size:13px}
+nav{display:flex;gap:6px;max-width:1000px;margin:14px auto 0;padding:0 16px}
+nav button{flex:1;padding:10px 4px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:8px;cursor:pointer;font:inherit}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+main{max-width:1000px;margin:14px auto;padding:0 16px 40px}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.stat span{display:block;color:var(--sub);font-size:12px}
+.stat b{font-size:18px}
+.up{color:var(--up)}.down{color:var(--down)}
+form,.row{display:flex;flex-wrap:wrap;gap:8px;align-items:end}
+label{display:flex;flex-direction:column;font-size:12px;color:var(--sub);gap:3px;flex:1;min-width:110px}
+input,select{padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text);font:inherit;width:100%}
+.btn{padding:9px 16px;border:0;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer;font:inherit}
+.btn.ghost{background:none;color:var(--sub);border:1px solid var(--line);padding:4px 8px;font-size:12px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td input{width:100px;text-align:right;padding:4px 6px}
+th{color:var(--sub);font-weight:600;font-size:12px}
+.charts{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+.charts>div{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+canvas{max-width:100%}
+.legend{font-size:13px}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+.empty{color:var(--sub);text-align:center;padding:20px}
+.warn{color:var(--up);font-size:13px;margin-top:8px}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:6px 0 2px}
+.bar>div{height:100%;background:var(--accent)}.bar>div.over{background:var(--up)}
+.tag{font-size:11px;padding:1px 6px;border-radius:8px;background:var(--line);color:var(--sub);margin-left:6px}
+.acctsel{display:flex;gap:8px;margin-bottom:14px;align-items:end;flex-wrap:wrap}
+.acctsel label{max-width:260px}
+.demo-badge{position:fixed;right:8px;bottom:8px;font-size:11px;padding:3px 8px;border-radius:10px;background:var(--text);color:var(--bg);opacity:.75;z-index:9;pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏦 내 자산 관리</h1>
+  <div class="note">퇴직연금(DC) · IRP · ISA · 주식계좌 · 현금을 한 곳에서 관리합니다. 데이터는 이 브라우저에만 저장되며, 투자 권유가 아닌 기록·계산 도구입니다.</div>
+  <div class="note" style="margin-top:4px">▶ 데모 버전: 모든 계좌·종목·시세는 가짜 데이터입니다. 마음껏 추가·수정·삭제해 보세요.</div>
+</header>
+<div class="demo-badge">데모 버전 · 가짜 데이터</div>
+<div style="max-width:1000px;margin:12px auto 0;padding:0 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+  <button class="btn" id="refresh" type="button">현재가 갱신</button>
+  <span class="note" id="pstat">종목을 검색해 추가하면 (가상) 현재가를 불러옵니다. 예: "코리아", "배당"</span>
+  <span style="flex:1"></span>
+  <button class="btn ghost" id="reset" type="button">예시 데이터로 초기화</button>
+  <button class="btn ghost" id="exp" type="button">내보내기</button>
+  <button class="btn ghost" id="imp" type="button">가져오기</button>
+  <input type="file" id="impf" accept=".json" style="display:none">
+</div>
+<nav>
+  <button data-t="ov" class="on">자산 현황</button>
+  <button data-t="ac">계좌 관리</button>
+  <button data-t="reb">리밸런싱</button>
+  <button data-t="calc">적립식 계산기</button>
+</nav>
+<main>
+<section id="ov" class="on">
+  <div class="grid" id="osum"></div>
+  <div class="card tw"><table id="otbl"></table></div>
+  <div class="card"><div class="charts">
+    <div><canvas id="d1" width="200" height="200"></canvas><div class="legend" id="l1"></div></div>
+    <div><canvas id="d2" width="200" height="200"></canvas><div class="legend" id="l2"></div></div>
+  </div></div>
+  <div class="card">
+    <h3>계좌 추가</h3>
+    <form id="addacct">
+      <label>계좌 이름<input name="name" required placeholder="예: 비상금 통장"></label>
+      <label>종류<select name="type"></select></label>
+      <button class="btn">추가</button>
+    </form>
+  </div>
+</section>
+
+<section id="ac">
+  <div class="acctsel"><label>계좌 선택<select class="asel"></select></label><button class="btn ghost" id="delacct">이 계좌 삭제</button></div>
+  <div id="acbody"></div>
+</section>
+
+<section id="reb">
+  <div class="acctsel"><label>계좌 선택<select class="asel"></select></label></div>
+  <div class="card">
+    <div class="row"><label>추가 투입 현금(원)<input id="rc" type="number" value="0"></label></div>
+    <div class="note" style="margin-top:8px" id="rhint"></div>
+  </div>
+  <div class="card tw"><table id="rtbl"></table><div class="warn" id="rwarn"></div></div>
+</section>
+
+<section id="calc">
+  <div class="card">
+    <div class="row">
+      <label>초기 투자금(원)<input id="c0" type="number" value="10000000"></label>
+      <label>월 적립금(원)<input id="cm" type="number" value="500000"></label>
+      <label>연 수익률(%)<input id="cr" type="number" step="0.1" value="5"></label>
+      <label>기간(년)<input id="cy" type="number" min="1" max="60" value="20"></label>
+      <button class="btn" id="fillTotal" type="button">총 자산으로 채우기</button>
+    </div>
+    <div class="note" style="margin-top:8px">월복리, 월초 적립 가정. 세금·수수료·물가상승 미반영. 수익률은 가정값이며 실제 결과를 보장하지 않습니다.</div>
+  </div>
+  <div class="grid" id="csum"></div>
+  <div class="card"><canvas id="line" width="920" height="300"></canvas>
+    <div class="legend"><i style="background:#8a93a6"></i>원금 &nbsp; <i style="background:var(--accent)"></i>평가금액</div></div>
+  <div class="card tw"><table id="ctbl"></table></div>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
+const pct=n=>(n>=0?'+':'')+n.toFixed(2)+'%';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cls=n=>n>0?'up':n<0?'down':'';
+const COLORS=['#2f6bff','#ff9f1a','#2bb673','#e5484d','#8e5cf7','#00a3bf','#d6409f','#7a8a00'];
+const TYPES={DC:'퇴직연금(DC)',IRP:'IRP',PEN:'연금저축',ISA:'ISA',STOCK:'주식계좌',CASH:'현금'};
+const ISA_LIMIT=20000000,PEN_LIMIT=6000000,TAX_LIMIT=9000000; // ISA 연 납입 / 연금저축 / IRP+연금저축 세액공제 한도
+const isTax=a=>a.type==='IRP'||a.type==='PEN';
+const RISK_CAP=70; // DC/IRP 위험자산 한도(%)
+const isRet=a=>a.type==='DC'||a.type==='IRP';
+
+// ---- 데모용 가짜 데이터 (종목·시세 모두 가상) ----
+const KEY='invest-demo:assets';
+const CATALOG=[ // 가상 상장 종목/ETF 목록: [코드, 이름, 분류, 구분, 가격]
+  ['D0001','가상전자','주식','위험자산',70000],['D0002','모의바이오','주식','위험자산',120000],
+  ['D0003','데모에너지','주식','위험자산',45000],['D0004','샘플금융','주식','위험자산',38000],
+  ['E0001','데모 코리아200 ETF','ETF','위험자산',36000],['E0002','데모 미국S&P500 ETF','ETF','위험자산',21000],
+  ['E0003','데모 미국나스닥100 ETF','ETF','위험자산',18500],['E0004','데모 코리아배당성장 ETF','ETF','위험자산',12500],
+  ['E0005','데모 국고채10년 ETF','ETF','안전자산',10200],['E0006','데모 단기채권 ETF','ETF','안전자산',10100],
+  ['E0007','데모 TDF2045','펀드','위험자산',15500],['E0008','데모 리츠 ETF','ETF','위험자산',5600],
+  ['E0009','데모 골드 ETF','ETF','안전자산',14000],['E0010','데모 코리아반도체 ETF','ETF','위험자산',24000]
+].map(([code,name,cat,kind,price])=>({code,name,cat,kind,price}));
+const cat=code=>CATALOG.find(c=>c.code===code);
+function mkSeed(){
+  let id=100;const hs=[];
+  const H=(acct,code,qty,avg,cur,target)=>{const c=cat(code);hs.push({id:id++,acct,code,name:c.name,kind:c.kind,qty,avg,cur,target:target||0});c.price=cur};
+  H(1,'E0007',300,14000,15500);H(1,'E0006',200,10000,10100);
+  H(2,'E0001',100,33000,36000,60);H(2,'E0005',150,10000,10200,40);
+  H(6,'E0002',120,19000,21000,70);H(6,'E0009',40,13000,14000,30);
+  H(7,'E0004',200,12000,12500);
+  H(3,'E0003',150,17000,18500);H(3,'E0006',100,10000,10100);
+  H(4,'D0001',20,65000,70000);H(4,'D0002',8,130000,120000);H(4,'D0003',30,42000,45000);
+  return{accts:[
+    {id:1,name:'회사 퇴직연금',type:'DC',cash:150000,contrib:0},
+    {id:2,name:'IRP 계좌',type:'IRP',cash:50000,contrib:3000000},
+    {id:6,name:'연금저축(회사)',type:'PEN',cash:30000,contrib:4000000},
+    {id:7,name:'연금저축(개인)',type:'PEN',cash:20000,contrib:2000000},
+    {id:3,name:'ISA 계좌',type:'ISA',cash:200000,contrib:8000000},
+    {id:4,name:'주식투자 계좌',type:'STOCK',cash:500000,contrib:0},
+    {id:5,name:'현금(통장)',type:'CASH',cash:12000000,contrib:0}],H:hs};
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+if(!S||!S.accts||!S.H)S=mkSeed();
+let sel=S.accts[0]?S.accts[0].id:0;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const acct=id=>S.accts.find(a=>a.id===id);
+const hold=id=>S.H.filter(h=>h.acct===id);
+const stat=a=>{const hs=hold(a.id),val=hs.reduce((s,h)=>s+h.qty*h.cur,0),cost=hs.reduce((s,h)=>s+h.qty*h.avg,0);
+  const risk=hs.filter(h=>h.kind==='위험자산').reduce((s,h)=>s+h.qty*h.cur,0);
+  return{val,cost,cash:a.cash,total:val+a.cash,risk,safe:val-risk+a.cash}};
+
+document.querySelector('[name=type]').innerHTML=Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button,section').forEach(e=>e.classList.remove('on'));
+  b.classList.add('on');$('#'+b.dataset.t).classList.add('on');render();
+});
+document.querySelectorAll('.asel').forEach(s=>s.onchange=()=>{sel=+s.value;render()});
+
+$('#addacct').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);
+  const a={id:Date.now(),name:f.get('name').trim(),type:f.get('type'),cash:0,contrib:0};
+  S.accts.push(a);sel=a.id;e.target.reset();save();render()};
+$('#delacct').onclick=()=>{const a=acct(sel);if(!a||!confirm(`'${a.name}' 계좌와 보유 종목을 삭제할까요?`))return;
+  S.accts=S.accts.filter(x=>x.id!==sel);S.H=S.H.filter(h=>h.acct!==sel);sel=S.accts[0]?S.accts[0].id:0;save();render()};
+window.updA=(id,k,v)=>{acct(id)[k]=Math.max(0,+v||0);save();render()};
+window.upd=(id,k,v)=>{const h=S.H.find(x=>x.id===id);h[k]=Math.max(0,+v||0);save();render()};
+window.del=id=>{S.H=S.H.filter(x=>x.id!==id);save();render()};
+window.addH=e=>{e.preventDefault();const f=new FormData(e.target);
+  S.H.push({id:Date.now(),acct:sel,code:f.get('code')||'',name:f.get('name').trim(),kind:f.get('kind'),qty:+f.get('qty'),avg:+f.get('avg'),cur:+f.get('cur'),target:0});
+  save();render()};
+
+// ---- 종목 검색 / 현재가 (데모: 가상 목록과 가상 시세, 약간의 지연으로 실제처럼 보이게 함) ----
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+let stimer;
+window.searchStock=q=>{clearTimeout(stimer);const box=$('#qres');q=q.trim().toLowerCase();if(!q){box.innerHTML='';return}
+  box.innerHTML='<span class="note">검색 중...</span>';
+  stimer=setTimeout(async()=>{await wait(250);
+    const it=CATALOG.filter(c=>c.name.toLowerCase().includes(q)||c.code.toLowerCase().includes(q)||c.cat.includes(q)).slice(0,8);
+    box.innerHTML=it.length?it.map(i=>`<div><button type="button" class="btn ghost" style="margin:2px 0" onclick="pickStock('${i.code}')">${esc(i.name)} <span class="note">${i.code} · ${i.cat}</span></button></div>`).join(''):'<span class="note">검색 결과가 없습니다. (데모 목록에서 "코리아", "ETF", "배당" 등을 검색해 보세요)</span>';
+  },200)};
+window.pickStock=async code=>{const f=document.querySelector('#acbody form'),c=cat(code);
+  f.name.value=c.name;f.code.value=c.code;f.kind.value=c.kind;$('#qres').innerHTML='';
+  f.cur.value=c.price;if(!f.avg.value)f.avg.value=c.price;
+  $('#pstat').textContent=`${c.name} 현재가 ${c.price.toLocaleString()}원 (가상 시세)`};
+$('#refresh').onclick=async()=>{
+  const codes=[...new Set(S.H.map(h=>h.code).filter(Boolean))];
+  if(!codes.length){$('#pstat').textContent='코드가 있는 종목이 없습니다. 종목 검색으로 추가한 종목만 갱신됩니다.';return}
+  $('#pstat').textContent='불러오는 중...';await wait(800);
+  CATALOG.forEach(c=>{c.price=Math.max(100,Math.round(c.price*(1+(Math.random()-.5)*.04)/10)*10)});
+  let n=0;S.H.forEach(h=>{const c=cat(h.code);if(c){h.cur=c.price;n++}});
+  S.updated=new Date().toLocaleString('ko-KR');save();render();
+  $('#pstat').textContent=`${n}개 종목 갱신 완료 (${S.updated}). 데모용 가상 시세입니다.`};
+$('#reset').onclick=()=>{if(!confirm('모든 변경을 지우고 예시 데이터로 되돌릴까요?'))return;
+  S=mkSeed();sel=S.accts[0].id;save();render();$('#pstat').textContent='예시 데이터로 초기화했습니다.'};
+$('#exp').onclick=()=>{const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));
+  a.download='assets-backup.json';a.click();URL.revokeObjectURL(a.href)};
+$('#imp').onclick=()=>$('#impf').click();
+$('#impf').onchange=e=>{const f=e.target.files[0];if(!f)return;
+  f.text().then(t=>{const d=JSON.parse(t);if(!d.accts||!d.H)throw 0;
+    if(!confirm('현재 데이터를 가져온 파일로 바꿉니다. 계속할까요?'))return;
+    S=d;sel=S.accts[0]?S.accts[0].id:0;save();render()}).catch(()=>alert('올바른 백업 파일이 아닙니다.'));e.target.value=''};
+
+function donut(cv,leg,items){
+  const x=cv.getContext('2d');x.clearRect(0,0,200,200);
+  items=items.filter(i=>i.v>0);const tot=items.reduce((s,i)=>s+i.v,0);
+  if(!tot){leg.textContent='데이터가 없습니다.';return}
+  let a0=-Math.PI/2;
+  items.forEach((it,i)=>{const a=it.v/tot*2*Math.PI;
+    x.beginPath();x.arc(100,100,92,a0,a0+a);x.arc(100,100,52,a0+a,a0,true);x.closePath();
+    x.fillStyle=COLORS[i%COLORS.length];x.fill();a0+=a});
+  leg.innerHTML=items.map((it,i)=>`<div><i style="background:${COLORS[i%COLORS.length]}"></i>${esc(it.l)} ${(it.v/tot*100).toFixed(1)}%</div>`).join('');
+}
+function fillSel(){document.querySelectorAll('.asel').forEach(s=>{
+  s.innerHTML=S.accts.map(a=>`<option value="${a.id}" ${a.id===sel?'selected':''}>${esc(a.name)} (${TYPES[a.type]})</option>`).join('')})}
+const bar=(ratio,over)=>`<div class="bar"><div class="${over?'over':''}" style="width:${Math.min(100,ratio)}%"></div></div>`;
+
+function renderOv(){
+  const st=S.accts.map(a=>({a,...stat(a)}));
+  const tot=st.reduce((s,x)=>s+x.total,0),cost=st.reduce((s,x)=>s+x.cost,0),val=st.reduce((s,x)=>s+x.val,0);
+  const cash=st.reduce((s,x)=>s+x.cash,0),pl=val-cost;
+  const ret=st.filter(x=>isRet(x.a)||x.a.type==='PEN'),rt=ret.reduce((s,x)=>s+x.total,0);
+  $('#osum').innerHTML=[['총 자산',won(tot),''],['투자자산 평가',won(val),''],['현금성 자산',won(cash),''],
+    ['투자 손익',won(pl),cls(pl)],['투자 수익률',cost?pct(pl/cost*100):'-',cls(pl)],['연금 합계(DC+IRP+연금저축)',won(rt),'']]
+    .map(([a,b,c])=>`<div class="stat"><span>${a}</span><b class="${c}">${b}</b></div>`).join('');
+  $('#otbl').innerHTML='<tr><th>계좌</th><th>투자자산</th><th>현금</th><th>합계</th><th>손익</th><th>수익률</th><th>비중</th></tr>'+
+    (st.map(x=>{const p=x.val-x.cost;return `<tr><td>${esc(x.a.name)}<span class="tag">${TYPES[x.a.type]}</span></td><td>${won(x.val)}</td><td>${won(x.cash)}</td>
+    <td><b>${won(x.total)}</b></td><td class="${cls(p)}">${won(p)}</td><td class="${cls(p)}">${x.cost?pct(p/x.cost*100):'-'}</td><td>${tot?(x.total/tot*100).toFixed(1):0}%</td></tr>`}).join('')||'<tr><td class="empty">계좌를 추가하세요.</td></tr>');
+  donut($('#d1'),$('#l1'),st.map(x=>({l:x.a.name,v:x.total})));
+  const risk=st.reduce((s,x)=>s+x.risk,0);
+  donut($('#d2'),$('#l2'),[{l:'위험자산(주식 등)',v:risk},{l:'안전자산(채권·예금 등)',v:val-risk},{l:'현금',v:cash}]);
+}
+
+function renderAc(){
+  const a=acct(sel),el=$('#acbody');
+  if(!a){el.innerHTML='<div class="card empty">자산 현황 탭에서 계좌를 추가하세요.</div>';return}
+  const s=stat(a),pl=s.val-s.cost;
+  let extra='';
+  if(isRet(a)){const r=s.total?s.risk/s.total*100:0;
+    extra+=`<div class="card"><h3>위험자산 비율 <span class="tag">참고</span></h3>
+      <b class="${r>RISK_CAP?'up':''}">${r.toFixed(1)}%</b> / 한도 ${RISK_CAP}%${bar(r/RISK_CAP*100,r>RISK_CAP)}
+      <div class="note">DC·IRP는 위험자산(주식형 펀드 등) 투자가 적립금의 ${RISK_CAP}%로 제한됩니다. 종목별 '구분'을 맞게 지정해야 정확합니다. 상품별 분류와 최신 제도는 금융사에 확인하세요.</div></div>`;}
+  const cin=`<input type="number" style="width:160px;display:inline-block" value="${a.contrib}" onchange="updA(${a.id},'contrib',this.value)">`;
+  if(a.type==='ISA'){const r=a.contrib/ISA_LIMIT*100;
+    extra+=`<div class="card"><h3>ISA 연 납입한도</h3>올해 납입액 ${cin}
+      → ${won(a.contrib)} / ${won(ISA_LIMIT)} (${r.toFixed(0)}%)${bar(r,r>100)}
+      <div class="note">연 2,000만원(미사용 한도 이월 가능). 제도 변경 가능성이 있으니 금융사 기준을 확인하세요.</div>
+      ${r>100?'<div class="warn">한도를 초과했습니다.</div>':''}</div>`;}
+  if(isTax(a)){
+    const tax=S.accts.filter(isTax),used=tax.reduce((s,x)=>s+x.contrib,0),pen=tax.filter(x=>x.type==='PEN').reduce((s,x)=>s+x.contrib,0);
+    const r=used/TAX_LIMIT*100,rp=pen/PEN_LIMIT*100;
+    extra+=`<div class="card"><h3>세액공제 한도 (IRP + 연금저축 합산)</h3>이 계좌 올해 납입액 ${cin}
+      <div style="margin-top:10px">합산 <b>${won(used)}</b> / ${won(TAX_LIMIT)} (${r.toFixed(0)}%) · 남은 한도 <b>${won(Math.max(0,TAX_LIMIT-used))}</b>${bar(r,r>100)}</div>
+      <div>연금저축 합계 <b>${won(pen)}</b> / ${won(PEN_LIMIT)} (${rp.toFixed(0)}%) · 남은 한도 <b>${won(Math.max(0,PEN_LIMIT-pen))}</b>${bar(rp,rp>100)}</div>
+      <div class="note" style="margin-top:6px">계좌별: ${tax.map(x=>`${esc(x.name)} ${won(x.contrib)}`).join(' · ')}</div>
+      <div class="note">연금저축 합계 연 600만원, IRP를 합산하면 연 900만원까지 세액공제 대상입니다(총급여 등에 따라 달라질 수 있음). 연금저축(회사)·연금저축(개인) 납입액을 합쳐 한도 안에서 관리하세요. 제도 변경 가능성이 있으니 국세청·금융사 기준을 확인하세요.</div>
+      ${r>100||rp>100?'<div class="warn">세액공제 한도를 초과했습니다.</div>':''}</div>`;}
+  const form=a.type==='CASH'?'':`<div class="card"><label style="max-width:360px;margin-bottom:8px">종목 검색 (상장 주식·ETF, 이름 또는 코드)
+      <input id="q" autocomplete="off" placeholder="예: KODEX 200, 삼성전자, 069500" oninput="searchStock(this.value)"></label>
+      <div id="qres" class="legend" style="margin-bottom:10px"></div>
+      <form onsubmit="addH(event)"><input type="hidden" name="code">
+      <label>종목/상품명<input name="name" required placeholder="검색하거나 직접 입력 (예: TDF 2045)"></label>
+      <label>구분<select name="kind"><option>위험자산</option><option>안전자산</option></select></label>
+      <label>수량<input name="qty" type="number" min="0" step="any" required></label>
+      <label>평균 매입가(원)<input name="avg" type="number" min="0" step="any" required></label>
+      <label>현재가(원)<input name="cur" type="number" min="0" step="any" required></label>
+      <button class="btn">추가</button></form></div>`;
+  const hs=hold(a.id);
+  const tbl=a.type==='CASH'?'':`<div class="card tw"><table><tr><th>종목</th><th>구분</th><th>수량</th><th>평균단가</th><th>현재가</th><th>평가금액</th><th>손익</th><th>수익률</th><th></th></tr>`+
+    (hs.map(h=>{const v=h.qty*h.cur,p=v-h.qty*h.avg,r=h.avg?(h.cur/h.avg-1)*100:0;
+      return `<tr><td>${esc(h.name)}</td><td>${h.kind}</td><td>${h.qty.toLocaleString()}</td><td>${Math.round(h.avg).toLocaleString()}</td>
+      <td><input type="number" value="${h.cur}" step="any" onchange="upd(${h.id},'cur',this.value)"></td><td>${won(v)}</td>
+      <td class="${cls(p)}">${won(p)}</td><td class="${cls(r)}">${pct(r)}</td><td><button class="btn ghost" onclick="del(${h.id})">삭제</button></td></tr>`}).join('')
+      ||'<tr><td colspan="9" class="empty">보유 종목을 추가해 보세요.</td></tr>')+'</table></div>';
+  el.innerHTML=`<div class="grid">
+    <div class="stat"><span>계좌 합계</span><b>${won(s.total)}</b></div>
+    <div class="stat"><span>투자자산</span><b>${won(s.val)}</b></div>
+    <div class="stat"><span>${a.type==='CASH'?'잔액':'예수금/현금'}</span><b><input type="number" style="width:100%" value="${a.cash}" onchange="updA(${a.id},'cash',this.value)"></b></div>
+    ${a.type==='CASH'?'':`<div class="stat"><span>손익</span><b class="${cls(pl)}">${won(pl)} (${s.cost?pct(pl/s.cost*100):'-'})</b></div>`}</div>`+extra+form+tbl;
+}
+
+function renderReb(){
+  const a=acct(sel);
+  if(!a||a.type==='CASH'){$('#rtbl').innerHTML='<tr><td class="empty">종목이 있는 계좌를 선택하세요.</td></tr>';$('#rwarn').textContent='';$('#rhint').textContent='';return}
+  const extra=+$('#rc').value||0,hs=hold(a.id),s=stat(a),invest=a.cash+extra,tot=s.val+invest;
+  $('#rhint').textContent=`계좌 현금 ${won(a.cash)}을 투입 가능 금액에 포함합니다. 목표 비중 합계가 100%가 되도록 입력하세요.`;
+  const ts=hs.reduce((s,h)=>s+h.target,0);
+  $('#rtbl').innerHTML=hs.length?'<tr><th>종목</th><th>현재 비중</th><th>목표 비중(%)</th><th>목표 금액</th><th>조정 금액</th><th>매매 수량</th></tr>'+
+    hs.map(h=>{const v=h.qty*h.cur,tv=tot*h.target/100,d=tv-v,q=h.cur?Math.trunc(d/h.cur):0;
+      return `<tr><td>${esc(h.name)}</td><td>${tot?(v/tot*100).toFixed(1):0}%</td>
+      <td><input type="number" min="0" max="100" step="any" value="${h.target}" onchange="upd(${h.id},'target',this.value)"></td>
+      <td>${won(tv)}</td><td class="${d>0?'up':d<0?'down':''}">${won(d)}</td>
+      <td>${q===0?'-':(q>0?'매수 ':'매도 ')+Math.abs(q).toLocaleString()+'주'}</td></tr>`}).join('')
+    :'<tr><td class="empty">계좌 관리 탭에서 종목을 먼저 추가하세요.</td></tr>';
+  $('#rwarn').textContent=hs.length&&Math.round(ts*100)/100!==100?`목표 비중 합계가 ${ts}%입니다 (100%가 되어야 합니다).`:'';
+}
+
+function renderCalc(){
+  const P0=+$('#c0').value||0,M=+$('#cm').value||0,R=(+$('#cr').value||0)/100,Y=Math.min(60,Math.max(1,Math.floor(+$('#cy').value||1)));
+  const mr=Math.pow(1+R,1/12)-1;let v=P0,p=P0;const rows=[[0,p,v]];
+  for(let y=1;y<=Y;y++){for(let m=0;m<12;m++){v=(v+M)*(1+mr);p+=M}rows.push([y,p,v])}
+  const [,pp,vv]=rows[Y];
+  $('#csum').innerHTML=[['총 원금',won(pp),''],['최종 평가금액',won(vv),''],['총 수익',won(vv-pp),'up'],['수익률',pp?pct((vv/pp-1)*100):'-','up']]
+    .map(([a,b,c])=>`<div class="stat"><span>${a}</span><b class="${c}">${b}</b></div>`).join('');
+  $('#ctbl').innerHTML='<tr><th>연차</th><th>원금</th><th>평가금액</th><th>수익</th></tr>'+
+    rows.map(r=>`<tr><td>${r[0]}년</td><td>${won(r[1])}</td><td>${won(r[2])}</td><td class="up">${won(r[2]-r[1])}</td></tr>`).join('');
+  const c=$('#line'),x=c.getContext('2d'),W=c.width,Hh=c.height,pad=44;x.clearRect(0,0,W,Hh);
+  const max=Math.max(...rows.map(r=>r[2]),1);
+  const px=i=>pad+i/Y*(W-pad-10),py=n=>Hh-25-n/max*(Hh-40);
+  x.strokeStyle='#8a93a6';x.fillStyle='#8a93a6';x.font='11px sans-serif';x.lineWidth=.5;
+  for(let i=0;i<=4;i++){const yy=py(max*i/4);x.beginPath();x.moveTo(pad,yy);x.lineTo(W-10,yy);x.stroke();
+    x.fillText(Math.round(max*i/4/10000).toLocaleString()+'만',2,yy+4)}
+  const acc=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#2f6bff';
+  [[1,'#8a93a6'],[2,acc]].forEach(([k,col])=>{x.strokeStyle=col;x.lineWidth=2.5;x.beginPath();
+    rows.forEach((r,i)=>i?x.lineTo(px(i),py(r[k])):x.moveTo(px(i),py(r[k])));x.stroke()});
+}
+['c0','cm','cr','cy'].forEach(i=>$('#'+i).oninput=renderCalc);
+$('#rc').oninput=renderReb;
+$('#fillTotal').onclick=()=>{$('#c0').value=Math.round(S.accts.reduce((s,a)=>s+stat(a).total,0));renderCalc()};
+function render(){fillSel();renderOv();renderAc();renderReb();renderCalc()}
+render();
+</script>
+</body>
+</html>

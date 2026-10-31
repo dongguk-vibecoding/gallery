@@ -53,6 +53,15 @@
       "liveUrl": "",
       "prompt": "",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "07",
+      "title": "자산관리앱",
+      "author": "edu025",
+      "summary": "주식,연금,현금 등 투자를 관리해주는 프로그램입니다.",
+      "liveUrl": "",
+      "prompt": "",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }
