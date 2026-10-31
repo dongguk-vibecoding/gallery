@@ -161,6 +161,15 @@
       "liveUrl": "",
       "prompt": "인터뷰",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "20",
+      "title": "근태관리 사이트",
+      "author": "카스타드",
+      "summary": "HRDer를 위한 급여계산 급태관리 사이트입니다.",
+      "liveUrl": "",
+      "prompt": "grilling",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }

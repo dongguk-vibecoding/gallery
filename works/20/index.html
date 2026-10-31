@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>근태 집계 도우미</title>
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <div class="topnav">
+    <div class="topnav-in">
+      <span class="wordmark">근태 집계 도우미</span>
+      <button type="button" class="ghost nav-btn" id="demoReset">예시 데이터로 초기화</button>
+    </div>
+  </div>
+  <div class="strip" role="note">연장 · 야간 · 휴일 · 수당 — 파일은 이 브라우저 안에서만 처리됩니다</div>
+
+  <header class="top">
+    <p class="eyebrow">HR · Attendance</p>
+    <h1>근태 집계 도우미</h1>
+    <p class="sub">출퇴근 기록 파일을 올리면 연장·야간·휴일 근로시간을 직원별로 모으고, 급여 기준 파일을 더하면 수당까지 계산합니다. 파일은 어디로도 전송되지 않습니다.</p>
+  </header>
+
+  <nav class="steps" aria-label="진행 단계">
+    <ol id="stepper">
+      <li data-step="1"><button type="button"><span class="num">1</span>근태 업로드</button></li>
+      <li data-step="2"><button type="button"><span class="num">2</span>급여 기준</button></li>
+      <li data-step="3"><button type="button"><span class="num">3</span>검증</button></li>
+      <li data-step="4"><button type="button"><span class="num">4</span>결과</button></li>
+      <li data-step="5"><button type="button"><span class="num">5</span>내보내기</button></li>
+    </ol>
+  </nav>
+
+  <main>
+    <section id="step1" class="panel" aria-labelledby="h1">
+      <p class="eyebrow">Step 1 / 5</p>
+      <h2 id="h1">1. 근태 파일 올리기</h2>
+      <div class="demo-start">
+        <button type="button" class="primary" id="demoAtt">예시 데이터로 시작</button>
+        <span>가상 식품 유통·급식 업체의 9월 근태 기록(직원 40명, 798행)을 바로 불러옵니다. 내 파일을 올려도 됩니다.</span>
+      </div>
+      <label id="drop" class="drop" for="file">
+        <input id="file" type="file" accept=".xlsx,.xls,.csv">
+        <strong>엑셀 또는 CSV 파일을 끌어다 놓거나 눌러서 고르세요</strong>
+        <span>첫 줄은 제목 행이고, 직원의 하루 기록이 한 줄입니다.</span>
+      </label>
+      <p id="fileMsg" class="msg" role="status"></p>
+
+      <details class="box" open>
+        <summary>파일에 있어야 할 열</summary>
+        <p><b>필수</b>: 사번, 이름, 날짜, 출근시각, 퇴근시각 &nbsp;/&nbsp; <b>있으면 표시</b>: 직군, 사업장</p>
+        <p>퇴근이 출근보다 이르면 다음 날 퇴근으로 봅니다(야간 근무). 날짜는 출근한 날입니다.</p>
+        <p>써 볼 파일이 없다면 가상의 식품 유통·급식 업체 파일을 받아 쓰세요:
+          <a href="data/sample-attendance-2026-09.xlsx" download>sample-attendance-2026-09.xlsx</a></p>
+      </details>
+
+      <details class="box">
+        <summary>공휴일 목록 (일요일은 자동으로 휴일)</summary>
+        <p>한 줄에 한 날짜(YYYY-MM-DD). 기본값은 2026년 9~12월 공휴일이고, 다른 달 파일은 직접 고쳐 주세요.</p>
+        <textarea id="holidays" rows="6" spellcheck="false"></textarea>
+      </details>
+    </section>
+
+    <section id="step2" class="panel" aria-labelledby="h2" hidden>
+      <p class="eyebrow">Step 2 / 5</p>
+      <h2 id="h2">2. 급여 기준 파일 올리기</h2>
+      <p class="lead">직원별 월 통상임금이 있는 파일입니다. 통상임금에 어떤 수당을 넣을지는 담당자가 정해서 합계를 적어 주세요. 월급제만 계산할 수 있습니다.</p>
+      <div class="demo-start">
+        <button type="button" class="primary" id="demoWage">예시 급여 기준 사용</button>
+        <span>예시 직원들의 가상 월 통상임금 파일을 불러옵니다.</span>
+      </div>
+      <label id="wdrop" class="drop" for="wfile">
+        <input id="wfile" type="file" accept=".xlsx,.xls,.csv">
+        <strong>급여 기준 파일을 끌어다 놓거나 눌러서 고르세요</strong>
+        <span>필수 열: 사번, 월 통상임금 / 있으면 표시: 이름</span>
+      </label>
+      <p id="wfileMsg" class="msg" role="status"></p>
+      <p class="privacy">임금 정보는 이 브라우저 안에서만 처리되고 저장되지 않습니다. 내려받은 엑셀 파일에는 임금 정보가 들어가므로, 그 파일의 보관은 담당자가 책임져 주세요.</p>
+      <p class="hint">써 볼 파일: <a href="data/sample-wage-2026-09.xlsx" download>sample-wage-2026-09.xlsx</a></p>
+      <div class="actions">
+        <button type="button" class="ghost" data-go="1">이전</button>
+        <button type="button" class="ghost" id="skipWage">건너뛰기 (시간만 집계)</button>
+        <button type="button" class="primary" id="toCheck" disabled>다음</button>
+      </div>
+    </section>
+
+    <section id="step3" class="panel" aria-labelledby="h3" hidden>
+      <p class="eyebrow">Step 3 / 5</p>
+      <h2 id="h3">3. 기록 검증</h2>
+      <div id="checkStats" class="cards"></div>
+      <div id="checkWarn"></div>
+      <div id="checkErr"></div>
+      <div id="checkWage"></div>
+      <div class="actions">
+        <button type="button" class="ghost" data-go="1">다른 파일 올리기</button>
+        <button type="button" class="primary" data-go="4">결과 보기</button>
+      </div>
+    </section>
+
+    <section id="step4" class="panel" aria-labelledby="h4" hidden>
+      <p class="eyebrow">Step 4 / 5</p>
+      <h2 id="h4">4. 직원별 월간 집계</h2>
+      <div class="filters">
+        <label>직군
+          <select id="fGroup"><option value="">전체</option></select>
+        </label>
+        <label>검색
+          <input id="fText" type="search" placeholder="이름 또는 사번">
+        </label>
+        <div class="seg" role="group" aria-label="보기 방식">
+          <button type="button" id="vGraph" aria-pressed="true">그래프</button>
+          <button type="button" id="vTable" aria-pressed="false">표</button>
+        </div>
+      </div>
+      <div id="graphView" class="viz"></div>
+      <div id="tableView" hidden>
+        <div class="tablewrap">
+          <table id="summary">
+            <thead></thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+        </div>
+        <p class="hint">시간은 시:분 형식입니다. 야간은 연장·휴일과 겹쳐 있을 수 있어서 시간을 더해 쓰는 값이 아닙니다. 금액은 원 단위(원 미만 절사)입니다.</p>
+      </div>
+      <div id="payNote"></div>
+      <div class="actions">
+        <button type="button" class="ghost" data-go="3">검증으로</button>
+        <button type="button" class="primary" data-go="5">내보내기로</button>
+      </div>
+    </section>
+
+    <section id="step5" class="panel" aria-labelledby="h5" hidden>
+      <p class="eyebrow">Step 5 / 5</p>
+      <h2 id="h5">5. 엑셀로 내보내기</h2>
+      <div id="exportInfo" class="box"></div>
+      <div class="actions">
+        <button type="button" class="ghost" data-go="4">결과로</button>
+        <button type="button" class="primary" id="download">엑셀 내려받기</button>
+      </div>
+      <p id="exportMsg" class="msg" role="status"></p>
+      <div class="actions"><button type="button" class="ghost" data-go="1" id="restart">새 파일로 처음부터</button></div>
+
+      <details class="box">
+        <summary>적용한 규칙</summary>
+        <ul id="rules"></ul>
+      </details>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span class="caption">근태 집계 도우미</span>
+    <span class="caption">서버 전송 없음 · 저장 없음</span>
+  </footer>
+
+  <div class="demo-badge">데모 버전 · 가짜 데이터</div>
+
+  <script src="lib/xlsx-full-min.js"></script>
+  <script src="src/rules.js"></script>
+  <script src="src/pay.js"></script>
+  <script src="src/io.js"></script>
+  <script src="src/charts.js"></script>
+  <script src="src/sample-data.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
