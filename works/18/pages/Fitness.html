@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>펄스 짐 홈 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFE14D}
+a{color:#0D0D0D}a:hover{color:#3A3A3A}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes punch{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · D · 이름이 히어로 — 피트니스</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Noto Sans KR', sans-serif; color: #0D0D0D; background: {{accent}}; font-size: 18px; line-height: 1.55; overflow: hidden">
+  <header style="padding: 24px 40px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center">
+    <a href="#" style="font-family: 'Black Han Sans', sans-serif; font-size: 26px; text-decoration: none">펄스 짐</a>
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px; font-weight: 700">
+      <a href="#programs" style="text-decoration: none">프로그램</a>
+      <a href="#schedule" style="text-decoration: none">시간표</a>
+      <a href="#visit" style="text-decoration: none">위치</a>
+      <a href="#visit" style="padding: 12px 20px; background: #0D0D0D; color: {{accent}}; text-decoration: none">첫 수업 예약</a>
+    </nav>
+  </header>
+
+  <section aria-labelledby="hero-title" style="padding: 0 40px 0">
+    <h1 id="hero-title" style="margin: 0; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(120px, 27vw, 380px); line-height: 0.82; letter-spacing: -0.04em; animation: punch 700ms cubic-bezier(0.16,1,0.3,1) both"><span aria-hidden="true">PULSE</span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">펄스 짐</span></h1>
+    <div style="display: flex; flex-wrap: wrap; gap: 32px 48px; align-items: stretch; margin-top: 32px">
+      <div style="flex: 999 1 520px; min-height: 560px; background: #0D0D0D; color: #FFE14D; padding: 24px; box-sizing: border-box; font-size: 14px">[사진: 새벽 수업, 바벨을 드는 회원 측면]</div>
+      <div style="flex: 1 1 280px; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; padding-bottom: 8px">
+        <p style="margin: 0; font-size: 28px; font-weight: 700; line-height: 1.3">새벽 여섯 시, 소그룹 근력 수업이 시작됩니다.</p>
+        <p style="margin: 0">한 수업 여덟 명. 코치가 이름을 부르며 자세를 잡아 줍니다.</p>
+        <a href="#visit" style="align-self: flex-start; padding: 18px 28px; background: #0D0D0D; color: {{accent}}; font-weight: 700; text-decoration: none">첫 수업 무료 체험</a>
+      </div>
+    </div>
+  </section>
+
+  <div aria-hidden="true" style="margin-top: 120px; background: #0D0D0D; color: {{accent}}; padding: 22px 0; white-space: nowrap; overflow: hidden">
+    <div style="display: inline-block; animation: slide 22s linear infinite; font-family: 'Black Han Sans', sans-serif; font-size: 40px">근력 — 컨디셔닝 — 모빌리티 — 오픈짐 — 근력 — 컨디셔닝 — 모빌리티 — 오픈짐 — 근력 — 컨디셔닝 — 모빌리티 — 오픈짐 — 근력 — 컨디셔닝 — 모빌리티 — 오픈짐 —&#160;</div>
+  </div>
+
+  <section id="programs" aria-labelledby="programs-title" style="background: #0D0D0D; color: #FFFFFF; padding: 120px 40px 200px">
+    <h2 id="programs-title" style="margin: 0 0 80px; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(48px, 6vw, 88px); line-height: 1">프로그램</h2>
+    <div style="display: flex; flex-direction: column; gap: 72px">
+      <sc-for list="{{programs}}" as="p" hint-placeholder-count="4">
+        <div style="display: flex; flex-wrap: wrap; gap: 16px 64px; align-items: baseline">
+          <h3 style="flex: 1 1 360px; margin: 0; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(44px, 5.5vw, 80px); line-height: 1; color: {{p.color}}">{{p.name}}</h3>
+          <p style="flex: 1 1 360px; margin: 0; max-width: 520px; font-size: 20px">{{p.desc}}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="schedule" aria-labelledby="schedule-title" style="background: #FFFFFF; padding: 160px 40px">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px 64px; align-items: flex-end; justify-content: space-between; margin-bottom: 48px">
+      <h2 id="schedule-title" style="margin: 0; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(48px, 6vw, 88px); line-height: 1">이번 주 시간표</h2>
+      <p style="margin: 0; color: #3A3A3A">샘플 시간표입니다 — 실제 운영 시간으로 교체하세요.</p>
+    </div>
+    <div style="overflow-x: auto">
+      <table style="width: 100%; min-width: 640px; border-collapse: collapse; font-size: 18px">
+        <thead><tr style="background: #0D0D0D; color: #FFFFFF"><th scope="col" style="padding: 18px 20px; text-align: left">시간</th><th scope="col" style="padding: 18px 20px; text-align: left">월 · 수 · 금</th><th scope="col" style="padding: 18px 20px; text-align: left">화 · 목</th><th scope="col" style="padding: 18px 20px; text-align: left">토</th></tr></thead>
+        <tbody>
+          <sc-for list="{{slots}}" as="s" hint-placeholder-count="4">
+            <tr style="background: {{s.bg}}"><th scope="row" style="padding: 18px 20px; text-align: left">{{s.time}}</th><td style="padding: 18px 20px">{{s.a}}</td><td style="padding: 18px 20px">{{s.b}}</td><td style="padding: 18px 20px">{{s.c}}</td></tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="visit" aria-labelledby="visit-title" style="padding: 160px 40px 48px; display: flex; flex-direction: column; gap: 96px">
+    <div style="display: flex; flex-wrap: wrap; gap: 32px 64px; align-items: flex-end; justify-content: space-between">
+      <h2 id="visit-title" style="margin: 0; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(56px, 8vw, 120px); line-height: 0.95">첫 수업은<br>무료입니다</h2>
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 360px">
+        <p style="margin: 0">[주소] · [전화번호]</p>
+        <a href="#" style="align-self: flex-start; padding: 18px 28px; background: #0D0D0D; color: {{accent}}; font-weight: 700; text-decoration: none">체험 예약하기</a>
+      </div>
+    </div>
+    <p style="margin: 0; font-size: 16px">© 2026 펄스 짐 · [인스타그램]</p>
+  </section>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#FFE14D","options":["#FFE14D","#FF6B35","#7CF29C"]},"$preview":{"width":1280,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#FFE14D';
+    const programs = [
+      { name: '근력', desc: '스쿼트, 데드리프트, 프레스. 기본 동작을 무겁게, 정확하게.' },
+      { name: '컨디셔닝', desc: '짧고 강한 인터벌로 심장을 깨웁니다. 40분이면 충분합니다.' },
+      { name: '모빌리티', desc: '굳은 고관절과 어깨를 푸는 시간. 다른 수업 전후로 추천합니다.' },
+      { name: '오픈짐', desc: '수업 없는 시간엔 자유롭게. 코치가 상주해 질문을 받습니다.' }
+    ];
+    const slots = [
+      { time: '06:00', a: '근력', b: '컨디셔닝', c: '근력' },
+      { time: '12:20', a: '모빌리티', b: '근력', c: '—' },
+      { time: '19:00', a: '컨디셔닝', b: '근력', c: '오픈짐' },
+      { time: '20:30', a: '근력', b: '모빌리티', c: '—' }
+    ];
+    return {
+      accent,
+      programs: programs.map((p, i) => ({ ...p, color: i % 2 === 0 ? accent : '#FFFFFF' })),
+      slots: slots.map((s, i) => ({ ...s, bg: i % 2 === 0 ? '#F1F1EE' : '#FFFFFF' }))
+    };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

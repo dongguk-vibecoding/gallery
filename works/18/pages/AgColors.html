@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>새벽코드 — 서비스마다 한 색 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:inherit}a:hover{opacity:0.8}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · 6 · 서비스마다 한 색</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Noto Sans KR', sans-serif; color: #14161A; background: #FFFFFF; font-size: 19px; line-height: 1.55">
+  <header style="padding: 24px 48px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center">
+    <a href="#" style="font-family: 'Do Hyeon', sans-serif; font-size: 28px; text-decoration: none">새벽코드</a>
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: center; font-size: 16px; font-weight: 500">
+      <a href="#web" style="text-decoration: none">웹</a>
+      <a href="#app" style="text-decoration: none">앱</a>
+      <a href="#mvp" style="text-decoration: none">MVP</a>
+      <a href="#care" style="text-decoration: none">유지보수</a>
+      <a href="#contact" style="padding: 12px 20px; background: #14161A; color: #FFFFFF; font-weight: 700; text-decoration: none">상담 신청</a>
+    </nav>
+  </header>
+
+  <section aria-labelledby="hero-title" style="padding: 80px 48px 160px; display: flex; flex-wrap: wrap; gap: 40px 64px; align-items: flex-end">
+    <h1 id="hero-title" style="flex: 2 1 520px; margin: 0; font-family: 'Do Hyeon', sans-serif; font-weight: 400; font-size: clamp(64px, 8.5vw, 136px); line-height: 0.95; letter-spacing: -0.02em; animation: rise 700ms cubic-bezier(0.16,1,0.3,1) both">무엇이든,<br>색깔별로 만듭니다</h1>
+    <div style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 16px">
+      <p style="margin: 0">새벽코드는 웹과 앱을 만드는 외주 개발 팀입니다. 필요한 색을 골라 내려가 보세요.</p>
+      <div aria-hidden="true" style="display: flex; height: 56px"><span style="flex: 1; background: #2B59FF"></span><span style="flex: 1; background: #FF6B4A"></span><span style="flex: 1; background: #FFD23F"></span><span style="flex: 1; background: #14161A"></span></div>
+    </div>
+  </section>
+
+  <section id="web" aria-labelledby="web-title" style="background: #2B59FF; color: #FFFFFF; padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: center">
+    <div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 20px">
+      <h2 id="web-title" style="margin: 0; font-family: 'Do Hyeon', sans-serif; font-weight: 400; font-size: clamp(64px, 9vw, 144px); line-height: 0.9">웹</h2>
+      <p style="margin: 0; max-width: 440px">예약, 커머스, 커뮤니티, 사내 도구. 관리자 화면까지 함께 만듭니다.</p>
+    </div>
+    <div style="flex: 1.4 1 440px; min-height: 480px; background: #1E44D6; padding: 20px; box-sizing: border-box; font-size: 14px">[프로젝트 화면: 커머스 웹 데스크톱]</div>
+  </section>
+
+  <section id="app" aria-labelledby="app-title" style="background: #FF6B4A; color: #14161A; padding: 160px 48px; display: flex; flex-wrap: wrap-reverse; gap: 48px 80px; align-items: center">
+    <div style="flex: 1 1 360px; display: flex; gap: 20px; justify-content: center">
+      <div style="flex: 0 1 220px; height: 440px; background: #E5532F; padding: 16px; box-sizing: border-box; font-size: 14px">[앱 화면 1]</div>
+      <div style="flex: 0 1 220px; height: 440px; background: #E5532F; padding: 16px; box-sizing: border-box; font-size: 14px; margin-top: 64px">[앱 화면 2]</div>
+    </div>
+    <div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 20px">
+      <h2 id="app-title" style="margin: 0; font-family: 'Do Hyeon', sans-serif; font-weight: 400; font-size: clamp(64px, 9vw, 144px); line-height: 0.9">앱</h2>
+      <p style="margin: 0; max-width: 440px">iOS와 안드로이드를 한 번에. 스토어 등록과 심사 대응까지 맡습니다.</p>
+    </div>
+  </section>
+
+  <section id="mvp" aria-labelledby="mvp-title" style="background: #FFD23F; color: #14161A; padding: 160px 48px; display: flex; flex-direction: column; gap: 40px">
+    <h2 id="mvp-title" style="margin: 0; font-family: 'Do Hyeon', sans-serif; font-weight: 400; font-size: clamp(64px, 9vw, 144px); line-height: 0.9">MVP</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 32px 80px">
+      <p style="flex: 1 1 360px; margin: 0; max-width: 520px; font-size: 24px; font-weight: 500">투자 전, 가설 하나를 검증할 만큼만. 기능을 덜어내는 것부터 함께합니다.</p>
+      <p style="flex: 1 1 360px; margin: 0; max-width: 440px">첫 출시 범위를 한 장으로 정리하고, 출시 뒤 사용자 반응을 보며 다음 기능을 정합니다.</p>
+    </div>
+  </section>
+
+  <section id="care" aria-labelledby="care-title" style="background: #14161A; color: #FFFFFF; padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: flex-end">
+    <h2 id="care-title" style="flex: 1 1 360px; margin: 0; font-family: 'Do Hyeon', sans-serif; font-weight: 400; font-size: clamp(64px, 9vw, 144px); line-height: 0.9">유지보수</h2>
+    <p style="flex: 1 1 360px; margin: 0; max-width: 480px">다른 곳에서 만든 서비스도 이어받습니다. 코드부터 읽고, 고칠 것과 둘 것을 먼저 말씀드립니다.</p>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-title" style="padding: 160px 48px 48px; display: flex; flex-direction: column; gap: 96px">
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between">
+      <h2 id="contact-title" style="margin: 0; font-family: 'Do Hyeon', sans-serif; font-weight: 400; font-size: clamp(56px, 7.5vw, 120px); line-height: 0.95">어떤 색이<br>필요하세요?</h2>
+      <a href="mailto:hello@example.com" style="padding: 18px 28px; background: #14161A; color: #FFFFFF; font-weight: 700; text-decoration: none">상담 신청</a>
+    </div>
+    <p style="margin: 0; font-size: 16px; color: #3A3E45">[사업자 정보] · [주소] · © 2026 새벽코드</p>
+  </section>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"$preview":{"width":1280,"height":2600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

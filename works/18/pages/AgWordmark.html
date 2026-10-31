@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>새벽코드 — 이름이 히어로 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0E14}
+a{color:#F5F3EE}a:hover{color:#FF9466}
+@keyframes left{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:none}}
+@keyframes right{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
+@keyframes strip{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · 4 · 이름이 히어로</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Noto Sans KR', sans-serif; color: #F5F3EE; background: #0B0E14; font-size: 18px; line-height: 1.55; overflow: hidden">
+  <header style="padding: 24px 40px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: flex-end; align-items: center">
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px; font-weight: 500">
+      <a href="#services" style="text-decoration: none">하는 일</a>
+      <a href="#work" style="text-decoration: none">작업</a>
+      <a href="#contact" style="text-decoration: none">문의</a>
+      <a href="#contact" style="padding: 12px 20px; background: {{accent}}; color: #0B0E14; font-weight: 700; text-decoration: none">상담 신청</a>
+    </nav>
+  </header>
+
+  <section aria-labelledby="hero-title" style="padding: 0 40px 160px; display: flex; flex-direction: column; gap: 24px">
+    <h1 id="hero-title" style="margin: 0; display: flex; flex-direction: column; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(120px, 24vw, 340px); line-height: 0.85; letter-spacing: -0.03em">
+      <span style="animation: left 800ms cubic-bezier(0.16,1,0.3,1) both">새벽</span>
+      <span style="align-self: flex-end; color: {{accent}}; animation: right 800ms 100ms cubic-bezier(0.16,1,0.3,1) both">코드</span>
+    </h1>
+    <div style="display: flex; flex-wrap: wrap; gap: 24px 64px; align-items: flex-end">
+      <div style="flex: 999 1 520px; min-height: 480px; background: #232836; padding: 24px; box-sizing: border-box; font-size: 14px; color: #E2E4EA">[사진: 해 뜨기 전 사무실, 모니터 불빛 아래 일하는 개발자]</div>
+      <p style="flex: 1 1 280px; margin: 0; font-size: 22px; font-weight: 500">웹과 앱을 만드는 외주 개발 팀. 다들 자는 새벽에도 서비스는 돌아가야 하니까요.</p>
+    </div>
+  </section>
+
+  <section id="services" aria-labelledby="services-title" style="background: #F5F3EE; color: #0B0E14; padding: 160px 40px">
+    <h2 id="services-title" style="margin: 0 0 72px; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(48px, 6vw, 88px); line-height: 1">하는 일</h2>
+    <div style="display: flex; flex-direction: column; gap: 56px">
+      <sc-for list="{{services}}" as="s" hint-placeholder-count="4">
+        <div style="display: flex; flex-wrap: wrap; gap: 12px 64px; align-items: baseline">
+          <h3 style="flex: 1 1 380px; margin: 0; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(40px, 5vw, 72px); line-height: 1">{{s.name}}</h3>
+          <p style="flex: 1 1 360px; margin: 0; max-width: 520px; font-size: 20px">{{s.desc}}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="work" aria-labelledby="work-title" style="padding: 160px 0">
+    <h2 id="work-title" style="margin: 0 40px 56px; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(48px, 6vw, 88px); line-height: 1">만든 것</h2>
+    <div style="overflow: hidden">
+      <div style="display: flex; gap: 24px; width: max-content; animation: strip 40s linear infinite">
+        <sc-for list="{{work}}" as="w" hint-placeholder-count="8">
+          <a href="#" style="flex: 0 0 auto; width: 420px; display: flex; flex-direction: column; gap: 14px; text-decoration: none">
+            <div style="height: 300px; background: {{w.bg}}; padding: 18px; box-sizing: border-box; font-size: 14px; color: #F5F3EE">[프로젝트 화면]</div>
+            <span style="font-size: 20px; font-weight: 700">[프로젝트명] — {{w.kind}}</span>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-title" style="background: {{accent}}; color: #0B0E14; padding: 160px 40px 40px; display: flex; flex-direction: column; gap: 96px">
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between">
+      <h2 id="contact-title" style="margin: 0; font-family: 'Black Han Sans', sans-serif; font-weight: 400; font-size: clamp(56px, 8vw, 128px); line-height: 0.95">내일 아침,<br>답장 드립니다</h2>
+      <a href="mailto:hello@example.com" style="padding: 18px 28px; background: #0B0E14; color: #F5F3EE; font-weight: 700; text-decoration: none">메일로 문의하기</a>
+    </div>
+    <p style="margin: 0; font-size: 16px">[사업자 정보] · [주소] · © 2026 새벽코드</p>
+  </section>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#FF9466","options":["#FF9466","#FFD23F","#7FC8F8"]},"$preview":{"width":1280,"height":2600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const kinds = ['예약 앱', '커머스 웹', '사내 관리 도구', '헬스케어 앱'];
+    const tones = ['#232836', '#2E3445', '#394055', '#444C63'];
+    const work = [];
+    for (let r = 0; r < 2; r++) kinds.forEach((k, i) => work.push({ kind: k, bg: tones[i] }));
+    return {
+      accent: this.props.accent ?? '#FF9466',
+      services: [
+        { name: '웹 서비스', desc: '예약, 커머스, 커뮤니티. 관리자 화면까지 한 번에 만듭니다.' },
+        { name: '모바일 앱', desc: 'iOS와 안드로이드를 한 코드로. 스토어 심사까지 맡습니다.' },
+        { name: 'MVP', desc: '투자 전, 검증에 꼭 필요한 기능만 골라 빠르게 냅니다.' },
+        { name: '유지보수', desc: '다른 곳에서 만든 서비스도 이어받아 고치고 키웁니다.' }
+      ],
+      work
+    };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

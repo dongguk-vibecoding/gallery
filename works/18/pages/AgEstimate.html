@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>새벽코드 — 범위 계산기 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#0F1115}a:hover{color:#2B59FF}
+button{font:inherit;cursor:pointer;border:0}
+.opt{transition:background-color 280ms cubic-bezier(0.22,1,0.36,1),color 280ms}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · 1 · 범위 계산기가 첫 화면</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'IBM Plex Sans KR', sans-serif; color: #0F1115; background: #FFFFFF; font-size: 18px; line-height: 1.55">
+  <header style="padding: 24px 48px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center">
+    <a href="#" style="font-weight: 700; font-size: 22px; letter-spacing: -0.03em; text-decoration: none">새벽코드</a>
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px">
+      <a href="#work" style="text-decoration: none">작업</a>
+      <a href="#how" style="text-decoration: none">진행 방식</a>
+      <a href="#team" style="text-decoration: none">팀</a>
+      <a href="#contact" style="padding: 12px 20px; background: {{accent}}; color: #FFFFFF; font-weight: 700; text-decoration: none">상담 신청</a>
+    </nav>
+  </header>
+
+  <section aria-labelledby="hero-title" style="padding: 80px 48px 160px; display: flex; flex-wrap: wrap; gap: 56px 64px; align-items: flex-start">
+    <div style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 28px; padding-top: 24px; animation: rise 600ms cubic-bezier(0.16,1,0.3,1) both">
+      <h1 style="margin: 0; font-size: clamp(44px, 5.5vw, 80px); font-weight: 700; line-height: 1.02; letter-spacing: -0.04em">기능을 고르면<br>기간이 나옵니다</h1>
+      <p style="margin: 0; max-width: 440px">새벽코드는 웹과 앱을 만드는 외주 개발 팀입니다. 오른쪽에서 만들고 싶은 것을 골라 보세요. 대략적인 기간과 팀 구성이 바로 보입니다.</p>
+    </div>
+    <div style="flex: 1.3 1 520px; background: #F1F3F7; padding: 36px; display: flex; flex-direction: column; gap: 28px; animation: rise 600ms 120ms cubic-bezier(0.16,1,0.3,1) both">
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 20px; font-weight: 700">무엇을 만드나요</h2>
+        <div role="group" aria-label="플랫폼" style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{platforms}}" as="p" hint-placeholder-count="3">
+            <button type="button" class="opt" aria-pressed="{{p.pressed}}" onClick="{{p.pick}}" style="min-height: 48px; padding: 12px 20px; background: {{p.bg}}; color: {{p.fg}}; font-weight: 500">{{p.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 20px; font-weight: 700">필요한 기능</h2>
+        <div role="group" aria-label="기능" style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{features}}" as="f" hint-placeholder-count="6">
+            <button type="button" class="opt" aria-pressed="{{f.pressed}}" onClick="{{f.toggle}}" style="min-height: 48px; padding: 12px 20px; background: {{f.bg}}; color: {{f.fg}}; font-weight: 500">{{f.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div aria-live="polite" style="background: #0F1115; color: #FFFFFF; padding: 28px; display: flex; flex-wrap: wrap; gap: 20px 48px; align-items: baseline">
+        <p style="margin: 0; font-size: clamp(48px, 5vw, 72px); font-weight: 700; letter-spacing: -0.04em; line-height: 1">약 {{weeks}}주</p>
+        <p style="margin: 0; font-size: 18px; color: #E4E7EE">{{team}}</p>
+      </div>
+      <p style="margin: 0; font-size: 15px; color: #4A505C">샘플 산식입니다. 비용은 상담 후 [견적 안내 방식]으로 알려 드립니다.</p>
+    </div>
+  </section>
+
+  <section id="work" aria-labelledby="work-title" style="background: #0F1115; color: #FFFFFF; padding: 160px 48px">
+    <h2 id="work-title" style="margin: 0 0 56px; font-size: clamp(36px, 4vw, 56px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05">최근에 만든 것</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 32px">
+      <a href="#" style="flex: 2 1 480px; display: flex; flex-direction: column; gap: 16px; text-decoration: none; color: #FFFFFF">
+        <div style="min-height: 520px; background: #2A2F3A; padding: 20px; font-size: 14px; color: #E4E7EE">[프로젝트 화면: 대표작 앱 3화면]</div>
+        <span style="font-size: 22px; font-weight: 700">[프로젝트명] — [고객사] 예약 앱</span>
+      </a>
+      <div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 32px">
+        <a href="#" style="display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: #FFFFFF"><div style="min-height: 220px; background: #3A4150; padding: 20px; font-size: 14px; color: #E4E7EE">[프로젝트 화면]</div><span style="font-size: 20px; font-weight: 700">[프로젝트명] — 사내 관리 도구</span></a>
+        <a href="#" style="display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: #FFFFFF"><div style="min-height: 220px; background: #4A5263; padding: 20px; font-size: 14px; color: #FFFFFF">[프로젝트 화면]</div><span style="font-size: 20px; font-weight: 700">[프로젝트명] — 커머스 웹</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" aria-labelledby="how-title" style="padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 48px 96px">
+    <h2 id="how-title" style="flex: 1 1 300px; margin: 0; font-size: clamp(36px, 4vw, 56px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05">매주 금요일, 돌아가는 화면을 보여드립니다</h2>
+    <div style="flex: 2 1 480px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px 48px">
+      <div style="display: flex; flex-direction: column; gap: 10px"><h3 style="margin: 0; font-size: 22px">기획</h3><p style="margin: 0">화면 목록과 우선순위를 함께 정하고, 첫 출시 범위를 문서 한 장으로 확정합니다.</p></div>
+      <div style="display: flex; flex-direction: column; gap: 10px"><h3 style="margin: 0; font-size: 22px">디자인</h3><p style="margin: 0">눌러볼 수 있는 시안으로 합의합니다. 그림이 아니라 동작을 보고 결정합니다.</p></div>
+      <div style="display: flex; flex-direction: column; gap: 10px"><h3 style="margin: 0; font-size: 22px">개발</h3><p style="margin: 0">일주일 단위로 쪼개 만들고, 매주 테스트 링크를 보내드립니다.</p></div>
+      <div style="display: flex; flex-direction: column; gap: 10px"><h3 style="margin: 0; font-size: 22px">출시 뒤</h3><p style="margin: 0">스토어 심사와 서버 이전을 맡고, [유지보수 기간] 동안 오류를 고칩니다.</p></div>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-title" style="background: {{accent}}; color: #FFFFFF; padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between">
+    <h2 id="contact-title" style="margin: 0; font-size: clamp(44px, 6vw, 88px); font-weight: 700; letter-spacing: -0.04em; line-height: 1">아이디어만 있어도<br>괜찮습니다</h2>
+    <a href="mailto:hello@example.com" style="padding: 18px 28px; background: #FFFFFF; color: #0F1115; font-weight: 700; text-decoration: none">30분 무료 상담 잡기</a>
+  </section>
+
+  <footer id="team" style="padding: 48px; display: flex; flex-wrap: wrap; gap: 16px 48px; justify-content: space-between; font-size: 16px; color: #4A505C">
+    <span style="font-weight: 700; color: #0F1115">새벽코드</span><span>[사업자 정보] · [주소] · [문의 메일]</span><span>© 2026 새벽코드</span>
+  </footer>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#2B59FF","options":["#2B59FF","#0F1115","#00875A"]},"$preview":{"width":1280,"height":2600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { platform: 'app', on: { login: true, pay: false, admin: true, chat: false, map: false, push: false } };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#2B59FF';
+    const platforms = [
+      { id: 'web', label: '웹', base: 6, devs: 2 },
+      { id: 'app', label: '앱', base: 8, devs: 2 },
+      { id: 'both', label: '웹 + 앱', base: 11, devs: 3 }
+    ];
+    const features = [
+      { id: 'login', label: '회원가입·로그인', w: 1 },
+      { id: 'pay', label: '결제', w: 2 },
+      { id: 'admin', label: '관리자 화면', w: 2 },
+      { id: 'chat', label: '채팅', w: 3 },
+      { id: 'map', label: '지도·위치', w: 1 },
+      { id: 'push', label: '푸시 알림', w: 1 }
+    ];
+    const s = this.state;
+    const plat = platforms.find((p) => p.id === s.platform);
+    const weeks = plat.base + features.reduce((sum, f) => sum + (s.on[f.id] ? f.w : 0), 0);
+    const onBg = (on) => (on ? '#0F1115' : '#FFFFFF');
+    const onFg = (on) => (on ? '#FFFFFF' : '#0F1115');
+    return {
+      accent,
+      weeks,
+      team: '기획 1 · 디자인 1 · 개발 ' + plat.devs + '명',
+      platforms: platforms.map((p) => ({
+        label: p.label,
+        pressed: p.id === s.platform ? 'true' : 'false',
+        bg: onBg(p.id === s.platform), fg: onFg(p.id === s.platform),
+        pick: () => this.setState({ platform: p.id })
+      })),
+      features: features.map((f) => ({
+        label: f.label,
+        pressed: s.on[f.id] ? 'true' : 'false',
+        bg: onBg(s.on[f.id]), fg: onFg(s.on[f.id]),
+        toggle: () => this.setState({ on: { ...s.on, [f.id]: !s.on[f.id] } })
+      }))
+    };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

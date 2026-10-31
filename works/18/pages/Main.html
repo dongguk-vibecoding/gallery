@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오롯 스튜디오 홈 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#141414}a:hover{color:#2E4A3F}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · A · 장소가 주인공 — 건축 스튜디오</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Noto Sans KR', sans-serif; color: #141414; background: #FFFFFF; font-size: 18px; line-height: 1.55">
+  <header style="padding: 24px 48px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center">
+    <a href="#" style="font-weight: 900; font-size: 24px; letter-spacing: -0.03em; text-decoration: none">오롯</a>
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px; font-weight: 500">
+      <a href="#work" style="text-decoration: none">프로젝트</a>
+      <a href="#studio" style="text-decoration: none">스튜디오</a>
+      <a href="#process" style="text-decoration: none">설계 과정</a>
+      <a href="#contact" style="padding: 12px 20px; background: {{accent}}; color: #FFFFFF; text-decoration: none">상담 신청</a>
+    </nav>
+  </header>
+
+  <section aria-labelledby="hero-title" style="position: relative; margin: 0 48px; min-height: 720px; background: #4A4B47; display: flex; flex-direction: column; justify-content: flex-end">
+    <span style="position: absolute; top: 24px; right: 24px; font-size: 14px; color: #E6E6E2">[사진: 연남동 협소주택 외관, 해 질 무렵]</span>
+    <div style="padding: 48px; background: rgba(20,20,20,0.55); color: #FFFFFF; display: flex; flex-wrap: wrap; gap: 24px 64px; align-items: flex-end; justify-content: space-between">
+      <h1 id="hero-title" style="margin: 0; font-size: clamp(64px, 10vw, 152px); font-weight: 900; line-height: 0.9; letter-spacing: -0.05em; animation: rise 700ms cubic-bezier(0.16,1,0.3,1) both">오롯 스튜디오</h1>
+      <p style="margin: 0; max-width: 340px; font-size: 18px">서울의 작은 땅 위에 집과 가게를 설계하는 건축 사무소입니다.</p>
+    </div>
+  </section>
+
+  <section id="studio" aria-labelledby="studio-title" style="padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: flex-start">
+    <div style="flex: 1 1 360px; max-width: 520px; display: flex; flex-direction: column; gap: 24px; padding-top: 80px">
+      <h2 id="studio-title" style="margin: 0; font-size: clamp(36px, 4vw, 56px); font-weight: 900; line-height: 1.05; letter-spacing: -0.03em">좁은 땅에서 시작합니다</h2>
+      <p style="margin: 0">열 평 남짓한 필지, 북향의 골목, 오래된 벽돌 한 장. 땅이 가진 조건을 먼저 읽고, 그 조건이 집의 성격이 되도록 설계합니다.</p>
+      <p style="margin: 0">[스튜디오 소개 한 문단 — 설립 연도, 구성원 수 등 실제 정보로 교체]</p>
+    </div>
+    <div style="flex: 999 1 480px; min-height: 640px; background: #D9DAD5; display: flex; align-items: flex-end; padding: 24px; box-sizing: border-box; font-size: 14px; color: #3A3B37">[사진: 실내 계단과 천창]</div>
+  </section>
+
+  <section id="work" aria-labelledby="work-title" style="background: #E4E5E0; padding: 160px 48px">
+    <h2 id="work-title" style="margin: 0 0 56px; font-size: clamp(36px, 4vw, 56px); font-weight: 900; letter-spacing: -0.03em; line-height: 1.05">최근 작업</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px">
+      <a href="#" style="grid-row: span 2; display: flex; flex-direction: column; gap: 16px; text-decoration: none">
+        <div style="flex: 1; min-height: 560px; background: #6B6C66; color: #F2F2EE; font-size: 14px; padding: 20px">[사진: 연남동 협소주택]</div>
+        <span style="font-size: 22px; font-weight: 700">연남동 협소주택 — 33㎡ 땅 위의 4층 집</span>
+      </a>
+      <a href="#" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
+        <div style="min-height: 260px; background: #A3A49D; font-size: 14px; padding: 20px; color: #1E1F1C">[사진: 성수 쇼룸]</div>
+        <span style="font-size: 22px; font-weight: 700">성수 쇼룸</span>
+      </a>
+      <a href="#" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
+        <div style="min-height: 260px; background: #8B8C85; font-size: 14px; padding: 20px; color: #FFFFFF">[사진: 망원 아파트 거실]</div>
+        <span style="font-size: 22px; font-weight: 700">망원 아파트 리모델링</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="process" aria-labelledby="process-title" style="background: #141414; color: #FFFFFF; padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 56px 96px">
+    <h2 id="process-title" style="flex: 1 1 320px; margin: 0; font-size: clamp(36px, 4vw, 56px); font-weight: 900; letter-spacing: -0.03em; line-height: 1.05">한 팀이 끝까지 갑니다</h2>
+    <div style="flex: 2 1 480px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 48px">
+      <div style="display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; font-size: 22px">대화</h3><p style="margin: 0; color: #E2E2DE">가족의 하루, 가게의 동선을 먼저 듣습니다. 첫 만남은 현장에서 합니다.</p></div>
+      <div style="display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; font-size: 22px">설계</h3><p style="margin: 0; color: #E2E2DE">모형과 도면을 함께 보며 세 번 이상 고칩니다. 예산은 매 단계 공개합니다.</p></div>
+      <div style="display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; font-size: 22px">현장</h3><p style="margin: 0; color: #E2E2DE">설계한 사람이 감리까지 맡아, 도면이 현장에서 바뀌지 않게 지킵니다.</p></div>
+    </div>
+  </section>
+
+  <footer id="contact" style="background: {{accent}}; color: #FFFFFF; padding: 160px 48px 48px; display: flex; flex-direction: column; gap: 96px">
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between">
+      <h2 style="margin: 0; font-size: clamp(44px, 6vw, 88px); font-weight: 900; letter-spacing: -0.04em; line-height: 1">함께 지을 집을<br>이야기해요</h2>
+      <a href="mailto:hello@example.com" style="padding: 18px 28px; background: #FFFFFF; color: #141414; font-weight: 700; text-decoration: none">상담 메일 보내기</a>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px 48px; font-size: 16px; color: #E6EEEA">
+      <span>[스튜디오 주소]</span><span>[전화번호]</span><span>© 2026 오롯 스튜디오</span>
+    </div>
+  </footer>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#2E4A3F","options":["#2E4A3F","#1D3A5F","#5A2E1E"]},"$preview":{"width":1280,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#2E4A3F' };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

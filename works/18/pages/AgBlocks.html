@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>새벽코드 — 블록 모티프 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;600;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F5F2}
+a{color:#111111}a:hover{color:#B8350F}
+@keyframes drop{from{opacity:0;transform:translateY(-80px)}to{opacity:1;transform:none}}
+.blk{animation:drop 600ms cubic-bezier(0.34,1.4,0.64,1) both}
+@media (max-width: 600px){.tiles{grid-template-columns:minmax(0,1fr) !important}.tiles>*{grid-column:auto !important;grid-row:auto !important}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · 10 · 블록 하나의 모티프</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Gothic A1', sans-serif; color: #111111; background: #F5F5F2; font-size: 18px; line-height: 1.55">
+  <header style="padding: 24px 48px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center">
+    <a href="#" style="display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 22px; text-decoration: none"><span aria-hidden="true" style="width: 22px; height: 22px; background: {{accent}}"></span>새벽코드</a>
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px; font-weight: 600">
+      <a href="#steps" style="text-decoration: none">쌓는 순서</a>
+      <a href="#work" style="text-decoration: none">작업</a>
+      <a href="#contact" style="text-decoration: none">문의</a>
+      <a href="#contact" style="width: 64px; height: 64px; background: #111111; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 15px">상담</a>
+    </nav>
+  </header>
+
+  <section aria-labelledby="hero-title" style="padding: 72px 48px 160px; display: flex; flex-wrap: wrap; gap: 48px 64px; align-items: flex-end">
+    <div style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 24px">
+      <h1 id="hero-title" style="margin: 0; font-size: clamp(52px, 7vw, 108px); font-weight: 900; line-height: 0.98; letter-spacing: -0.045em">블록 하나씩,<br>단단하게</h1>
+      <p style="margin: 0; max-width: 440px">새벽코드는 웹과 앱을 만드는 외주 개발 팀입니다. 한 번에 다 짓지 않고, 매주 블록 하나씩 쌓아 보여드립니다.</p>
+    </div>
+    <div aria-hidden="true" style="flex: 1 1 420px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; align-items: end; max-width: 560px">
+      <sc-for list="{{tower}}" as="t" hint-placeholder-count="15">
+        <div class="blk" style="aspect-ratio: 1; background: {{t.bg}}; visibility: {{t.vis}}; animation-delay: {{t.delay}}"></div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="steps" aria-labelledby="steps-title" style="background: #111111; color: #FFFFFF; padding: 160px 48px">
+    <h2 id="steps-title" style="margin: 0 0 72px; font-size: clamp(40px, 5vw, 72px); font-weight: 900; letter-spacing: -0.04em; line-height: 1">쌓는 순서</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+        <div style="flex: 1 1 220px; min-height: {{s.h}}; background: {{s.bg}}; color: {{s.fg}}; padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px">
+          <h3 style="margin: 0; font-size: 28px; font-weight: 900">{{s.name}}</h3>
+          <p style="margin: 0; font-size: 17px">{{s.desc}}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="work" aria-labelledby="work-title" style="padding: 160px 48px">
+    <h2 id="work-title" style="margin: 0 0 56px; font-size: clamp(40px, 5vw, 72px); font-weight: 900; letter-spacing: -0.04em; line-height: 1">쌓아 올린 것</h2>
+    <div class="tiles" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px">
+      <a href="#" style="grid-column: span 2; grid-row: span 2; aspect-ratio: 1; background: #2E2E2E; color: #FFFFFF; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none"><span style="font-size: 14px">[프로젝트 화면]</span><span style="font-size: 24px; font-weight: 900">[프로젝트명] — 예약 앱</span></a>
+      <a href="#" style="aspect-ratio: 1; background: #D9D9D4; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none"><span style="font-size: 14px">[프로젝트 화면]</span><span style="font-size: 20px; font-weight: 900">[프로젝트명] — 커머스 웹</span></a>
+      <a href="#" style="aspect-ratio: 1; background: {{accent}}; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none"><span style="font-size: 14px">[프로젝트 화면]</span><span style="font-size: 20px; font-weight: 900">[프로젝트명] — 관리 도구</span></a>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-title" style="background: {{accent}}; padding: 160px 48px 48px; display: flex; flex-direction: column; gap: 96px">
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between">
+      <h2 id="contact-title" style="margin: 0; font-size: clamp(52px, 7vw, 112px); font-weight: 900; letter-spacing: -0.05em; line-height: 0.95">첫 블록을<br>같이 놓아요</h2>
+      <a href="mailto:hello@example.com" style="width: 200px; height: 200px; background: #111111; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 22px; font-weight: 900; text-decoration: none">상담<br>신청하기</a>
+    </div>
+    <p style="margin: 0; font-size: 16px">[사업자 정보] · [주소] · © 2026 새벽코드</p>
+  </section>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#FF6A3D","options":["#FF6A3D","#FFD23F","#4F8BFF"]},"$preview":{"width":1280,"height":2600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#FF6A3D';
+    // 3 rows x 5 cols, top row first; a staircase rising to the right
+    const shape = [
+      0, 0, 0, 0, 1,
+      0, 0, 1, 1, 2,
+      1, 1, 2, 1, 1
+    ];
+    const tower = shape.map((v, i) => ({
+      vis: v === 0 ? 'hidden' : 'visible',
+      bg: v === 2 ? accent : '#111111',
+      delay: ((14 - i) * 60) + 'ms'
+    }));
+    const steps = [
+      { name: '기초', desc: '출시 범위를 한 장으로 정합니다.', h: '220px' },
+      { name: '뼈대', desc: '눌러보는 시안으로 화면 흐름을 굳힙니다.', h: '300px' },
+      { name: '벽돌', desc: '매주 기능 하나씩, 테스트 링크와 함께.', h: '380px' },
+      { name: '지붕', desc: '스토어 출시와 출시 뒤 오류 수정까지.', h: '460px' }
+    ];
+    return {
+      accent,
+      tower,
+      steps: steps.map((s, i) => ({ ...s, bg: i === 3 ? accent : '#2A2A2A', fg: i === 3 ? '#111111' : '#FFFFFF' }))
+    };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

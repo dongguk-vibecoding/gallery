@@ -143,6 +143,15 @@
       "liveUrl": "",
       "prompt": "",
       "thumb": "gallery-thumb.jpg"
+    },
+    {
+      "id": "18",
+      "title": "홈페이지 디자인 시안 20개 뽑아보기",
+      "author": "박현근",
+      "summary": "홈페이지 개발 및 외주 개발 사이트 예시 20개입니다!",
+      "liveUrl": "www.qpin.co.kr",
+      "prompt": "인수인계서 만들어줘",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }

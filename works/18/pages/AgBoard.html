@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>새벽코드 — 칸반 보드 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;600;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9EBEE}
+a{color:#121417}a:hover{color:#B34700}
+@keyframes drop{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+.card{animation:drop 500ms cubic-bezier(0.16,1,0.3,1) both}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · 3 · 칸반 보드가 된 페이지</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Gothic A1', sans-serif; color: #121417; background: #E9EBEE; font-size: 18px; line-height: 1.55">
+  <header style="padding: 24px 48px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center">
+    <a href="#" style="font-weight: 800; font-size: 22px; text-decoration: none">새벽코드</a>
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px; font-weight: 600">
+      <a href="#board" style="text-decoration: none">진행 방식</a>
+      <a href="#work" style="text-decoration: none">작업</a>
+      <a href="#contact" style="text-decoration: none">문의</a>
+      <a href="#contact" style="padding: 12px 20px; background: {{accent}}; color: #121417; text-decoration: none">프로젝트 시작</a>
+    </nav>
+  </header>
+
+  <section aria-labelledby="hero-title" style="padding: 64px 48px 48px; display: flex; flex-wrap: wrap; gap: 24px 64px; align-items: flex-end; justify-content: space-between">
+    <h1 id="hero-title" style="margin: 0; font-size: clamp(48px, 6vw, 88px); font-weight: 800; line-height: 1; letter-spacing: -0.04em">진행 상황을<br>매일 보는 외주</h1>
+    <p style="margin: 0; max-width: 440px">새벽코드는 웹과 앱을 만드는 개발 팀입니다. 계약하는 날 이 보드의 초대 링크를 드립니다. 카드가 오른쪽으로 옮겨 가는 걸 직접 확인하세요.</p>
+  </section>
+
+  <section id="board" aria-label="진행 보드" style="padding: 0 48px 160px">
+    <div style="overflow-x: auto">
+      <div style="display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 12px; min-width: 1120px">
+        <sc-for list="{{columns}}" as="col" hint-placeholder-count="5">
+          <div style="background: {{col.bg}}; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 620px">
+            <h2 style="margin: 0 0 4px; font-size: 22px; font-weight: 800; color: {{col.fg}}">{{col.name}}</h2>
+            <sc-for list="{{col.cards}}" as="c" hint-placeholder-count="2">
+              <div class="card" style="background: #FFFFFF; padding: 18px; display: flex; flex-direction: column; gap: 8px; animation-delay: {{c.delay}}">
+                <h3 style="margin: 0; font-size: 18px; font-weight: 800">{{c.title}}</h3>
+                <p style="margin: 0; font-size: 16px; color: #33373D">{{c.body}}</p>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" aria-labelledby="work-title" style="background: #121417; color: #FFFFFF; padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: flex-end">
+    <div style="flex: 999 1 520px; min-height: 600px; background: #2C3038; padding: 24px; box-sizing: border-box; font-size: 14px; color: #E6E8EB">[프로젝트 화면: 대표작 웹 서비스 대시보드 실제 캡처]</div>
+    <div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 16px">
+      <h2 id="work-title" style="margin: 0; font-size: clamp(36px, 4vw, 56px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05">완료 칸에 도착한 것들</h2>
+      <p style="margin: 0; color: #E6E8EB">[프로젝트명] — [고객사], [기간]. 다른 작업은 상담 때 보여드립니다.</p>
+      <a href="#" style="align-self: flex-start; color: {{accent}}; font-weight: 800">작업 더 보기 →</a>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-title" style="background: {{accent}}; padding: 160px 48px 48px; display: flex; flex-direction: column; gap: 96px">
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between">
+      <h2 id="contact-title" style="margin: 0; font-size: clamp(48px, 6.5vw, 96px); font-weight: 800; letter-spacing: -0.04em; line-height: 1">첫 카드는<br>문의 칸에서</h2>
+      <a href="mailto:hello@example.com" style="padding: 18px 28px; background: #121417; color: #FFFFFF; font-weight: 800; text-decoration: none">아이디어 보내기</a>
+    </div>
+    <p style="margin: 0; font-size: 16px">[사업자 정보] · [주소] · © 2026 새벽코드</p>
+  </section>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#FF8A3D","options":["#FF8A3D","#FFD23F","#7CD992"]},"$preview":{"width":1280,"height":2600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#FF8A3D';
+    const columns = [
+      { name: '문의', cards: [
+        { title: '아이디어만 있어도 됩니다', body: '한 문단이면 충분합니다. 기획서가 없어도 시작할 수 있습니다.' },
+        { title: '30분 무료 상담', body: '만들 수 있는지, 얼마나 걸리는지 솔직하게 말씀드립니다.' } ] },
+      { name: '기획', cards: [
+        { title: '출시 범위 확정', body: '처음부터 다 만들지 않습니다. 첫 출시에 꼭 필요한 화면만 고릅니다.' } ] },
+      { name: '디자인', cards: [
+        { title: '눌러보는 시안', body: '그림 대신 휴대폰에서 직접 눌러보며 결정합니다.' },
+        { title: '수정은 두 번까지 포함', body: '[수정 정책은 실제 계약 조건으로 교체]' } ] },
+      { name: '개발', cards: [
+        { title: '매주 금요일 테스트 링크', body: '한 주 동안 만든 것을 직접 써 보실 수 있게 보내드립니다.' } ] },
+      { name: '출시', cards: [
+        { title: '스토어 심사까지', body: '앱 등록과 심사 대응을 맡습니다.' },
+        { title: '출시 뒤 오류 수정', body: '[유지보수 기간] 동안 무상으로 고칩니다.' } ] }
+    ];
+    let n = 0;
+    return {
+      accent,
+      columns: columns.map((c, i) => ({
+        ...c,
+        bg: i === 4 ? '#121417' : '#D5D9DF',
+        fg: i === 4 ? '#FFFFFF' : '#121417',
+        cards: c.cards.map((card) => ({ ...card, delay: (n++ * 80) + 'ms' }))
+      }))
+    };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>책방 여백 홈 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#1A1A1A}a:hover{color:#1E5B3A}
+button{font:inherit;cursor:pointer;border:0}
+.spine{transition:transform 420ms cubic-bezier(0.16,1,0.3,1)}
+.spine:hover{transform:translateY(-12px)}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · E · 절제된 서가 — 독립서점</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Nanum Myeongjo', serif; color: #1A1A1A; background: #FFFFFF; font-size: 18px; line-height: 1.6">
+  <header style="padding: 24px 48px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center">
+    <a href="#" style="font-weight: 800; font-size: 22px; text-decoration: none">여백</a>
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px">
+      <a href="#shelf" style="text-decoration: none">이달의 서가</a>
+      <a href="#club" style="text-decoration: none">독서 모임</a>
+      <a href="#visit" style="text-decoration: none">찾아오기</a>
+      <a href="#club" style="padding: 12px 20px; background: {{accent}}; color: #FFFFFF; text-decoration: none">모임 신청</a>
+    </nav>
+  </header>
+
+  <section id="shelf" aria-labelledby="hero-title" style="padding: 80px 48px 160px">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px 64px; align-items: baseline; margin-bottom: 64px">
+      <h1 id="hero-title" style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.01em">책방 여백, 서점지기가 고른 여덟 권</h1>
+      <p style="margin: 0; color: #3D3D3D">책등을 눌러 보세요.</p>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 48px 64px; align-items: flex-end">
+      <div role="group" aria-label="이달의 책" style="flex: 999 1 560px; display: flex; gap: 6px; align-items: flex-end; min-height: 460px; padding: 0 0 0; background: #FFFFFF; overflow-x: auto">
+        <sc-for list="{{books}}" as="b" hint-placeholder-count="8">
+          <button type="button" class="spine" aria-pressed="{{b.pressed}}" onClick="{{b.pick}}" style="flex: 0 0 auto; width: {{b.w}}; height: {{b.h}}; background: {{b.bg}}; color: {{b.fg}}; writing-mode: vertical-rl; padding: 20px 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; outline-offset: 4px">{{b.title}}</button>
+        </sc-for>
+      </div>
+      <div aria-live="polite" style="flex: 1 1 300px; max-width: 380px; display: flex; flex-direction: column; gap: 16px; animation: fade 420ms both">
+        <h2 style="margin: 0; font-size: 28px; font-weight: 800">{{current.title}}</h2>
+        <p style="margin: 0; color: #3D3D3D">{{current.author}}</p>
+        <p style="margin: 0">{{current.note}}</p>
+        <a href="#" style="align-self: flex-start; padding: 12px 0; font-weight: 700; color: {{accent}}">재고 문의하기 →</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="space-title" style="background: #EEF1EC; padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: flex-end">
+    <div style="flex: 999 1 520px; min-height: 600px; background: #C9D1C4; padding: 24px; box-sizing: border-box; font-size: 14px; color: #1A1A1A">[사진: 창가 쪽 서가와 나무 의자 하나]</div>
+    <div style="flex: 1 1 300px; max-width: 400px; display: flex; flex-direction: column; gap: 16px">
+      <h2 id="space-title" style="margin: 0; font-size: 28px; font-weight: 800">열두 평, 의자 하나</h2>
+      <p style="margin: 0">서가 사이에 의자를 하나만 두었습니다. 머물다 가셔도, 한 권만 고르고 가셔도 좋습니다.</p>
+    </div>
+  </section>
+
+  <section id="club" aria-labelledby="club-title" style="padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 48px 96px">
+    <h2 id="club-title" style="flex: 1 1 260px; margin: 0; font-size: 28px; font-weight: 800">이달의 독서 모임</h2>
+    <div style="flex: 3 1 520px; display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{clubs}}" as="c" hint-placeholder-count="3">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px 40px; align-items: baseline; padding: 28px 32px; background: {{c.bg}}">
+          <span style="flex: 0 0 180px; font-weight: 700">{{c.when}}</span>
+          <span style="flex: 1 1 260px">{{c.what}}</span>
+          <a href="#" style="flex: 0 0 auto; color: {{accent}}; font-weight: 700">신청</a>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <footer id="visit" style="background: {{accent}}; color: #FFFFFF; padding: 160px 48px 48px; display: flex; flex-direction: column; gap: 96px">
+    <div style="display: flex; flex-wrap: wrap; gap: 32px 96px">
+      <h2 style="flex: 1 1 260px; margin: 0; font-size: 28px; font-weight: 800">찾아오기</h2>
+      <dl style="flex: 3 1 420px; margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 16px 40px">
+        <dt style="font-weight: 700">주소</dt><dd style="margin: 0">[서점 주소]</dd>
+        <dt style="font-weight: 700">여는 시간</dt><dd style="margin: 0">[요일 · 시간]</dd>
+        <dt style="font-weight: 700">연락</dt><dd style="margin: 0">[전화번호] · [인스타그램]</dd>
+      </dl>
+    </div>
+    <p style="margin: 0; font-size: 16px; color: #E3ECE5">© 2026 책방 여백</p>
+  </footer>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#1E5B3A","options":["#1E5B3A","#8A2B2B","#24406B"]},"$preview":{"width":1280,"height":2700}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { picked: 0 };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#1E5B3A';
+    const look = [
+      { bg: accent, fg: '#FFFFFF', h: '420px', w: '64px' },
+      { bg: '#D8DDD5', fg: '#1A1A1A', h: '360px', w: '52px' },
+      { bg: '#1A1A1A', fg: '#FFFFFF', h: '440px', w: '72px' },
+      { bg: '#8FA68A', fg: '#1A1A1A', h: '380px', w: '58px' },
+      { bg: '#EEF1EC', fg: '#1A1A1A', h: '400px', w: '80px' },
+      { bg: '#3D3D3D', fg: '#FFFFFF', h: '340px', w: '50px' },
+      { bg: '#C9D1C4', fg: '#1A1A1A', h: '430px', w: '62px' },
+      { bg: '#5E7F5F', fg: '#FFFFFF', h: '390px', w: '68px' }
+    ];
+    const letters = ['가', '나', '다', '라', '마', '바', '사', '아'];
+    const books = letters.map((l, i) => ({
+      title: '[도서명 ' + l + ']',
+      author: '[저자] · [출판사]',
+      note: '[서점지기의 추천 한 문단 — 이 책을 고른 이유를 두세 문장으로]'
+    }));
+    const picked = this.state.picked;
+    return {
+      accent,
+      current: books[picked],
+      books: books.map((b, i) => ({
+        ...b, ...look[i],
+        pressed: i === picked ? 'true' : 'false',
+        pick: () => this.setState({ picked: i })
+      })),
+      clubs: [
+        { when: '[날짜] 저녁', what: '[모임 이름] — [함께 읽을 책]', bg: '#EEF1EC' },
+        { when: '[날짜] 오후', what: '[모임 이름] — [함께 읽을 책]', bg: '#F6F7F5' },
+        { when: '[날짜] 오전', what: '[모임 이름] — [함께 읽을 책]', bg: '#EEF1EC' }
+      ]
+    };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>물감 미술학원 홈 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Gothic+A1:wght@400;600;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FF5A36}
+a{color:#141414}a:hover{color:#3A3A3A}
+@keyframes drop{from{opacity:0;transform:translateY(-28px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · I · 섹션마다 한 색 — 미술학원</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Gothic A1', sans-serif; color: #141414; font-size: 19px; line-height: 1.55">
+  <section aria-labelledby="hero-title" style="background: {{hero}}; padding: 0 48px 160px">
+    <header style="padding: 24px 0; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center">
+      <a href="#" style="font-family: 'Jua', sans-serif; font-size: 28px; text-decoration: none">물감</a>
+      <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px; font-weight: 600">
+        <a href="#classes" style="text-decoration: none">수업</a>
+        <a href="#works" style="text-decoration: none">아이들 작품</a>
+        <a href="#visit" style="text-decoration: none">상담</a>
+        <a href="#visit" style="padding: 12px 20px; background: #141414; color: #FFFFFF; text-decoration: none">체험 수업 신청</a>
+      </nav>
+    </header>
+    <div style="padding-top: 56px; display: flex; flex-wrap: wrap; gap: 48px 64px; align-items: flex-end">
+      <div style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 24px; animation: drop 700ms cubic-bezier(0.16,1,0.3,1) both">
+        <h1 id="hero-title" style="margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: clamp(64px, 8.5vw, 132px); line-height: 0.95; letter-spacing: -0.03em">물감 미술학원</h1>
+        <p style="margin: 0; max-width: 420px; font-size: 22px">여섯 살부터 열세 살까지. 정답 없이, 손으로 섞고 칠하는 수업.</p>
+      </div>
+      <div style="flex: 1.2 1 440px; min-height: 560px; background: #141414; color: #FFFFFF; padding: 24px; box-sizing: border-box; font-size: 14px">[사진: 물감 묻은 작은 손과 큰 종이, 위에서]</div>
+    </div>
+  </section>
+
+  <section id="classes" aria-labelledby="classes-title" style="background: #7FC8F8; padding: 160px 48px">
+    <h2 id="classes-title" style="margin: 0 0 72px; font-family: 'Jua', sans-serif; font-weight: 400; font-size: clamp(48px, 6vw, 88px); line-height: 1">나이에 맞는 수업</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 56px 72px">
+      <div style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; font-size: 28px; font-weight: 800">여섯·일곱 살</h3><p style="margin: 0">손바닥, 붓, 스펀지로 색을 섞어 봅니다. 결과물보다 섞는 시간이 수업입니다.</p></div>
+      <div style="flex: 1.4 1 320px; display: flex; flex-direction: column; gap: 12px; padding-top: 64px"><h3 style="margin: 0; font-size: 28px; font-weight: 800">초등 저학년</h3><p style="margin: 0">관찰해서 그리기를 시작합니다. 동네 산책에서 본 것을 다음 시간에 그립니다.</p></div>
+      <div style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 12px; padding-top: 128px"><h3 style="margin: 0; font-size: 28px; font-weight: 800">초등 고학년</h3><p style="margin: 0">수채, 판화, 입체까지. 한 학기에 한 번 작은 전시를 직접 엽니다.</p></div>
+    </div>
+  </section>
+
+  <section id="works" aria-labelledby="works-title" style="background: #1F8A5B; color: #FFFFFF; padding: 160px 48px">
+    <div style="display: flex; flex-wrap: wrap; gap: 24px 96px; align-items: flex-end; margin-bottom: 64px">
+      <h2 id="works-title" style="margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: clamp(48px, 6vw, 88px); line-height: 1">이번 달 벽에 걸린 그림</h2>
+      <p style="margin: 0; max-width: 360px">보호자 동의를 받은 작품만 올립니다.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px">
+      <div style="grid-row: span 2; min-height: 560px; background: #F2E9D8; color: #141414; padding: 20px; font-size: 14px">[작품 사진: 세로 수채화]</div>
+      <div style="min-height: 268px; background: #FFD23F; color: #141414; padding: 20px; font-size: 14px">[작품 사진]</div>
+      <div style="min-height: 268px; background: #FF5A36; color: #141414; padding: 20px; font-size: 14px">[작품 사진]</div>
+      <div style="grid-column: span 2; min-height: 268px; background: #7FC8F8; color: #141414; padding: 20px; font-size: 14px">[작품 사진: 가로 판화]</div>
+    </div>
+  </section>
+
+  <section id="visit" aria-labelledby="visit-title" style="background: #FFD23F; padding: 160px 48px; display: flex; flex-wrap: wrap; gap: 40px 96px; align-items: flex-end; justify-content: space-between">
+    <div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 20px">
+      <h2 id="visit-title" style="margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: clamp(48px, 6vw, 88px); line-height: 1">한 번 와서 칠해 보세요</h2>
+      <p style="margin: 0; max-width: 480px">체험 수업 한 시간, 앞치마는 저희가 준비합니다. 끝나면 그린 그림을 가져가세요.</p>
+    </div>
+    <div style="flex: 0 1 360px; display: flex; flex-direction: column; gap: 16px">
+      <p style="margin: 0">[학원 주소] · [전화번호] · [수업 요일]</p>
+      <a href="#" style="align-self: flex-start; padding: 18px 28px; background: #141414; color: #FFFFFF; font-weight: 800; text-decoration: none">체험 수업 신청</a>
+    </div>
+  </section>
+
+  <footer style="background: #141414; color: #FFFFFF; padding: 48px; display: flex; flex-wrap: wrap; gap: 16px 48px; justify-content: space-between; font-size: 16px">
+    <span style="font-family: 'Jua', sans-serif; font-size: 24px">물감 미술학원</span><span>[교습소 등록번호] · © 2026</span>
+  </footer>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"hero":{"editor":"color","default":"#FF5A36","options":["#FF5A36","#FFD23F","#7FC8F8"]},"$preview":{"width":1280,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { hero: this.props.hero ?? '#FF5A36' };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

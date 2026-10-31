@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>새벽코드 — 작업실이 주인공 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#ECEEF0}
+a{color:#101214}a:hover{color:#B23A1B}
+@keyframes rise{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@keyframes pan{from{transform:scale(1.06)}to{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · 9 · 작업실이 주인공</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Noto Sans KR', sans-serif; color: #101214; background: #ECEEF0; font-size: 18px; line-height: 1.55">
+  <section aria-labelledby="hero-title" style="position: relative; min-height: 880px; background: #5E646C; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden">
+    <div aria-hidden="true" style="position: absolute; inset: 0; background: #5E646C; animation: pan 2400ms cubic-bezier(0.16,1,0.3,1) both"></div>
+    <header style="position: relative; padding: 24px 40px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center; background: rgba(16,18,20,0.6)">
+      <a href="#" style="font-weight: 900; font-size: 22px; color: #FFFFFF; text-decoration: none">새벽코드</a>
+      <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px; font-weight: 500">
+        <a href="#visit" style="color: #FFFFFF; text-decoration: none">작업실</a>
+        <a href="#people" style="color: #FFFFFF; text-decoration: none">사람들</a>
+        <a href="#work" style="color: #FFFFFF; text-decoration: none">작업</a>
+        <a href="#contact" style="padding: 12px 20px; background: {{accent}}; color: #FFFFFF; font-weight: 700; text-decoration: none">방문 예약</a>
+      </nav>
+    </header>
+    <span style="position: relative; align-self: flex-end; margin: 24px 40px; font-size: 14px; color: #FFFFFF">[사진: 창이 큰 작업실 전경, 오전 햇빛과 책상들]</span>
+    <div style="position: relative; padding: 32px 40px 40px; background: rgba(16,18,20,0.62); color: #FFFFFF; display: flex; flex-wrap: wrap; gap: 16px 48px; align-items: flex-end; justify-content: space-between">
+      <h1 id="hero-title" style="margin: 0; font-size: clamp(64px, 12vw, 184px); font-weight: 900; line-height: 0.85; letter-spacing: -0.05em; animation: rise 900ms cubic-bezier(0.16,1,0.3,1) both">새벽코드</h1>
+      <p style="margin: 0; max-width: 360px; font-size: 20px">[동네 이름]의 작업실에서 웹과 앱을 만드는 외주 개발 팀입니다.</p>
+    </div>
+  </section>
+
+  <section id="visit" aria-labelledby="visit-title" style="padding: 160px 40px; display: flex; flex-wrap: wrap; gap: 48px 96px; align-items: flex-start">
+    <div style="flex: 1 1 360px; max-width: 480px; display: flex; flex-direction: column; gap: 20px; padding-top: 64px">
+      <h2 id="visit-title" style="margin: 0; font-size: clamp(40px, 5vw, 72px); font-weight: 900; letter-spacing: -0.04em; line-height: 1">와서 보고<br>정하세요</h2>
+      <p style="margin: 0">계약 전에 작업실에 들러 만들 사람을 직접 만나 보세요. 화면 너머의 외주가 아니라, 문 열고 들어올 수 있는 팀입니다.</p>
+      <p style="margin: 0; font-weight: 700">[작업실 주소] · [방문 가능 시간]</p>
+    </div>
+    <div style="flex: 999 1 520px; min-height: 620px; background: #B9BEC4; padding: 24px; box-sizing: border-box; font-size: 14px">[사진: 회의 테이블 위 화면 시안 출력물과 노트북]</div>
+  </section>
+
+  <section id="people" aria-labelledby="people-title" style="background: #101214; color: #FFFFFF; padding: 160px 40px">
+    <div style="display: flex; flex-wrap: wrap; gap: 24px 96px; align-items: flex-end; margin-bottom: 64px">
+      <h2 id="people-title" style="margin: 0; font-size: clamp(40px, 5vw, 72px); font-weight: 900; letter-spacing: -0.04em; line-height: 1">여기서 일하는 사람들</h2>
+      <p style="margin: 0; max-width: 400px; color: #E2E4E7">기획, 디자인, 개발. 이름과 얼굴로 일합니다.</p>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end">
+      <sc-for list="{{people}}" as="p" hint-placeholder-count="5">
+        <figure style="margin: 0; flex: 1 1 200px; display: flex; flex-direction: column; gap: 12px">
+          <div style="height: {{p.h}}; background: {{p.bg}}; padding: 14px; box-sizing: border-box; font-size: 14px; color: #FFFFFF">[인물 사진]</div>
+          <figcaption style="display: flex; flex-direction: column"><span style="font-weight: 700; font-size: 20px">[이름]</span><span style="color: #E2E4E7">{{p.role}}</span></figcaption>
+        </figure>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="work" aria-labelledby="work-title" style="padding: 160px 40px; display: flex; flex-wrap: wrap; gap: 32px">
+    <h2 id="work-title" style="flex: 1 1 100%; margin: 0 0 24px; font-size: clamp(40px, 5vw, 72px); font-weight: 900; letter-spacing: -0.04em; line-height: 1">이 책상에서 나간 것</h2>
+    <a href="#" style="flex: 2 1 480px; display: flex; flex-direction: column; gap: 14px; text-decoration: none"><div style="min-height: 460px; background: #8D939A; padding: 20px; font-size: 14px; color: #FFFFFF">[프로젝트 화면]</div><span style="font-size: 20px; font-weight: 700">[프로젝트명] — 예약 앱</span></a>
+    <a href="#" style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 14px; text-decoration: none; padding-top: 120px"><div style="min-height: 340px; background: #A7ACB2; padding: 20px; font-size: 14px">[프로젝트 화면]</div><span style="font-size: 20px; font-weight: 700">[프로젝트명] — 사내 관리 도구</span></a>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-title" style="background: {{accent}}; color: #FFFFFF; padding: 160px 40px 40px; display: flex; flex-direction: column; gap: 96px">
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between">
+      <h2 id="contact-title" style="margin: 0; font-size: clamp(52px, 7vw, 112px); font-weight: 900; letter-spacing: -0.05em; line-height: 0.95">커피 한 잔<br>하러 오세요</h2>
+      <a href="mailto:hello@example.com" style="padding: 18px 28px; background: #FFFFFF; color: #101214; font-weight: 700; text-decoration: none">방문 예약하기</a>
+    </div>
+    <p style="margin: 0; font-size: 16px">[사업자 정보] · © 2026 새벽코드</p>
+  </section>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#B23A1B","options":["#B23A1B","#101214","#1F5A8A"]},"$preview":{"width":1280,"height":2600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const roles = ['대표 · 기획', '디자인', '프론트엔드', '백엔드', '앱 개발'];
+    const hs = ['360px', '300px', '340px', '280px', '320px'];
+    const bgs = ['#3A3F46', '#4A5058', '#3A3F46', '#555B63', '#4A5058'];
+    return {
+      accent: this.props.accent ?? '#B23A1B',
+      people: roles.map((r, i) => ({ role: r, h: hs[i], bg: bgs[i] }))
+    };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

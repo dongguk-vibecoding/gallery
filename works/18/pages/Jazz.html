@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>클럽 열한시 홈 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;600;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#101826}
+a{color:#F4F1EA}a:hover{color:#F5B83D}
+.stage{position:sticky;top:0}
+@media (max-width: 900px){.stage{position:static}}
+@keyframes glow{0%,100%{opacity:1}50%{opacity:0.55}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · H · 고정된 무대 — 재즈 클럽</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Gothic A1', sans-serif; color: #F4F1EA; background: #101826; font-size: 18px; line-height: 1.55">
+  <header style="padding: 24px 48px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center">
+    <a href="#" style="font-weight: 800; font-size: 22px; text-decoration: none">열한시</a>
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; font-size: 16px">
+      <a href="#lineup" style="text-decoration: none">공연</a>
+      <a href="#room" style="text-decoration: none">공간</a>
+      <a href="#bar" style="text-decoration: none">바 메뉴</a>
+      <a href="#lineup" style="padding: 12px 20px; background: {{accent}}; color: #101826; font-weight: 800; text-decoration: none">좌석 예약</a>
+    </nav>
+  </header>
+
+  <div style="padding: 32px 48px 0; display: flex; flex-wrap: wrap; gap: 48px 64px; align-items: flex-start">
+    <aside class="stage" style="flex: 1 1 340px; max-width: 440px; padding: 32px 0 48px; display: flex; flex-direction: column; gap: 28px">
+      <h1 style="margin: 0; font-size: clamp(56px, 6.5vw, 96px); font-weight: 800; line-height: 0.95; letter-spacing: -0.04em">클럽 열한시</h1>
+      <p aria-hidden="true" style="margin: 0; font-size: clamp(72px, 9vw, 136px); font-weight: 800; line-height: 1; color: {{accent}}; letter-spacing: -0.04em; animation: glow 3.2s ease-in-out infinite">23:00</p>
+      <p style="margin: 0">매일 밤 열한 시, 지하 마흔 석에서 라이브 재즈가 시작됩니다.</p>
+      <p style="margin: 0; color: #C8CCD4">[클럽 주소] · 지하 1층</p>
+    </aside>
+
+    <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 160px; padding-bottom: 160px">
+      <div style="min-height: 720px; background: #2A3447; padding: 24px; box-sizing: border-box; font-size: 14px; color: #E2E5EA">[사진: 무대 위 콘트라베이스와 핀 조명, 객석 뒤에서]</div>
+
+      <section id="lineup" aria-labelledby="lineup-title" style="display: flex; flex-direction: column; gap: 40px">
+        <h2 id="lineup-title" style="margin: 0; font-size: clamp(40px, 4.5vw, 64px); font-weight: 800; letter-spacing: -0.03em; line-height: 1">이번 주 무대</h2>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <sc-for list="{{shows}}" as="s" hint-placeholder-count="5">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: baseline; padding: 24px 28px; background: {{s.bg}}">
+              <span style="flex: 0 0 96px; font-weight: 800; color: {{accent}}">{{s.day}}</span>
+              <span style="flex: 1 1 240px; font-size: 22px; font-weight: 600">{{s.act}}</span>
+              <a href="#" style="flex: 0 0 auto; font-weight: 600">예약</a>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin: 0; color: #C8CCD4">입장료 [금액] · 한 세트 약 [분]분 · 두 세트 공연</p>
+      </section>
+
+      <section id="room" aria-labelledby="room-title" style="display: flex; flex-wrap: wrap; gap: 32px 48px; align-items: flex-end">
+        <div style="flex: 1 1 320px; min-height: 480px; background: #3A2E22; padding: 24px; box-sizing: border-box; font-size: 14px; color: #F4F1EA">[사진: 촛불 놓인 작은 테이블들]</div>
+        <div style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 16px">
+          <h2 id="room-title" style="margin: 0; font-size: clamp(40px, 4.5vw, 64px); font-weight: 800; letter-spacing: -0.03em; line-height: 1">마흔 석, 가까이</h2>
+          <p style="margin: 0">가장 먼 자리에서도 연주자의 숨소리가 들립니다. 공연 중에는 대화를 조금만 낮춰 주세요.</p>
+        </div>
+      </section>
+
+      <section id="bar" aria-labelledby="bar-title" style="background: {{accent}}; color: #101826; padding: 72px 56px; display: flex; flex-direction: column; gap: 24px">
+        <h2 id="bar-title" style="margin: 0; font-size: clamp(40px, 4.5vw, 64px); font-weight: 800; letter-spacing: -0.03em; line-height: 1">자정의 바</h2>
+        <p style="margin: 0; max-width: 520px">위스키와 클래식 칵테일, 그리고 공연이 끝난 뒤에만 내는 늦은 밤 메뉴가 있습니다.</p>
+        <a href="#" style="align-self: flex-start; padding: 16px 24px; background: #101826; color: #F4F1EA; font-weight: 800; text-decoration: none">메뉴 보기</a>
+      </section>
+    </main>
+  </div>
+
+  <footer style="background: #0A0F18; padding: 48px; display: flex; flex-wrap: wrap; gap: 16px 48px; justify-content: space-between; font-size: 16px; color: #C8CCD4">
+    <span>[영업 시간] · [전화번호]</span><span>© 2026 클럽 열한시</span>
+  </footer>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#F5B83D","options":["#F5B83D","#E86A5C","#8FD3E8"]},"$preview":{"width":1280,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const days = ['월', '화', '수', '목', '금'];
+    return {
+      accent: this.props.accent ?? '#F5B83D',
+      shows: days.map((d, i) => ({
+        day: d + '요일',
+        act: '[연주자 이름] ' + (i % 2 === 0 ? '트리오' : '쿼텟'),
+        bg: i % 2 === 0 ? '#1A2436' : '#151E2D'
+      }))
+    };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>

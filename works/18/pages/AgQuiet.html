@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>새벽코드 — 절제된 텍스트 · 데모</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#23408E}a:hover{color:#1A1A1A}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<style>
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;padding:10px 16px;background:#111111;color:#FFFFFF;font:500 14px/1.4 system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.demo-bar a{color:#FFFFFF;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="demo-bar"><a href="../index.html">← 시안 목록</a><span>데모 · 7 · 극도로 절제된 텍스트</span></div>
+<div id="dc-root"></div>
+<script type="text/x-dc-template" id="dc-template">
+<div style="font-family: 'Noto Serif KR', serif; color: #1A1A1A; background: #FFFFFF; font-size: 19px; line-height: 1.7">
+  <header style="padding: 28px 48px; display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: baseline">
+    <a href="#" style="font-weight: 600; font-size: 19px; color: #1A1A1A; text-decoration: none">새벽코드</a>
+    <nav aria-label="주요 메뉴" style="display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: baseline; font-size: 17px">
+      <a href="#not" style="color: #1A1A1A">원칙</a>
+      <a href="#work" style="color: #1A1A1A">작업</a>
+      <a href="#contact" style="color: #1A1A1A">연락</a>
+      <a href="#contact" style="padding: 10px 18px; background: {{accent}}; color: #FFFFFF; text-decoration: none">상담 신청</a>
+    </nav>
+  </header>
+
+  <div style="padding: 120px 48px 0 clamp(24px, 38vw, 560px); display: flex; flex-direction: column; gap: 200px; animation: fade 1200ms both">
+    <section aria-labelledby="hero-title" style="max-width: 620px; display: flex; flex-direction: column; gap: 28px">
+      <h1 id="hero-title" style="margin: 0; font-size: 28px; font-weight: 600; line-height: 1.4">새벽코드는 [N]명이 일하는 외주 개발 팀입니다.</h1>
+      <p style="margin: 0">웹과 앱을 만듭니다. 한 번에 [N]개 프로젝트까지만 맡습니다. 그래서 대표가 직접 전화를 받고, 처음 만난 개발자가 마지막 배포까지 합니다.</p>
+      <p style="margin: 0">화려한 소개 대신, 지금까지 만든 것과 일하는 방식을 아래에 적었습니다.</p>
+    </section>
+
+    <section id="not" aria-labelledby="not-title" style="max-width: 620px; display: flex; flex-direction: column; gap: 28px">
+      <h2 style="margin: 0; font-size: 28px; font-weight: 600" id="not-title">하지 않는 일</h2>
+      <ul style="margin: 0; padding: 0 0 0 1.1em; display: flex; flex-direction: column; gap: 16px">
+        <li>견적을 낮게 부르고 나중에 추가 비용을 청구하지 않습니다.</li>
+        <li>계약 뒤 담당자를 바꾸지 않습니다.</li>
+        <li>소스 코드를 붙잡고 있지 않습니다. 매주 고객 저장소에 올립니다.</li>
+        <li>만들 수 없는 것을 만들 수 있다고 말하지 않습니다.</li>
+      </ul>
+    </section>
+  </div>
+
+  <div style="margin: 200px 48px 0; min-height: 640px; background: #D6D8DC; padding: 24px; box-sizing: border-box; font-size: 14px; color: #1A1A1A">[사진: 팀 전원이 한 책상에 둘러앉은 모습, 자연광]</div>
+
+  <div style="padding: 200px 48px 0 clamp(24px, 38vw, 560px); display: flex; flex-direction: column; gap: 200px">
+    <section id="work" aria-labelledby="work-title" style="max-width: 620px; display: flex; flex-direction: column; gap: 28px">
+      <h2 id="work-title" style="margin: 0; font-size: 28px; font-weight: 600">만든 것</h2>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <sc-for list="{{work}}" as="w" hint-placeholder-count="5">
+          <a href="#" style="display: flex; flex-wrap: wrap; gap: 4px 24px; padding: 14px 16px; background: {{w.bg}}; color: #1A1A1A; text-decoration: none">
+            <span style="flex: 0 0 64px; color: #4A4A4A">{{w.year}}</span>
+            <span style="flex: 1 1 260px">[프로젝트명] — {{w.kind}}</span>
+          </a>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="contact" aria-labelledby="contact-title" style="max-width: 620px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 160px">
+      <h2 id="contact-title" style="margin: 0; font-size: 28px; font-weight: 600">연락</h2>
+      <p style="margin: 0">만들고 싶은 것을 몇 줄로 보내 주세요. 대표가 하루 안에 직접 답합니다.</p>
+      <p style="margin: 0; font-size: 28px"><a href="mailto:hello@example.com">hello@[도메인]</a></p>
+    </section>
+  </div>
+
+  <footer style="background: #F2F3F5; padding: 48px; display: flex; flex-wrap: wrap; gap: 16px 48px; justify-content: space-between; font-size: 16px; color: #3A3A3A">
+    <span>[사업자 정보] · [주소]</span><span>© 2026 새벽코드</span>
+  </footer>
+</div>
+</script>
+<script type="text/x-dc" id="dc-logic" data-props='{"accent":{"editor":"color","default":"#23408E","options":["#23408E","#1A1A1A","#7A2E2E"]},"$preview":{"width":1280,"height":2600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const work = [
+      { year: '[연도]', kind: '예약 앱' },
+      { year: '[연도]', kind: '사내 관리 도구' },
+      { year: '[연도]', kind: '커머스 웹' },
+      { year: '[연도]', kind: '헬스케어 앱' },
+      { year: '[연도]', kind: '교육 플랫폼 유지보수' }
+    ];
+    return {
+      accent: this.props.accent ?? '#23408E',
+      work: work.map((w, i) => ({ ...w, bg: i % 2 === 0 ? '#F2F3F5' : '#FFFFFF' }))
+    };
+  }
+}
+</script>
+<script src="../dc-lite.js"></script>
+</body>
+</html>
