@@ -62,6 +62,15 @@
       "liveUrl": "",
       "prompt": "",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "08",
+      "title": "오늘의 선생님 카드",
+      "author": "edu013",
+      "summary": "전화일본어 선생님별 프로필과 수업 기록을 모아 두고 검색하는 개인용 노트",
+      "liveUrl": "",
+      "prompt": "인스타그램이나 블로그의 사진은 올린 사람의 저작물이에요. 저장해서 사이트에 쓰거나 주소만 연결해 보여 주는 것도 허락 없이 쓰는 셈이에요.",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }
