@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>봉사단체 소개 및 후원 (데모)</title>
+<meta name="description" content="봉사단체 소개와 정기·일시 후원 안내">
+<meta name="robots" content="noindex">
+<style>
+/* ===== 디자인 기준 (디자인.md 참고). 색을 바꾸려면 여기만 수정 ===== */
+:root {
+  --primary: #0077d4;
+  --primary-dark: #005fa9;
+  --navy: #0e4280;
+  --blue: #115a9e;
+  --purple: #6b3a8c;
+  --steel: #3e6b8a;
+  --text: #212121;
+  --muted: #5f6b73;
+  --surface: #f1f4f6;
+  --border: #d5dadd;
+  --bg: #ffffff;
+  --radius: 8px;
+  --pill: 24px;
+  --max: 1200px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Pretendard", "Inter", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 16px; background: var(--bg); color: var(--text);
+  line-height: 1.6; word-break: keep-all; overflow-wrap: anywhere;
+}
+img { max-width: 100%; display: block; }
+a { color: var(--primary); }
+.container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+@media (max-width: 760px) { .container { padding: 0 16px; } }
+[hidden] { display: none !important; }
+
+/* 맨 위 안내 띠 */
+.example-notice { background: var(--navy); color: #fff; text-align: center; font-size: 0.9rem; font-weight: 600; padding: 12px 16px; }
+
+/* 머리글 */
+.site-header { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid var(--border); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; position: relative; }
+.logo { font-weight: 800; font-size: 1.3rem; text-decoration: none; color: var(--primary); letter-spacing: -0.01em; }
+.logo img { height: 40px; }
+.nav { display: flex; gap: 8px; align-items: center; }
+.nav a { text-decoration: none; padding: 8px 12px; color: var(--text); font-weight: 600; font-size: 0.95rem; border-bottom: 2px solid transparent; }
+.nav a:hover { color: var(--primary); }
+.nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+.nav a.nav-cta { color: #fff; background: var(--primary); border-radius: var(--pill); padding: 10px 20px; margin-left: 8px; border-bottom: 0; }
+.nav a.nav-cta:hover, .nav a.nav-cta.active { background: var(--primary-dark); color: #fff; }
+.menu-toggle { display: none; background: none; border: 0; font-size: 1.6rem; cursor: pointer; color: var(--text); padding: 4px 8px; }
+@media (max-width: 760px) {
+  .menu-toggle { display: block; }
+  .nav { display: none; position: absolute; top: 72px; left: 0; right: 0; flex-direction: column; align-items: stretch; padding: 12px 16px; background: #fff; border-bottom: 1px solid var(--border); }
+  .nav.open { display: flex; }
+  .nav a.nav-cta { margin: 8px 0 0; text-align: center; }
+}
+
+/* 버튼: 알약 모양 + 화살표 */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: var(--pill); background: var(--primary); color: #fff; font-weight: 600; font-size: 0.875rem; text-decoration: none; border: 1px solid var(--primary); cursor: pointer; font-family: inherit; line-height: 1.4; }
+.btn:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn .arrow { transition: transform .15s; }
+.btn:hover .arrow { transform: translateX(3px); }
+.btn.outline { background: transparent; color: var(--primary); }
+.btn.outline:hover { background: rgba(0, 119, 212, 0.08); }
+.btn.white { background: #fff; color: var(--primary); border-color: #fff; }
+.btn.white:hover { background: #e8f2fb; }
+.btn:disabled { opacity: 0.6; cursor: default; }
+
+/* 공통 */
+section { padding: 64px 0; }
+.divider { border: 0; border-top: 1px solid var(--border); margin: 0; }
+.section-title { font-size: clamp(1.6rem, 3vw, 2.125rem); font-weight: 700; line-height: 1.17; margin: 0 0 12px; letter-spacing: -0.01em; }
+.section-lead { font-size: 1.125rem; line-height: 1.6; margin: 0 0 32px; max-width: 760px; }
+.page-head { padding: 56px 0 8px; }
+.page-head h1 { font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 800; line-height: 1.17; margin: 0 0 12px; letter-spacing: -0.02em; }
+.page-head p { font-size: 1.125rem; margin: 0; max-width: 760px; }
+.grid { display: grid; gap: 24px; }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.card { background: var(--surface); border-radius: var(--radius); padding: 24px; }
+.card h3 { font-size: 1.125rem; font-weight: 600; margin: 0 0 8px; }
+.card p { margin: 0; color: var(--muted); }
+.caption { font-size: 0.8125rem; color: var(--muted); margin-top: 8px; }
+
+/* 예시 이미지 자리 */
+.placeholder {
+  width: 100%; height: 100%; min-height: 120px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  background: repeating-linear-gradient(45deg, #e7ecef, #e7ecef 12px, var(--surface) 12px, var(--surface) 24px);
+  color: var(--muted); font-size: 0.85rem; font-weight: 600; text-align: center;
+}
+.placeholder .ph-icon { font-size: 1.8rem; opacity: 0.6; }
+
+/* 첫 화면 */
+.hero { padding: 96px 0; min-height: 520px; background-size: cover; background-position: center; position: relative; overflow: hidden; }
+/* 계절별 하늘색과 땅색 */
+.hero[data-season="spring"] { background-image: linear-gradient(180deg, #fde6ee 0%, #fff7f2 75%, #e4f1d6 100%); }
+.hero[data-season="summer"] { background-image: linear-gradient(180deg, #d9effa 0%, #f3fbf6 75%, #cfe8bd 100%); }
+.hero[data-season="autumn"] { background-image: linear-gradient(180deg, #fde2c4 0%, #fff4e6 75%, #f0dcb8 100%); }
+.hero[data-season="winter"] { background-image: linear-gradient(180deg, #c9d7e8 0%, #e6eef7 75%, #f4f8fc 100%); }
+.hero[data-season="spring"] .ground { fill: #d5eabf; }
+.hero[data-season="summer"] .ground { fill: #a9d18e; }
+.hero[data-season="autumn"] .ground { fill: #e4c48f; }
+.hero[data-season="winter"] .ground { fill: #fbfdff; stroke: #c9d6e3; stroke-width: 2; }
+.hero-art { position: absolute; right: 0; bottom: 0; width: min(56%, 700px); height: auto; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16%); mask-image: linear-gradient(to right, transparent 0, #000 16%); }
+.hero-art .s-spring, .hero-art .s-summer, .hero-art .s-autumn, .hero-art .s-winter { display: none; }
+.hero[data-season="spring"] .s-spring, .hero[data-season="summer"] .s-summer,
+.hero[data-season="autumn"] .s-autumn, .hero[data-season="winter"] .s-winter { display: inline; }
+.hero-label { position: absolute; right: 12px; bottom: 10px; font-size: 0.75rem; color: var(--muted); background: rgba(255,255,255,0.85); padding: 2px 10px; border-radius: var(--pill); }
+.hero.has-image { color: #fff; }
+.hero.has-image::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,0.6), rgba(0,0,0,0.2)); }
+.hero .container { position: relative; }
+.hero h1 { font-size: clamp(2.1rem, 5vw, 3.75rem); font-weight: 800; line-height: 1.17; letter-spacing: -0.02em; margin: 0 0 20px; white-space: pre-line; max-width: 640px; }
+.hero p { font-size: 1.125rem; margin: 0 0 32px; max-width: 520px; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero.has-image .btn.outline { color: #fff; border-color: #fff; }
+@media (max-width: 760px) {
+  .hero { padding: 56px 0 0; min-height: 0; }
+  .hero-art { position: static; display: block; width: 100%; margin-top: 16px; -webkit-mask-image: none; mask-image: none; }
+}
+
+/* 성과 숫자 타일 */
+.stat-tile { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 24px; min-height: 140px; display: flex; flex-direction: column; justify-content: flex-end; }
+.stat-tile:nth-child(2) { background: var(--blue); }
+.stat-tile:nth-child(3) { background: var(--steel); }
+.stat-tile:nth-child(4) { background: var(--purple); }
+.stat-number { font-size: clamp(2.2rem, 4vw, 3rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+.stat-number small { font-size: 1rem; font-weight: 600; margin-left: 4px; }
+.stat-label { font-weight: 600; opacity: 0.9; margin-top: 4px; }
+@media (max-width: 760px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-tile { min-height: 112px; padding: 16px; }
+}
+
+/* 글 + 사진 나란히 */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.split .media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 4 / 3; }
+.split .media img { width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 760px) { .split { grid-template-columns: 1fr; gap: 24px; } }
+
+/* 색 타일 (주요 활동) */
+.tile { position: relative; display: flex; flex-direction: column; justify-content: flex-start; min-height: 220px; padding: 24px; border-radius: var(--radius); color: #fff; text-decoration: none; background: var(--blue); }
+.tile:nth-child(3n+2) { background: var(--purple); }
+.tile:nth-child(3n+3) { background: var(--steel); }
+.tile h3 { font-size: 1.125rem; font-weight: 600; margin: 0 40px 12px 0; }
+.tile p { margin: 0; color: rgba(255,255,255,0.92); }
+.tile .tile-icon { font-size: 1.8rem; margin-top: auto; padding-top: 24px; }
+.tile .circle-arrow { position: absolute; top: 20px; right: 20px; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--text); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; transition: transform .15s; }
+.tile:hover .circle-arrow { transform: translateX(3px); }
+
+/* 후원 유도 띠 */
+.cta-band { background: var(--primary); color: #fff; }
+.cta-band .container { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.cta-band h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; margin: 0 0 8px; }
+.cta-band p { margin: 0; opacity: 0.92; max-width: 640px; }
+
+/* 단체 소개 */
+.mission { font-size: clamp(1.4rem, 3vw, 1.75rem); font-weight: 700; line-height: 1.35; color: var(--primary); margin: 0; }
+.vision-list { padding: 0; margin: 0; list-style: none; display: grid; gap: 12px; }
+.vision-list li { background: var(--surface); border-left: 4px solid var(--primary); padding: 14px 18px; border-radius: 0 var(--radius) var(--radius) 0; }
+.timeline { list-style: none; padding: 0; margin: 24px 0 0 6px; border-left: 2px solid var(--border); }
+.timeline li { position: relative; padding: 0 0 22px 26px; }
+.timeline li::before { content: ""; position: absolute; left: -7px; top: 8px; width: 12px; height: 12px; border-radius: 50%; background: var(--primary); }
+.timeline .year { font-weight: 800; color: var(--primary); margin-right: 12px; }
+.person { text-align: center; }
+.avatar { width: 112px; height: 112px; border-radius: 50%; margin: 0 auto 12px; overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar .placeholder { min-height: 0; font-size: 0.75rem; }
+.person .role { color: var(--muted); font-size: 0.95rem; }
+
+/* 활동 소식 */
+.news-card { display: flex; flex-direction: column; color: inherit; text-decoration: none; }
+.news-card:hover h3 { color: var(--primary); text-decoration: underline; }
+.news-thumb { aspect-ratio: 16 / 10; border-radius: var(--radius); overflow: hidden; position: relative; }
+.photo-count { position: absolute; right: 10px; bottom: 10px; background: rgba(0,0,0,0.65); color: #fff; font-size: 0.8125rem; font-weight: 600; padding: 3px 10px; border-radius: var(--pill); }
+.back-link { margin: 0 0 16px; font-weight: 600; }
+.back-link a { text-decoration: none; }
+.news-text { font-size: 1.0625rem; line-height: 1.8; white-space: pre-line; margin-bottom: 32px; }
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.photo-grid a { display: block; aspect-ratio: 4 / 3; border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.photo-grid img { width: 100%; height: 100%; object-fit: cover; transition: transform .2s; }
+.photo-grid a:hover img { transform: scale(1.03); }
+.news-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.news-body { padding: 16px 0 0; }
+.news-body h3 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; margin: 8px 0 6px; }
+.news-body p { margin: 0; color: var(--muted); }
+.news-meta { font-size: 0.8125rem; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tag { color: var(--primary); font-weight: 700; text-transform: uppercase; }
+.filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+.filter-bar button { border: 1px solid var(--border); background: #fff; padding: 8px 18px; border-radius: var(--pill); cursor: pointer; font-family: inherit; font-size: 0.875rem; font-weight: 600; color: var(--text); }
+.filter-bar button:hover { border-color: var(--primary); color: var(--primary); }
+.filter-bar button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.empty { color: var(--muted); text-align: center; padding: 40px 0; }
+
+/* 후원 */
+.amount { font-size: 1.75rem; font-weight: 800; color: var(--primary); letter-spacing: -0.01em; }
+.bank-box { background: var(--surface); border-radius: var(--radius); padding: 32px 24px; text-align: center; border-top: 4px solid var(--primary); }
+.bank-box .account { font-size: clamp(1.4rem, 3vw, 1.75rem); font-weight: 800; margin: 8px 0; letter-spacing: 0.02em; }
+.notice { font-size: 0.95rem; color: var(--muted); background: var(--surface); padding: 16px 20px; border-radius: var(--radius); margin-top: 20px; }
+.form { display: grid; gap: 20px; }
+.form .field > label, .form .field > .label { font-weight: 600; display: block; margin-bottom: 6px; }
+.req { color: #c62828; }
+.form input[type="text"], .form input[type="tel"], .form input[type="email"], .form select, .form textarea {
+  width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 1rem; font-family: inherit; background: #fff; color: var(--text);
+}
+.form input:focus, .form select:focus, .form textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
+.radio-row { display: flex; gap: 18px; flex-wrap: wrap; }
+.radio-row label { display: flex; gap: 6px; align-items: center; }
+.consent { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; font-size: 0.92rem; }
+.consent .table-wrap { overflow-x: auto; }
+.consent table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; }
+.consent th, .consent td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; vertical-align: top; }
+.consent th { background: var(--surface); width: 32%; }
+.consent .check { font-weight: 600; display: flex; gap: 8px; align-items: center; }
+.field-error { color: #c62828; font-size: 0.9rem; margin-top: 4px; }
+.form-result { padding: 20px; border-radius: var(--radius); text-align: center; font-weight: 600; }
+.form-result.ok { background: #e3f1fc; color: var(--navy); }
+.form-result.warn { background: #fff4e5; color: #8a4b00; }
+
+/* 개인정보처리방침 */
+.policy h2 { font-size: 1.125rem; font-weight: 700; margin-top: 32px; }
+.policy table { border-collapse: collapse; width: 100%; }
+.policy th, .policy td { border: 1px solid var(--border); padding: 8px; text-align: left; vertical-align: top; }
+.policy th { background: var(--surface); }
+
+/* 바닥글 */
+.site-footer { background: var(--surface); color: var(--text); padding: 48px 0; font-size: 0.92rem; border-top: 1px solid var(--border); }
+.site-footer strong { font-size: 1.05rem; }
+.site-footer p { margin: 4px 0; color: var(--muted); }
+.site-footer a { color: var(--text); }
+.footer-links { margin-top: 16px; display: flex; gap: 20px; flex-wrap: wrap; }
+.footer-links a { font-weight: 600; text-decoration: none; }
+.footer-links a:hover { color: var(--primary); }
+
+/* 데모 표시 (화면 왼쪽 아래) */
+.demo-badge { position: fixed; left: 12px; bottom: 12px; z-index: 50; display: flex; align-items: center; gap: 8px; background: rgba(33,33,33,0.86); color: #fff; font-size: 0.75rem; font-weight: 600; padding: 6px 8px 6px 12px; border-radius: var(--pill); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.demo-badge a, .demo-badge button { color: #fff; background: rgba(255,255,255,0.16); border: 0; border-radius: var(--pill); padding: 3px 10px; font: inherit; cursor: pointer; text-decoration: none; }
+.demo-badge a:hover, .demo-badge button:hover { background: rgba(255,255,255,0.3); }
+.demo-note { font-size: 0.875rem; color: #8a4b00; background: #fff4e5; padding: 10px 14px; border-radius: var(--radius); margin: 0; }
+.toast { position: fixed; left: 50%; bottom: 64px; transform: translateX(-50%); z-index: 60; background: var(--navy); color: #fff; padding: 12px 20px; border-radius: var(--radius); font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.2); max-width: calc(100% - 32px); text-align: center; }
+
+/* 관리자 화면 (데모) */
+.admin-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--surface); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; }
+.admin-bar .who { font-weight: 600; }
+.admin-bar .who small { display: block; color: var(--muted); font-weight: 400; }
+.admin-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.editor details { border: 1px solid var(--border); border-radius: var(--radius); background: #fff; margin-bottom: 12px; }
+.editor details > summary { cursor: pointer; padding: 12px 16px; font-weight: 700; list-style-position: inside; }
+.editor details[open] > summary { border-bottom: 1px solid var(--border); }
+.editor .ed-body { padding: 16px; display: grid; gap: 16px; }
+.editor .ed-field > label, .editor .ed-field > .ed-label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.95rem; }
+.editor .ed-hint { font-size: 0.8125rem; color: var(--muted); margin-top: 4px; }
+.editor input[type="text"], .editor textarea, .editor select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 1rem; font-family: inherit; background: #fff; color: var(--text); }
+.editor textarea { min-height: 84px; resize: vertical; }
+.editor .ed-check { display: flex; gap: 8px; align-items: center; font-weight: 600; }
+.editor .ed-item > summary { font-weight: 600; }
+.editor .ed-item-tools { display: flex; gap: 6px; justify-content: flex-end; }
+.editor .ed-item-tools button, .editor .ed-small { border: 1px solid var(--border); background: #fff; border-radius: var(--pill); padding: 4px 12px; cursor: pointer; font-family: inherit; font-size: 0.8125rem; color: var(--text); }
+.editor .ed-item-tools button:hover, .editor .ed-small:hover { border-color: var(--primary); color: var(--primary); }
+.editor .ed-item-tools button.danger:hover { border-color: #c62828; color: #c62828; }
+.editor .ed-img { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.editor .ed-img .thumb { width: 96px; height: 72px; border-radius: 6px; overflow: hidden; background: var(--surface); flex: none; }
+.editor .ed-img .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.editor .ed-img .thumb .placeholder { min-height: 0; font-size: 0.7rem; }
+.demo-badge { white-space: nowrap; }
+@media (max-width: 760px) {
+  .demo-badge { left: 8px; bottom: 8px; font-size: 0.6875rem; gap: 6px; padding: 4px 6px 4px 10px; }
+  .demo-badge a { display: none; } /* 좁은 화면에서는 바닥글의 "관리자 화면 (데모)" 링크를 씁니다 */
+}
+</style>
+</head>
+<body>
+  <div id="example-notice" class="example-notice" hidden>
+    숫자, 연혁, 사진, 소식, 연락처 등 일부 내용은 아직 <strong>예시</strong>입니다. 실제 정보로 바꾼 뒤 공개해 주세요.
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="#home" id="logo"></a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+      <nav class="nav" id="nav">
+        <a href="#home" data-route="home">홈</a>
+        <a href="#about" data-route="about">단체 소개</a>
+        <a href="#news" data-route="news">활동 소식</a>
+        <a href="#donate" data-route="donate" class="nav-cta">후원하기</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <footer class="site-footer">
+    <div class="container" id="footer"></div>
+  </footer>
+
+  <div class="demo-badge" role="note">
+    <span>데모 버전 · 가짜 데이터</span>
+    <a href="#admin">관리자 화면</a>
+    <button type="button" id="demo-reset">예시 데이터로 초기화</button>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+  // 데모 버전: 사이트 내용은 아래 DEMO_DATA(가짜 데이터)에 들어 있고, 관리자 화면(#admin)에서 고친 내용은
+  // 이 브라우저의 localStorage에만 저장됩니다. 서버·로그인·외부 전송은 없습니다.
+  var STORAGE_KEY = "maeum-ttatteut-demo:content";
+  var C;
+  var app = document.getElementById("app");
+
+  /* ---------- 도우미 ---------- */
+  function esc(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function placeholder(label) {
+    return '<div class="placeholder" role="img" aria-label="예시 이미지"><span class="ph-icon">🖼️</span><span>예시 이미지</span>' +
+      (label ? "<span>" + esc(label) + "</span>" : "") + "</div>";
+  }
+  function image(src, alt, label) {
+    return src ? '<img src="' + esc(src) + '" alt="' + esc(alt) + '" loading="lazy">' : placeholder(label);
+  }
+  // 알약 버튼 + 화살표 (디자인.md 참고)
+  function button(href, label, style) {
+    return '<a class="btn' + (style ? " " + style : "") + '" href="' + href + '">' + esc(label) + ' <span class="arrow" aria-hidden="true">→</span></a>';
+  }
+  function cta(title, text) {
+    return '<section class="cta-band"><div class="container"><div><h2>' + esc(title) + "</h2>" + (text ? "<p>" + esc(text) + "</p>" : "") +
+      "</div>" + button("#donate", T.nav.donate, "white") + "</div></section>";
+  }
+  function lead(text, cls) {
+    return text ? '<p class="' + (cls || "section-lead") + '">' + esc(text) + "</p>" : "";
+  }
+
+  /* ---------- 화면 제목·안내 문구 ----------
+     관리자 화면 "7. 화면 제목·안내 문구"에서 고친 값을 쓰고, 비어 있으면 아래 기본값을 씁니다. */
+  var T;
+  var DEFAULT_TEXTS = {
+    nav: { home: "홈", about: "단체 소개", news: "활동 소식", donate: "후원하기" },
+    home: {
+      primaryButton: "정기 후원하기", secondaryButton: "단체 알아보기",
+      statsTitle: "숫자로 보는 활동", statsLead: "",
+      introButton: "단체 소개 보기",
+      programsTitle: "이런 일을 합니다", programsLead: "", programsButton: "활동 소식 보기",
+      newsTitle: "최근 활동 소식", newsLead: "", newsButton: "활동 소식 전체 보기",
+      ctaTitle: "함께해 주세요", ctaText: ""
+    },
+    about: {
+      missionTitle: "미션", visionTitle: "우리의 약속", historyTitle: "연혁",
+      peopleTitle: "함께하는 사람들", peopleLead: "",
+      ctaTitle: "뜻을 함께해 주세요", ctaText: "정기 후원은 꾸준한 활동을 가능하게 하는 가장 큰 힘입니다."
+    },
+    news: { lead: "", backButton: "활동 소식 목록으로", ctaTitle: "다음 소식을 함께 만들어 주세요", ctaText: "후원자님의 손길이 다음 활동 소식이 됩니다." },
+    donate: {
+      amountTitle: "후원금은 이렇게 쓰입니다", amountLead: "금액별 사용 예시입니다.",
+      bankTitle: "후원 계좌", applyButton: "후원 신청서 쓰기",
+      applyTitle: "후원 신청", applyLead: "신청서를 남겨 주시면 담당자가 확인 후 연락드립니다. 이 사이트에서는 결제가 이루어지지 않습니다."
+    }
+  };
+  function mergeTexts(custom) {
+    var out = {};
+    Object.keys(DEFAULT_TEXTS).forEach(function (group) {
+      var given = (custom && custom[group]) || {};
+      out[group] = {};
+      Object.keys(DEFAULT_TEXTS[group]).forEach(function (key) {
+        out[group][key] = given[key] ? given[key] : DEFAULT_TEXTS[group][key];
+      });
+    });
+    return out;
+  }
+
+  /* ---------- 공통: 헤더와 푸터 ---------- */
+  function renderShell() {
+    document.title = C.org.name + " | " + C.org.tagline;
+    document.getElementById("example-notice").hidden = !C.showExampleNotice;
+    var logo = document.getElementById("logo");
+    logo.innerHTML = C.org.logoImage ? '<img src="' + esc(C.org.logoImage) + '" alt="' + esc(C.org.name) + '">' : esc(C.org.logoText || C.org.name);
+    Array.prototype.forEach.call(document.querySelectorAll("#nav a"), function (a) { a.textContent = T.nav[a.getAttribute("data-route")]; });
+
+    var o = C.org;
+    document.getElementById("footer").innerHTML =
+      "<strong>" + esc(o.name) + "</strong>" +
+      "<p>대표자 " + esc(o.representative) + " · 고유번호 " + esc(o.registrationNumber) + "</p>" +
+      "<p>" + esc(o.address) + "</p>" +
+      '<p>전화 <a href="tel:' + esc(o.phone.replace(/[^0-9+]/g, "")) + '">' + esc(o.phone) + "</a> · 이메일 " +
+      '<a href="mailto:' + esc(o.email) + '">' + esc(o.email) + "</a></p>" +
+      '<div class="footer-links"><a href="#privacy"><strong>개인정보처리방침</strong></a><a href="#donate">' + esc(T.nav.donate) + '</a><a href="#admin">관리자 화면 (데모)</a></div>';
+    document.querySelector('meta[name="description"]').setAttribute("content", o.description);
+  }
+  function bindShell() {
+    var toggle = document.getElementById("menu-toggle");
+    var nav = document.getElementById("nav");
+    toggle.addEventListener("click", function () {
+      var open = nav.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    nav.addEventListener("click", function (e) { if (e.target.tagName === "A") closeMenu(); });
+    document.getElementById("demo-reset").addEventListener("click", resetDemo);
+  }
+  function toast(text) {
+    var old = document.querySelector(".toast");
+    if (old) old.remove();
+    var t = document.createElement("div");
+    t.className = "toast"; t.setAttribute("role", "status"); t.textContent = text;
+    document.body.appendChild(t);
+    setTimeout(function () { t.remove(); }, 3200);
+  }
+  function closeMenu() {
+    document.getElementById("nav").classList.remove("open");
+    document.getElementById("menu-toggle").setAttribute("aria-expanded", "false");
+  }
+
+  /* ---------- 홈: 계절 배경 ---------- */
+  var SEASON_NAMES = { spring: "봄", summer: "여름", autumn: "가을", winter: "겨울" };
+  function currentSeason() {
+    var set = (C.home.heroSeason || {}).season;
+    if (SEASON_NAMES[set]) return set;
+    var m = new Date().getMonth() + 1;
+    return m >= 3 && m <= 5 ? "spring" : m >= 6 && m <= 8 ? "summer" : m >= 9 && m <= 11 ? "autumn" : "winter";
+  }
+  function scatter(points, shape) { return points.map(shape).join(""); }
+
+  // 작은 집 앞 평상에 홀로 앉은 어르신. 계절마다 나무, 날씨, 옷차림이 바뀝니다.
+  var HERO_ART =
+    '<svg class="hero-art" viewBox="0 0 600 420" aria-hidden="true" focusable="false">' +
+      '<g class="s-summer"><circle cx="520" cy="72" r="50" fill="#ffd166" opacity=".25"/><circle cx="520" cy="72" r="34" fill="#ffd166"/></g>' +
+      '<path class="ground" d="M0 345 Q150 312 300 330 T600 318 L600 420 L0 420Z"/>' +
+      // 나무 줄기와 가지
+      '<g stroke="#7a5238" fill="none" stroke-linecap="round"><path d="M128 344 L133 200" stroke-width="14"/>' +
+        '<path d="M132 252 Q112 230 92 222 M133 236 Q156 214 182 206 M132 214 Q118 190 112 168 M133 204 Q146 182 162 172" stroke-width="6"/></g>' +
+      '<g class="s-spring">' + scatter([[108,196,40],[150,178,46],[186,204,34],[134,220,36],[96,226,26]], function (c) { return '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '" fill="#f6b8c8"/>'; }) +
+        scatter([[120,182],[160,166],[178,210],[100,214],[145,206]], function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9" fill="#fcd9e3"/>'; }) + "</g>" +
+      '<g class="s-summer">' + scatter([[108,196,42],[152,176,48],[188,206,36],[134,222,38],[94,228,28]], function (c) { return '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '" fill="#6fae5c"/>'; }) +
+        scatter([[124,180],[164,164],[180,212],[104,212]], function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="12" fill="#8cc56f"/>'; }) + "</g>" +
+      '<g class="s-autumn">' + scatter([[108,196,38],[150,180,42],[186,206,32],[134,220,34]], function (c) { return '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '" fill="#e9a04a"/>'; }) +
+        scatter([[116,176],[158,160],[176,214],[98,206],[140,234],[188,186]], function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="6" fill="#e2651f"/>'; }) + "</g>" +
+      '<g class="s-winter" fill="#ffffff" stroke="#d3dde8" stroke-width="1"><ellipse cx="96" cy="221" rx="10" ry="3.5"/><ellipse cx="174" cy="206" rx="11" ry="3.5"/><ellipse cx="113" cy="168" rx="6" ry="3"/><ellipse cx="160" cy="172" rx="7" ry="3"/></g>' +
+      // 집
+      '<rect x="522" y="182" width="16" height="40" fill="#8a5a44"/>' +
+      '<g class="s-winter" fill="none" stroke="#b9c3cf" stroke-width="5" stroke-linecap="round"><path d="M530 176 q-10 -14 2 -26 q12 -12 0 -26"/></g>' +
+      '<rect x="380" y="232" width="172" height="110" fill="#f3e3cc" stroke="#d8c0a2" stroke-width="2"/>' +
+      '<polygon points="360,236 466,176 572,236" fill="#8a5a44"/>' +
+      '<path class="s-winter" d="M360 236 L466 176 L572 236 L563 240 L466 186 L369 240Z" fill="#ffffff"/>' +
+      '<rect x="398" y="256" width="52" height="44" fill="#ffe7a3" stroke="#8a5a44" stroke-width="4"/>' +
+      '<path d="M424 256 V300 M398 278 H450" stroke="#8a5a44" stroke-width="3"/>' +
+      '<rect x="482" y="270" width="40" height="72" rx="3" fill="#a8735a"/><circle cx="514" cy="308" r="2.5" fill="#f3e3cc"/>' +
+      // 평상
+      '<rect x="236" y="320" width="156" height="10" rx="2" fill="#b98552"/>' +
+      '<rect x="244" y="330" width="8" height="24" fill="#9a6a3e"/><rect x="376" y="330" width="8" height="24" fill="#9a6a3e"/>' +
+      // 봉사자가 두고 간 반찬 보자기
+      '<rect x="340" y="304" width="26" height="16" rx="4" fill="#e8743b"/><ellipse cx="353" cy="303" rx="7" ry="4" fill="#c95c26"/>' +
+      '<g class="s-summer"><path d="M378 319 V308" stroke="#7a5238" stroke-width="2.5"/><path d="M368 309 A10 10 0 0 1 388 309Z" fill="#6fb7d6"/></g>' +
+      // 어르신
+      '<path d="M306 318 L282 320 L280 350" stroke="#5d6275" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<ellipse cx="275" cy="353" rx="9" ry="4" fill="#3d3a3a"/>' +
+      '<path d="M300 320 C300 300 302 286 310 274 C318 264 332 266 335 282 C337 296 334 310 332 320Z" fill="#9c5b48"/>' +
+      '<path class="s-winter" d="M305 270 Q316 277 327 270 L328 277 Q316 285 304 277Z M310 277 L305 294 L312 294 L316 279Z" fill="#c0392b"/>' +
+      '<circle cx="306" cy="258" r="13" fill="#f2cfb0"/>' +
+      '<path d="M293 255 A13 13 0 0 1 319 257 L318 264 Q312 256 300 255Z" fill="#e7e7ee"/><circle cx="320" cy="250" r="5.5" fill="#e7e7ee"/>' +
+      '<circle cx="299" cy="260" r="1.4" fill="#5a463a"/>' +
+      '<path d="M316 282 Q300 296 291 300" stroke="#9c5b48" stroke-width="9" fill="none" stroke-linecap="round"/>' +
+      '<path d="M289 300 L272 352 M289 300 q-2 -8 -9 -6" stroke="#6b4a36" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="290" cy="301" r="4.5" fill="#f2cfb0"/>' +
+      // 계절 날씨
+      '<g class="s-spring" fill="#f4a3b8">' + scatter([[60,120,20],[214,92,-30],[256,162,40],[420,120,10],[84,284,-20],[226,250,60],[470,300,-40],[330,200,25],[560,150,-10]], function (p) {
+        return '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="5" ry="3" transform="rotate(' + p[2] + " " + p[0] + " " + p[1] + ')"/>'; }) + "</g>" +
+      '<g class="s-autumn">' + scatter([[70,130,"#d9622b"],[230,100,"#e9a23b"],[262,190,"#c94c24"],[430,130,"#e9a23b"],[90,290,"#d9622b"],[236,262,"#e9a23b"],[340,206,"#c94c24"],[560,160,"#d9622b"]], function (p) {
+        return '<path d="M' + p[0] + " " + (p[1] - 6) + " L" + (p[0] + 5) + " " + p[1] + " L" + p[0] + " " + (p[1] + 6) + " L" + (p[0] - 5) + " " + p[1] + 'Z" fill="' + p[2] + '"/>'; }) + "</g>" +
+      '<g class="s-winter" fill="#ffffff" stroke="#c9d6e3" stroke-width="1">' + scatter([[40,60],[110,110],[200,70],[260,140],[330,90],[400,50],[470,110],[560,70],[60,200],[230,220],[350,180],[590,200],[20,280],[200,290],[450,170]], function (p) {
+        return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3.2"/>'; }) + "</g>" +
+    "</svg>";
+
+  /* ---------- 홈 ---------- */
+  function renderHome() {
+    var h = C.home;
+    var season = currentSeason();
+    var photo = ((h.heroSeason || {}).photos || {})[season];
+    var heroStyle = photo ? ' style="background-image:url(\'' + esc(photo) + '\')"' : "";
+    var label = !photo && C.showExampleNotice ? '<span class="hero-label">예시 일러스트 · ' + SEASON_NAMES[season] + "</span>" : "";
+    return (
+      '<section class="hero' + (photo ? " has-image" : "") + '" data-season="' + season + '"' + heroStyle + '><div class="container">' +
+        "<h1>" + esc(h.heroTitle) + "</h1><p>" + esc(h.heroText) + "</p>" +
+        '<div class="hero-actions">' + button("#donate", T.home.primaryButton) + button("#about", T.home.secondaryButton, "outline") + "</div>" +
+      "</div>" + (photo ? "" : HERO_ART) + label + "</section>" +
+      '<section aria-label="활동 성과"><div class="container"><h2 class="section-title">' + esc(T.home.statsTitle) + "</h2>" + lead(T.home.statsLead) + '<div class="grid grid-4 stats-grid">' +
+        h.stats.map(function (s) {
+          return '<div class="stat-tile"><div class="stat-number">' + esc(s.number) + "<small>" + esc(s.unit) + '</small></div><div class="stat-label">' + esc(s.label) + "</div></div>";
+        }).join("") +
+      "</div></div></section>" +
+      '<div class="container"><hr class="divider"></div>' +
+      '<section><div class="container split"><div><h2 class="section-title">' + esc(C.org.name) + '</h2><p class="section-lead">' + esc(C.org.description) + "</p>" +
+        '<p class="mission" style="margin-bottom:32px">' + esc(C.about.mission) + "</p>" + button("#about", T.home.introButton) + "</div>" +
+        '<figure style="margin:0"><div class="media">' + image(h.introImage, C.org.name, "단체 소개 사진") + "</div>" +
+        (h.introCaption ? '<figcaption class="caption">© ' + esc(h.introCaption) + "</figcaption>" : "") + "</figure>" +
+      "</div></section>" +
+      '<div class="container"><hr class="divider"></div>' +
+      '<section><div class="container"><h2 class="section-title">' + esc(T.home.programsTitle) + "</h2>" + lead(T.home.programsLead) + '<div class="grid ' + (h.programs.length % 4 === 0 ? "grid-4" : "grid-3") + '">' +
+        h.programs.map(function (p) {
+          return '<a class="tile" href="#news"><span class="circle-arrow" aria-hidden="true">→</span><h3>' + esc(p.title) + "</h3><p>" + esc(p.text) + '</p><span class="tile-icon" aria-hidden="true">' + esc(p.icon) + "</span></a>";
+        }).join("") +
+      '</div><p style="margin-top:32px">' + button("#news", T.home.programsButton) + "</p></div></section>" +
+      latestNews() +
+      cta(T.home.ctaTitle, T.home.ctaText || C.donate.intro)
+    );
+  }
+
+  // 홈 화면의 최근 활동 소식 3개. 관리자가 소식을 올리면 여기에 자동으로 나타납니다.
+  function latestNews() {
+    var items = sortedNews().slice(0, 3);
+    if (!items.length) return "";
+    return '<div class="container"><hr class="divider"></div>' +
+      '<section><div class="container"><h2 class="section-title">' + esc(T.home.newsTitle) + "</h2>" + lead(T.home.newsLead) +
+        '<div class="grid grid-3">' + items.map(newsCard).join("") + "</div>" +
+        '<p style="margin-top:32px">' + button("#news", T.home.newsButton) + "</p></div></section>";
+  }
+
+  /* ---------- 단체 소개 ---------- */
+  function renderAbout() {
+    var a = C.about;
+    return (
+      '<div class="page-head"><div class="container"><h1>' + esc(T.nav.about) + "</h1>" + lead(C.org.description, " ") + "</div></div>" +
+      '<section><div class="container split" style="align-items:start"><div><h2 class="section-title">' + esc(T.about.missionTitle) + '</h2><p class="mission">' + esc(a.mission) + "</p></div>" +
+        '<div><h2 class="section-title">' + esc(T.about.visionTitle) + '</h2><ul class="vision-list">' + a.vision.map(function (v) { return "<li>" + esc(v) + "</li>"; }).join("") + "</ul></div></div></section>" +
+      '<div class="container"><hr class="divider"></div>' +
+      '<section><div class="container"><h2 class="section-title">' + esc(T.about.historyTitle) + '</h2><ol class="timeline">' +
+        a.history.map(function (h) { return '<li><span class="year">' + esc(h.year) + "</span>" + esc(h.text) + "</li>"; }).join("") +
+      "</ol></div></section>" +
+      '<div class="container"><hr class="divider"></div>' +
+      '<section><div class="container"><h2 class="section-title">' + esc(T.about.peopleTitle) + "</h2>" + lead(T.about.peopleLead) + '<div class="grid grid-4">' +
+        a.people.map(function (p) {
+          return '<div class="card person"><div class="avatar">' + image(p.photo, p.name, "") + "</div><strong>" + esc(p.name) + '</strong><div class="role">' + esc(p.role) + "</div></div>";
+        }).join("") +
+      "</div></div></section>" +
+      cta(T.about.ctaTitle, T.about.ctaText)
+    );
+  }
+
+  /* ---------- 활동 소식 ---------- */
+  var newsFilter = "전체";
+  // 날짜(2026-11-15 형식)가 적힌 소식은 최신순으로, 날짜가 없는 소식은 적힌 순서대로 그 뒤에 놓습니다.
+  // 각 항목의 i는 site.json 안의 원래 위치로, 상세 화면 주소(#news/i)에 씁니다.
+  function sortedNews() {
+    var list = C.news.map(function (n, i) { return { n: n, i: i }; });
+    var dated = list.filter(function (x) { return /^\d{4}-\d{2}-\d{2}/.test(x.n.date || ""); });
+    var undated = list.filter(function (x) { return dated.indexOf(x) < 0; });
+    dated.sort(function (a, b) { return a.n.date < b.n.date ? 1 : a.n.date > b.n.date ? -1 : a.i - b.i; });
+    return dated.concat(undated);
+  }
+  function newsPhotos(n) {
+    var all = (n.image ? [n.image] : []).concat(n.photos || []);
+    return all.filter(function (src, k) { return src && all.indexOf(src) === k; });
+  }
+  function newsCard(x) {
+    var n = x.n, photos = newsPhotos(n);
+    return '<a class="news-card" href="#news/' + x.i + '"><div class="news-thumb">' + image(photos[0], n.title, n.category) +
+        (photos.length > 1 ? '<span class="photo-count">사진 ' + photos.length + "장</span>" : "") + "</div>" +
+      '<div class="news-body"><div class="news-meta"><span class="tag">' + esc(n.category) + "</span><span>" + esc(n.date) + "</span></div>" +
+      "<h3>" + esc(n.title) + "</h3><p>" + esc(n.summary) + "</p></div></a>";
+  }
+  function newsCards() {
+    var items = sortedNews().filter(function (x) { return newsFilter === "전체" || x.n.category === newsFilter; });
+    if (!items.length) return '<p class="empty">아직 등록된 소식이 없습니다.</p>';
+    return '<div class="grid grid-3">' + items.map(newsCard).join("") + "</div>";
+  }
+  function renderNewsDetail(i) {
+    var n = C.news[i];
+    if (!n) return renderNews();
+    var photos = newsPhotos(n);
+    return (
+      '<div class="page-head"><div class="container" style="max-width:960px"><p class="back-link"><a href="#news">← ' + esc(T.news.backButton) + "</a></p>" +
+        '<div class="news-meta"><span class="tag">' + esc(n.category) + "</span><span>" + esc(n.date) + "</span></div>" +
+        "<h1>" + esc(n.title) + "</h1>" + lead(n.summary, " ") + "</div></div>" +
+      '<section style="padding-top:32px"><div class="container" style="max-width:960px">' +
+        (n.body ? '<div class="news-text">' + esc(n.body) + "</div>" : "") +
+        (photos.length
+          ? '<div class="photo-grid">' + photos.map(function (src, k) {
+              return '<a href="' + esc(src) + '" target="_blank" rel="noopener"><img src="' + esc(src) + '" alt="' + esc(n.title) + " 사진 " + (k + 1) + '" loading="lazy"></a>';
+            }).join("") + "</div>" +
+            (photos.length > 1 ? '<p class="caption">사진을 누르면 크게 볼 수 있습니다.</p>' : "")
+          : '<div class="news-thumb" style="max-width:480px">' + placeholder(n.category) + "</div>") +
+        '<p style="margin-top:32px">' + button("#news", T.news.backButton, "outline") + "</p>" +
+      "</div></section>" +
+      cta(T.news.ctaTitle, T.news.ctaText)
+    );
+  }
+  function renderNews() {
+    var cats = ["전체"];
+    C.news.forEach(function (n) { if (n.category && cats.indexOf(n.category) < 0) cats.push(n.category); });
+    if (cats.indexOf(newsFilter) < 0) newsFilter = "전체";
+    return (
+      '<div class="page-head"><div class="container"><h1>' + esc(T.nav.news) + "</h1>" + lead(T.news.lead, " ") + "</div></div>" +
+      '<section style="padding-top:32px"><div class="container"><div class="filter-bar" id="filter-bar" role="group" aria-label="분류 선택">' +
+        cats.map(function (c) { return '<button type="button" data-cat="' + esc(c) + '" class="' + (c === newsFilter ? "active" : "") + '">' + esc(c) + "</button>"; }).join("") +
+      '</div><div id="news-list">' + newsCards() + "</div></div></section>" +
+      cta(T.news.ctaTitle, T.news.ctaText)
+    );
+  }
+  // 데모의 사진은 data: 주소라 브라우저가 새 탭에서 열어 주지 않으므로, blob: 주소로 바꿔 크게 볼 수 있게 합니다.
+  function dataUrlToBlobUrl(url) {
+    var comma = url.indexOf(","), meta = url.slice(5, comma), data = url.slice(comma + 1);
+    var type = meta.split(";")[0], bytes;
+    if (/;base64/.test(meta)) {
+      var bin = atob(data); bytes = new Uint8Array(bin.length);
+      for (var k = 0; k < bin.length; k++) bytes[k] = bin.charCodeAt(k);
+    } else {
+      bytes = decodeURIComponent(data);
+    }
+    return URL.createObjectURL(new Blob([bytes], { type: type }));
+  }
+  function bindNewsDetail() {
+    Array.prototype.forEach.call(document.querySelectorAll('.photo-grid a[href^="data:"]'), function (a) {
+      try { a.href = dataUrlToBlobUrl(a.getAttribute("href")); } catch (e) { /* 그대로 둠 */ }
+    });
+  }
+  function bindNews() {
+    document.getElementById("filter-bar").addEventListener("click", function (e) {
+      var cat = e.target.getAttribute("data-cat");
+      if (!cat) return;
+      newsFilter = cat;
+      Array.prototype.forEach.call(this.children, function (b) { b.classList.toggle("active", b.getAttribute("data-cat") === cat); });
+      document.getElementById("news-list").innerHTML = newsCards();
+    });
+  }
+
+  /* ---------- 후원하기 ---------- */
+  function renderDonate() {
+    var d = C.donate, b = d.bank, p = C.privacy;
+    return (
+      '<div class="page-head"><div class="container"><h1>' + esc(T.nav.donate) + "</h1>" + lead(d.intro, " ") + "</div></div>" +
+      '<section style="padding-top:32px"><div class="container"><div class="grid grid-2">' +
+        d.types.map(function (t) { return '<div class="card"><h3>' + esc(t.title) + "</h3><p>" + esc(t.text) + "</p></div>"; }).join("") +
+      "</div></div></section>" +
+      '<section style="padding-top:0"><div class="container"><h2 class="section-title">' + esc(T.donate.amountTitle) + "</h2>" + lead(T.donate.amountLead) + '<div class="grid grid-3">' +
+        d.amountExamples.map(function (x) { return '<div class="card"><div class="amount">' + esc(x.amount) + "</div><p>" + esc(x.text) + "</p></div>"; }).join("") +
+      "</div></div></section>" +
+      '<section style="padding-top:0"><div class="container"><h2 class="section-title">' + esc(T.donate.bankTitle) + "</h2>" +
+        '<div class="bank-box"><div>' + esc(b.bankName) + '</div><div class="account" id="account">' + esc(b.accountNumber) + "</div><div>예금주 " + esc(b.accountHolder) + "</div>" +
+        '<p style="margin:16px 0 0"><button type="button" class="btn outline" id="copy-account">계좌번호 복사</button></p></div>' +
+        '<p style="margin-top:20px">' + button("#apply", T.donate.applyButton) + "</p>" +
+        '<p class="notice">' + esc(d.taxNotice) + "</p>" +
+      "</div></section>" +
+      '<section id="apply" style="padding-top:0"><div class="container" style="max-width:720px"><h2 class="section-title">' + esc(T.donate.applyTitle) + "</h2>" +
+        lead(T.donate.applyLead) +
+        '<form class="form card" id="donate-form" novalidate style="background:#fff;border:1px solid var(--border)">' +
+          '<div class="field"><label for="f-name">이름 <span class="req">*</span></label><input type="text" id="f-name" name="name" required autocomplete="name" maxlength="40"></div>' +
+          '<div class="field"><label for="f-phone">연락처 <span class="req">*</span></label><input type="tel" id="f-phone" name="phone" required autocomplete="tel" placeholder="010-0000-0000" pattern="[0-9\\-\\s]{9,15}" maxlength="15"></div>' +
+          '<div class="field"><label for="f-email">이메일</label><input type="email" id="f-email" name="email" autocomplete="email" maxlength="80"></div>' +
+          '<div class="field"><span class="label" id="type-label">후원 종류 <span class="req">*</span></span><div class="radio-row" role="radiogroup" aria-labelledby="type-label">' +
+            '<label><input type="radio" name="type" value="정기 후원" required checked> 정기 후원</label>' +
+            '<label><input type="radio" name="type" value="일시 후원"> 일시 후원</label></div></div>' +
+          '<div class="field"><label for="f-amount">후원 금액</label><select id="f-amount" name="amount">' +
+            "<option value=\"\">선택해 주세요</option>" +
+            ["10,000원", "20,000원", "30,000원", "50,000원", "100,000원", "직접 입력 (남기실 말씀에 적어 주세요)"].map(function (v) { return "<option>" + esc(v) + "</option>"; }).join("") +
+          "</select></div>" +
+          '<div class="field"><span class="label" id="receipt-label">기부금 영수증</span><div class="radio-row" role="radiogroup" aria-labelledby="receipt-label">' +
+            '<label><input type="radio" name="receipt" value="발급 희망"> 발급 희망</label>' +
+            '<label><input type="radio" name="receipt" value="발급 안 함" checked> 발급 안 함</label></div></div>' +
+          '<div class="field"><label for="f-message">남기실 말씀</label><textarea id="f-message" name="message" rows="3" maxlength="500"></textarea></div>' +
+          '<div class="consent"><strong>개인정보 수집·이용 동의 <span class="req">*</span></strong>' +
+            '<div class="table-wrap"><table><tbody>' +
+              "<tr><th>수집 항목</th><td>(필수) 이름, 연락처, 후원 종류<br>(선택) 이메일, 후원 금액, 기부금 영수증 발급 여부, 남기실 말씀</td></tr>" +
+              "<tr><th>수집 목적</th><td>후원 신청 확인, 후원 안내 연락, 기부금 영수증 발급 안내</td></tr>" +
+              "<tr><th>보유 기간</th><td>" + esc(p.retentionPeriod) + "</td></tr>" +
+            "</tbody></table></div>" +
+            "<p style=\"margin:0 0 10px\">동의를 거부할 수 있으며, 거부하시면 후원 신청이 접수되지 않습니다. 자세한 내용은 <a href=\"#privacy\">개인정보처리방침</a>을 확인해 주세요.</p>" +
+            '<label class="check"><input type="checkbox" id="f-consent" name="consent" required> 위 내용에 동의합니다.</label>' +
+          "</div>" +
+          '<p class="demo-note">데모 버전입니다. 신청서를 보내도 실제로 처리되지 않으며, 입력한 내용은 어디에도 전송·저장되지 않습니다. 가짜 이름과 번호로 시험해 보세요.</p>' +
+          '<div id="form-error" class="field-error" role="alert" hidden></div>' +
+          '<p style="margin:0"><button type="submit" class="btn" id="submit-btn">후원 신청하기</button></p>' +
+        "</form>" +
+        '<div id="form-result" class="form-result" role="status" hidden></div>' +
+      "</div></section>"
+    );
+  }
+  function bindDonate() {
+    document.getElementById("copy-account").addEventListener("click", function () {
+      var btn = this, text = C.donate.bank.bankName + " " + C.donate.bank.accountNumber;
+      function done() { btn.textContent = "복사했습니다"; setTimeout(function () { btn.textContent = "계좌번호 복사"; }, 2000); }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, function () { btn.textContent = "직접 복사해 주세요"; });
+      } else {
+        var r = document.createRange(); r.selectNodeContents(document.getElementById("account"));
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        try { document.execCommand("copy"); done(); } catch (e) { btn.textContent = "직접 복사해 주세요"; }
+      }
+    });
+
+    var form = document.getElementById("donate-form");
+    var errorBox = document.getElementById("form-error");
+    var result = document.getElementById("form-result");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      errorBox.hidden = true;
+      if (!form.checkValidity()) {
+        var first = form.querySelector(":invalid");
+        var msg = "필수 항목을 확인해 주세요.";
+        if (first && first.id === "f-consent") msg = "개인정보 수집·이용에 동의해 주셔야 신청할 수 있습니다.";
+        else if (first && first.id === "f-phone") msg = first.value ? "연락처를 숫자와 하이픈(-)으로 정확히 입력해 주세요." : "연락처를 입력해 주세요.";
+        else if (first && first.id === "f-name") msg = "이름을 입력해 주세요.";
+        else if (first && first.id === "f-email") msg = "이메일 형식을 확인해 주세요.";
+        errorBox.textContent = msg; errorBox.hidden = false;
+        if (first) first.focus();
+        return;
+      }
+
+      function show(kind, html) {
+        result.className = "form-result " + kind; result.innerHTML = html; result.hidden = false;
+        result.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      // 데모: 원본은 구글 설문지로 보내지만, 여기서는 아무 데도 보내지 않고 잠시 기다린 뒤 접수 화면을 보여 줍니다.
+      var btn = document.getElementById("submit-btn");
+      btn.disabled = true; btn.textContent = "보내는 중…";
+      setTimeout(function () {
+        form.reset();
+        form.hidden = true;
+        btn.disabled = false; btn.textContent = "후원 신청하기";
+        show("ok", "후원 신청이 접수되었습니다. 감사합니다!<br>담당자가 확인 후 연락드리겠습니다." +
+          '<br><small style="font-weight:400">데모에서는 실제로 처리되지 않습니다. 입력한 내용은 전송되지 않았습니다.</small>');
+      }, 1000);
+    });
+  }
+
+  /* ---------- 개인정보처리방침 ---------- */
+  function renderPrivacy() {
+    var p = C.privacy, o = C.org;
+    return (
+      '<div class="page-head"><div class="container" style="max-width:820px"><h1>개인정보처리방침</h1><p>시행일 ' + esc(p.effectiveDate) + "</p></div></div>" +
+      '<section style="padding-top:16px"><div class="container policy" style="max-width:820px">' +
+        "<p>" + esc(o.name) + '(이하 "단체")는 「개인정보 보호법」에 따라 정보주체의 개인정보를 보호하고 관련 고충을 원활하게 처리하기 위해 다음과 같이 개인정보처리방침을 둡니다.</p>' +
+        "<h2>1. 수집하는 개인정보 항목과 방법</h2><ul><li>필수: 이름, 연락처, 후원 종류</li><li>선택: 이메일, 후원 금액, 기부금 영수증 발급 여부, 남기실 말씀</li><li>수집 방법: 홈페이지 후원 신청서</li></ul>" +
+        "<p>단체는 홈페이지에서 주민등록번호를 수집하지 않습니다. 기부금 영수증 발급에 필요한 정보는 법령에 따라 별도로 안내하고 동의를 받아 처리합니다.</p>" +
+        "<h2>2. 개인정보의 처리 목적</h2><ul><li>후원 신청 확인과 후원 방법 안내 연락</li><li>기부금 영수증 발급 안내</li></ul>" +
+        "<h2>3. 보유 및 이용 기간</h2><p>" + esc(p.retentionPeriod) + ". 기간이 지나거나 처리 목적이 달성되면 지체 없이 파기합니다.</p>" +
+        "<h2>4. 제3자 제공</h2><p>단체는 정보주체의 동의나 법률의 특별한 규정이 있는 경우를 제외하고 개인정보를 제3자에게 제공하지 않습니다.</p>" +
+        "<h2>5. 처리 위탁 및 국외 이전</h2><p>후원 신청서 응답은 아래 서비스에 저장됩니다.</p>" +
+        "<table><tbody><tr><th>수탁자</th><td>Google LLC (Google 설문지·스프레드시트)</td></tr><tr><th>이전 국가</th><td>미국 등 Google 데이터센터 소재국</td></tr><tr><th>이전 항목</th><td>1항의 수집 항목 전부</td></tr><tr><th>이전 시기·방법</th><td>신청서 제출 시 네트워크를 통해 전송</td></tr><tr><th>보유 기간</th><td>3항과 같음</td></tr></tbody></table>" +
+        "<h2>6. 파기 절차와 방법</h2><p>보유 기간이 지난 개인정보는 스프레드시트에서 복구할 수 없는 방법으로 삭제하고, 출력물은 분쇄하거나 소각합니다.</p>" +
+        "<h2>7. 정보주체의 권리</h2><p>정보주체는 언제든지 자신의 개인정보 열람, 정정, 삭제, 처리 정지를 요구할 수 있으며, 아래 보호책임자에게 연락하시면 지체 없이 조치합니다.</p>" +
+        "<h2>8. 안전성 확보 조치</h2><p>신청서 응답 스프레드시트는 지정된 담당자만 접근할 수 있도록 권한을 제한합니다.</p>" +
+        "<h2>9. 개인정보 보호책임자</h2><ul><li>성명: " + esc(p.officerName) + "</li><li>연락처: " + esc(p.officerContact) + "</li></ul>" +
+        "<p>개인정보 침해에 대한 신고나 상담은 개인정보침해신고센터(국번 없이 118), 개인정보분쟁조정위원회(1833-6972)에 문의하실 수 있습니다.</p>" +
+        "<h2>10. 시행일</h2><p>이 방침은 " + esc(p.effectiveDate) + "부터 적용됩니다.</p>" +
+      "</div></section>"
+    );
+  }
+
+  /* ---------- 화면 전환 (#home, #about, #news, #donate, #privacy) ---------- */
+  var routes = {
+    home: { nav: "", render: renderHome },
+    about: { nav: "about", render: renderAbout },
+    news: { nav: "news", render: renderNews, bind: bindNews },
+    donate: { nav: "donate", render: renderDonate, bind: bindDonate },
+    apply: { nav: "donate", render: renderDonate, bind: bindDonate, scrollTo: "apply" },
+    privacy: { title: "개인정보처리방침", render: renderPrivacy },
+    admin: { title: "관리자 화면", render: renderAdmin, bind: bindAdmin }
+  };
+  function navigate() {
+    var key = (location.hash || "#home").slice(1);
+    var detail = /^news\/(\d+)$/.exec(key);
+    if (detail) key = "news";
+    var route = routes[key] || routes.home;
+    closeMenu();
+    app.innerHTML = detail ? renderNewsDetail(Number(detail[1])) : route.render();
+    if (route.bind && !detail) route.bind();
+    if (detail) bindNewsDetail();
+    var navKey = key === "apply" ? "donate" : (routes[key] ? key : "home");
+    Array.prototype.forEach.call(document.querySelectorAll("#nav a"), function (a) {
+      var on = a.getAttribute("data-route") === navKey;
+      a.classList.toggle("active", on);
+      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    var pageTitle = route.nav ? T.nav[route.nav] : route.title;
+    document.title = (pageTitle ? pageTitle + " | " : "") + C.org.name;
+    var target = route.scrollTo && document.getElementById(route.scrollTo);
+    if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
+  }
+
+  /* ---------- 관리자 화면 (데모) ----------
+     원본은 Decap CMS + GitHub 로그인이고 config.yml에 항목이 정의되어 있습니다.
+     데모는 같은 항목을 아래 SCHEMA로 다시 정의하고, 항상 "데모 관리자"로 로그인된 상태로 엽니다.
+     "게시"를 누르면 이 브라우저의 localStorage에만 저장됩니다. */
+  var PHOTO_HINT = "⚠️ 탈북민 어르신의 얼굴·이름이 알려지면 북한에 남은 가족이 위험해질 수 있습니다. 얼굴이 보이지 않는 사진(뒷모습, 손, 작품)을 쓰고, 꼭 필요하면 본인 동의를 받으세요.";
+  function s(name, label, extra) { var f = { name: name, label: label, widget: "string" }; for (var k in extra) f[k] = extra[k]; return f; }
+  function tx(name, label, extra) { var f = s(name, label, extra); f.widget = "text"; return f; }
+  function im(name, label, extra) { var f = s(name, label, extra); f.widget = "image"; return f; }
+  var SCHEMA = [
+    { name: "showExampleNotice", label: "예시 정보 안내 띠 표시", widget: "boolean", hint: "실제 정보로 모두 바꾼 뒤 끄세요. 끄면 화면 맨 위 안내 띠와 '예시 일러스트' 표시가 사라집니다." },
+    { name: "org", label: "1. 단체 기본 정보", widget: "object", fields: [
+      s("name", "단체 이름"), s("tagline", "한 줄 소개"), tx("description", "단체 설명"), s("representative", "대표자"),
+      s("registrationNumber", "고유번호"), s("address", "주소"), s("phone", "전화"), s("email", "이메일"),
+      s("logoText", "로고 글자", { hint: "로고 이미지가 없을 때 왼쪽 위에 보이는 글자" }), im("logoImage", "로고 이미지")
+    ] },
+    { name: "home", label: "2. 홈 화면", widget: "object", fields: [
+      tx("heroTitle", "대표 문구", { hint: "Enter로 줄을 바꿀 수 있습니다." }), tx("heroText", "소개 문장"),
+      { name: "heroSeason", label: "첫 화면 계절 배경", widget: "object", fields: [
+        { name: "season", label: "계절", widget: "select", options: [["auto", "자동 (날짜에 따라 바뀜)"], ["spring", "봄으로 고정"], ["summer", "여름으로 고정"], ["autumn", "가을로 고정"], ["winter", "겨울로 고정"]] },
+        { name: "photos", label: "계절별 사진 (비우면 그림이 나옵니다)", widget: "object", fields: [im("spring", "봄 사진"), im("summer", "여름 사진"), im("autumn", "가을 사진"), im("winter", "겨울 사진")] }
+      ] },
+      im("introImage", "단체 소개 사진 (홈 중간, 글 오른쪽)", { hint: PHOTO_HINT }),
+      s("introCaption", "단체 소개 사진 출처", { hint: "사진 아래 '© 출처'로 표시됩니다. 예: ○○ 봉사단" }),
+      { name: "stats", label: "활동 성과 숫자", widget: "list", summary: "{{label}}: {{number}}{{unit}}", fields: [s("number", "숫자"), s("unit", "단위"), s("label", "설명")] },
+      { name: "programs", label: "주요 활동", widget: "list", summary: "{{title}}", fields: [s("icon", "아이콘 (이모지)"), s("title", "제목"), tx("text", "설명")] }
+    ] },
+    { name: "about", label: "3. 단체 소개", widget: "object", fields: [
+      tx("mission", "미션"),
+      { name: "vision", label: "우리의 약속", widget: "list", field: s("item", "약속") },
+      { name: "history", label: "연혁 (최신순)", widget: "list", addToTop: true, summary: "{{year}} {{text}}", fields: [s("year", "연도"), s("text", "내용")] },
+      { name: "people", label: "함께하는 사람들", widget: "list", summary: "{{name}} ({{role}})", fields: [s("name", "이름"), s("role", "역할"), im("photo", "사진", { hint: PHOTO_HINT })] }
+    ] },
+    { name: "news", label: "4. 활동 소식", widget: "list", addToTop: true, summary: "{{date}} · {{title}}", fields: [
+      s("date", "날짜", { hint: "2026-11-15처럼 적으면 홈페이지에서 최신순으로 자동 정렬되고, 홈 화면 '최근 활동 소식'에 최신 3개가 나옵니다." }),
+      s("category", "분류", { hint: "같은 분류끼리 소식 화면에서 묶여 보입니다. 예: 컴퓨터 교육, 그림 그리기, 명절 나눔" }),
+      s("title", "제목"), tx("summary", "요약 (목록에 보이는 두세 문장)"), tx("body", "본문 (소식을 눌렀을 때 보이는 글)"),
+      im("image", "대표 사진 (목록에 보이는 사진)", { hint: PHOTO_HINT }),
+      { name: "photos", label: "활동 사진 (여러 장)", widget: "list", field: im("src", "사진"), hint: "대표 사진이 비어 있으면 첫 사진이 대표 사진이 됩니다. 얼굴이 보이지 않는 사진을 써 주세요." }
+    ] },
+    { name: "donate", label: "5. 후원 안내", widget: "object", fields: [
+      tx("intro", "후원 안내 문구"),
+      { name: "types", label: "후원 종류", widget: "list", summary: "{{title}}", fields: [s("title", "이름"), tx("text", "설명")] },
+      { name: "amountExamples", label: "금액별 사용 예시", widget: "list", summary: "{{amount}}", fields: [s("amount", "금액"), s("text", "쓰임")] },
+      { name: "bank", label: "후원 계좌", widget: "object", fields: [s("bankName", "은행"), s("accountNumber", "계좌번호"), s("accountHolder", "예금주")] },
+      tx("taxNotice", "기부금 영수증 안내"),
+      { name: "googleForm", label: "구글 설문지 연결", widget: "object", hint: "데모에서는 주소를 적어도 신청서가 실제로 전송되지 않습니다.", fields: [
+        s("googleFormUrl", "설문지 주소 (formResponse로 끝나는 주소)"),
+        { name: "fields", label: "질문 번호", widget: "object", fields: [s("name", "1. 이름"), s("phone", "2. 연락처"), s("email", "3. 이메일"), s("type", "4. 후원 종류"), s("amount", "5. 후원 금액"), s("receipt", "6. 기부금 영수증"), s("message", "7. 남기실 말씀")] }
+      ] }
+    ] },
+    { name: "privacy", label: "6. 개인정보처리방침", widget: "object", fields: [
+      s("effectiveDate", "시행일", { hint: "예: 2026-12-01" }), s("officerName", "개인정보 보호책임자"), s("officerContact", "보호책임자 연락처"), s("retentionPeriod", "보유 기간")
+    ] },
+    { name: "texts", label: "7. 화면 제목·안내 문구", widget: "object", hint: "메뉴 이름, 각 화면의 제목과 안내 문장, 버튼 글자입니다. 칸을 비우면 기본 문구가 나옵니다.", fields: [
+      { name: "nav", label: "메뉴 이름", widget: "object", fields: [s("home", "홈"), s("about", "단체 소개"), s("news", "활동 소식"), s("donate", "후원하기")] },
+      { name: "home", label: "홈 화면 문구", widget: "object", fields: [
+        s("primaryButton", "첫 화면 파란 버튼"), s("secondaryButton", "첫 화면 테두리 버튼"), s("statsTitle", "성과 숫자 제목"), tx("statsLead", "성과 숫자 안내 문장"),
+        s("introButton", "단체 소개 요약 버튼"), s("programsTitle", "주요 활동 제목"), tx("programsLead", "주요 활동 안내 문장"), s("programsButton", "주요 활동 아래 버튼"),
+        s("newsTitle", "최근 활동 소식 제목"), tx("newsLead", "최근 활동 소식 안내 문장"), s("newsButton", "최근 활동 소식 아래 버튼"),
+        s("ctaTitle", "아래 파란 띠 제목"), tx("ctaText", "아래 파란 띠 문장 (비우면 후원 안내 문구)")
+      ] },
+      { name: "about", label: "단체 소개 화면 문구", widget: "object", fields: [
+        s("missionTitle", "미션 제목"), s("visionTitle", "약속 제목"), s("historyTitle", "연혁 제목"), s("peopleTitle", "사람들 제목"),
+        tx("peopleLead", "사람들 안내 문장"), s("ctaTitle", "아래 파란 띠 제목"), tx("ctaText", "아래 파란 띠 문장")
+      ] },
+      { name: "news", label: "활동 소식 화면 문구", widget: "object", fields: [
+        tx("lead", "제목 아래 안내 문장"), s("backButton", "상세 화면의 목록으로 돌아가기 버튼"), s("ctaTitle", "아래 파란 띠 제목"), tx("ctaText", "아래 파란 띠 문장")
+      ] },
+      { name: "donate", label: "후원하기 화면 문구", widget: "object", fields: [
+        s("amountTitle", "금액별 예시 제목"), tx("amountLead", "금액별 예시 안내 문장"), s("bankTitle", "계좌 제목"),
+        s("applyButton", "신청서로 가는 버튼"), s("applyTitle", "신청서 제목"), tx("applyLead", "신청서 안내 문장")
+      ] }
+    ] }
+  ];
+
+  var draft = null;          // 게시 전에 고치고 있는 내용
+  var openPaths = {};        // 펼쳐 둔 영역 (다시 그려도 유지)
+  var dirty = false;
+
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function getAt(obj, path) { return path.reduce(function (o, k) { return o == null ? undefined : o[k]; }, obj); }
+  function setAt(obj, path, value) {
+    var parent = getAt(obj, path.slice(0, -1));
+    parent[path[path.length - 1]] = value;
+  }
+  function emptyValue(f) {
+    if (f.widget === "list") return [];
+    if (f.widget === "boolean") return false;
+    if (f.widget === "object") { var o = {}; f.fields.forEach(function (sub) { o[sub.name] = emptyValue(sub); }); return o; }
+    if (f.widget === "select") return f.options[0][0];
+    return "";
+  }
+  function itemSummary(f, item, i) {
+    if (!f.fields) return item || "(빈 항목)";
+    var text = (f.summary || "").replace(/\{\{(\w+)\}\}/g, function (m, k) { return item[k] == null ? "" : item[k]; }).trim();
+    return text || "항목 " + (i + 1);
+  }
+  function hint(f) { return f.hint ? '<div class="ed-hint">' + esc(f.hint) + "</div>" : ""; }
+  function details(path, label, body, cls) {
+    var key = path.join(".");
+    return '<details class="' + (cls || "") + '" data-open-key="' + esc(key) + '"' + (openPaths[key] ? " open" : "") + "><summary>" + esc(label) +
+      '</summary><div class="ed-body">' + body + "</div></details>";
+  }
+  function fieldHtml(f, value, path) {
+    var p = esc(path.join(".")), id = "ed-" + path.join("-");
+    switch (f.widget) {
+      case "boolean":
+        return '<div class="ed-field"><label class="ed-check"><input type="checkbox" data-path="' + p + '"' + (value ? " checked" : "") + "> " + esc(f.label) + "</label>" + hint(f) + "</div>";
+      case "text":
+        return '<div class="ed-field"><label for="' + id + '">' + esc(f.label) + '</label><textarea id="' + id + '" data-path="' + p + '">' + esc(value) + "</textarea>" + hint(f) + "</div>";
+      case "select":
+        return '<div class="ed-field"><label for="' + id + '">' + esc(f.label) + '</label><select id="' + id + '" data-path="' + p + '">' +
+          f.options.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === value ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select>" + hint(f) + "</div>";
+      case "image":
+        return '<div class="ed-field"><span class="ed-label">' + esc(f.label) + '</span><div class="ed-img"><div class="thumb">' + image(value, f.label, "") + "</div>" +
+          '<label class="ed-small">이미지 선택<input type="file" accept="image/*" data-img-path="' + p + '" hidden></label>' +
+          (value ? '<button type="button" class="ed-small" data-act="clear" data-path="' + p + '">이미지 빼기</button>' : "") + "</div>" + hint(f) + "</div>";
+      case "object":
+        return details(path, f.label, hint(f) + f.fields.map(function (sub) { return fieldHtml(sub, (value || {})[sub.name], path.concat(sub.name)); }).join(""));
+      case "list":
+        var items = value || [];
+        return details(path, f.label + " (" + items.length + ")", hint(f) +
+          items.map(function (item, i) {
+            var ip = path.concat(i), ipStr = esc(ip.join("."));
+            var tools = '<div class="ed-item-tools"><button type="button" data-act="up" data-path="' + ipStr + '" aria-label="위로">↑ 위로</button>' +
+              '<button type="button" data-act="down" data-path="' + ipStr + '" aria-label="아래로">↓ 아래로</button>' +
+              '<button type="button" class="danger" data-act="del" data-path="' + ipStr + '">× 삭제</button></div>';
+            var body = f.fields
+              ? f.fields.map(function (sub) { return fieldHtml(sub, item[sub.name], ip.concat(sub.name)); }).join("")
+              : fieldHtml(f.field, item, ip);
+            return details(ip, itemSummary(f, item, i), tools + body, "ed-item");
+          }).join("") +
+          '<p style="margin:0"><button type="button" class="ed-small" data-act="add" data-path="' + p + '">+ ' + esc(f.label.replace(/ \(.*\)$/, "")) + " 추가</button></p>");
+      default:
+        return '<div class="ed-field"><label for="' + id + '">' + esc(f.label) + '</label><input type="text" id="' + id + '" data-path="' + p + '" value="' + esc(value) + '">' + hint(f) + "</div>";
+    }
+  }
+  function findField(path) {
+    // 경로(예: news.0.photos)에 해당하는 SCHEMA 항목을 찾습니다. 숫자는 목록 안의 순번입니다.
+    var list = SCHEMA, f = null;
+    for (var k = 0; k < path.length; k++) {
+      if (typeof path[k] === "number") { if (!f.fields) return f.field; list = f.fields; continue; }
+      f = list.filter(function (x) { return x.name === path[k]; })[0];
+      if (f && f.fields) list = f.fields;
+    }
+    return f;
+  }
+  function parsePath(str) { return str.split(".").map(function (k) { return /^\d+$/.test(k) ? Number(k) : k; }); }
+
+  function editorHtml() { return SCHEMA.map(function (f) { return fieldHtml(f, draft[f.name], [f.name]); }).join(""); }
+  function renderAdmin() {
+    if (!draft) draft = clone(C);
+    return (
+      '<div class="page-head"><div class="container" style="max-width:900px"><h1>홈페이지 관리</h1>' +
+        "<p>홈페이지의 글자와 사진을 고치고 <strong>게시</strong>를 누르면 바로 반영됩니다.</p></div></div>" +
+      '<section style="padding-top:24px"><div class="container" style="max-width:900px">' +
+        '<div class="admin-bar"><div class="who">👤 데모 관리자 계정으로 로그인됨<small>데모 버전: 실제 로그인 없이 누구나 들어올 수 있고, 고친 내용은 이 브라우저에만 저장됩니다.</small></div>' +
+          '<div class="admin-actions"><button type="button" class="btn" id="admin-publish">게시</button><a class="btn outline" href="#home">홈페이지 보기</a></div></div>' +
+        '<div class="editor" id="editor">' + editorHtml() + "</div>" +
+        '<p style="margin-top:24px"><button type="button" class="btn" id="admin-publish-2">게시</button></p>' +
+      "</div></section>"
+    );
+  }
+  function redrawEditor() { document.getElementById("editor").innerHTML = editorHtml(); }
+  function resizeImage(file, done) {
+    // 사진을 가로세로 1000px 이하 JPEG로 줄여 브라우저 저장 공간을 아낍니다. 서버로는 보내지 않습니다.
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, 1000 / Math.max(img.width, img.height));
+        var c = document.createElement("canvas");
+        c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        done(c.toDataURL("image/jpeg", 0.75));
+      };
+      img.onerror = function () { done(null); };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  function publish() {
+    C = clone(draft);
+    T = mergeTexts(C.texts);
+    renderShell();
+    dirty = false;
+    toast(saveContent() ? "게시했습니다. 홈페이지에 바로 반영되었습니다." : "화면에는 반영했지만 저장 공간이 부족해 새로고침하면 사라집니다. 사진 수를 줄여 주세요.");
+  }
+  function bindAdmin() {
+    var ed = document.getElementById("editor");
+    document.getElementById("admin-publish").addEventListener("click", publish);
+    document.getElementById("admin-publish-2").addEventListener("click", publish);
+    ed.addEventListener("toggle", function (e) {
+      var key = e.target.getAttribute && e.target.getAttribute("data-open-key");
+      if (key != null) openPaths[key] = e.target.open;
+    }, true);
+    ed.addEventListener("input", function (e) {
+      var p = e.target.getAttribute("data-path");
+      if (!p) return;
+      setAt(draft, parsePath(p), e.target.type === "checkbox" ? e.target.checked : e.target.value);
+      dirty = true;
+    });
+    ed.addEventListener("change", function (e) {
+      var p = e.target.getAttribute("data-img-path");
+      if (p && e.target.files[0]) {
+        resizeImage(e.target.files[0], function (url) {
+          if (!url) { toast("이미지를 읽지 못했습니다."); return; }
+          setAt(draft, parsePath(p), url); dirty = true; redrawEditor();
+        });
+      }
+    });
+    ed.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-act]");
+      if (!btn) return;
+      var path = parsePath(btn.getAttribute("data-path")), act = btn.getAttribute("data-act");
+      if (act === "clear") setAt(draft, path, "");
+      if (act === "add") {
+        var f = findField(path), list = getAt(draft, path);
+        var item = f.fields ? emptyValue({ widget: "object", fields: f.fields }) : emptyValue(f.field);
+        var at = f.addToTop ? 0 : list.length;
+        list.splice(at, 0, item);
+        openPaths[path.concat(at).join(".")] = true;
+      }
+      if (act === "del" || act === "up" || act === "down") {
+        var i = path[path.length - 1], arr = getAt(draft, path.slice(0, -1));
+        if (act === "del") {
+          if (!confirm("이 항목을 삭제할까요? (게시해야 홈페이지에 반영됩니다)")) return;
+          arr.splice(i, 1);
+        } else {
+          var j = act === "up" ? i - 1 : i + 1;
+          if (j < 0 || j >= arr.length) return;
+          var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        }
+        // 순서가 바뀌면 펼침 상태가 엉키므로 그 목록 안의 펼침 상태를 비웁니다.
+        var prefix = path.slice(0, -1).join(".") + ".";
+        Object.keys(openPaths).forEach(function (k) { if (k.indexOf(prefix) === 0) delete openPaths[k]; });
+      }
+      dirty = true;
+      redrawEditor();
+    });
+  }
+  window.addEventListener("beforeunload", function (e) {
+    if (dirty && location.hash === "#admin") { e.preventDefault(); e.returnValue = ""; }
+  });
+
+  /* ---------- 데모 데이터 저장·초기화 ---------- */
+  function saveContent() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(C)); return true; } catch (e) { return false; }
+  }
+  function loadContent() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (saved && saved.org && saved.home && saved.about && Array.isArray(saved.news) && saved.donate && saved.privacy) return saved;
+    } catch (e) { /* 저장된 내용이 없거나 깨졌으면 예시 데이터로 시작 */ }
+    return clone(DEMO_DATA);
+  }
+  function resetDemo() {
+    if (!confirm("관람 중에 바꾼 내용을 모두 지우고 예시 데이터로 되돌릴까요?")) return;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* 저장 공간을 쓸 수 없는 브라우저 */ }
+    C = clone(DEMO_DATA);
+    T = mergeTexts(C.texts);
+    draft = null; dirty = false; openPaths = {}; newsFilter = "전체";
+    renderShell();
+    navigate();
+    toast("예시 데이터로 초기화했습니다.");
+  }
+
+  /* ---------- 예시 데이터 (모두 가짜입니다. 실존 인물·단체·연락처가 아닙니다) ---------- */
+  // 예시 사진 대신 쓰는 간단한 그림 (사람 얼굴 없음)
+  function pic(bg, emoji, caption) {
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="' + bg + '"/>' +
+      '<circle cx="640" cy="120" r="180" fill="#ffffff" opacity=".18"/><circle cx="120" cy="560" r="220" fill="#ffffff" opacity=".12"/>' +
+      '<text x="400" y="320" font-size="180" text-anchor="middle">' + emoji + "</text>" +
+      '<text x="400" y="470" font-size="40" font-family="sans-serif" font-weight="700" fill="#ffffff" text-anchor="middle">' + caption + "</text>" +
+      '<text x="780" y="580" font-size="22" font-family="sans-serif" fill="#ffffff" opacity=".8" text-anchor="end">데모 예시 그림</text></svg>';
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  }
+  var DEMO_DATA = {
+    showExampleNotice: false,
+    org: {
+      name: "마음이 따뜻한 사람들",
+      tagline: "홀로 사시는 탈북민 어르신의 따뜻한 이웃이 되겠습니다",
+      description: "마음이 따뜻한 사람들은 혼자 사시는 탈북민 어르신들을 돕고, 어르신들이 한국 사회에 잘 정착하실 수 있도록 컴퓨터 교육과 그림 그리기 같은 활동을 함께합니다. 추석과 설에는 함께 모여 정을 나눕니다.",
+      representative: "한소망 (가상 인물)",
+      registrationNumber: "000-80-00000 (예시)",
+      address: "가상시 나눔구 이웃로 12, 3층 (데모용 가상 주소)",
+      phone: "000-0000-0000",
+      email: "hello@example.org",
+      logoText: "마음이 따뜻한 사람들",
+      logoImage: ""
+    },
+    home: {
+      heroTitle: "낯선 곳에서의 하루가\n덜 외롭도록",
+      heroText: "혼자 사시는 탈북민 어르신들이 한국 사회에 잘 정착하실 수 있도록, 정기 후원으로 함께해 주세요.",
+      heroSeason: { season: "auto", photos: { spring: "", summer: "", autumn: "", winter: "" } },
+      introImage: pic("#3e6b8a", "🫖", "따뜻한 차 한 잔의 오후"),
+      introCaption: "데모 예시 그림",
+      stats: [
+        { number: "7", unit: "년", label: "함께한 시간" },
+        { number: "42", unit: "명", label: "함께하는 어르신" },
+        { number: "318", unit: "회", label: "교육·활동" },
+        { number: "156", unit: "명", label: "정기 후원자" }
+      ],
+      programs: [
+        { icon: "🤝", title: "홀로 계신 어르신 돕기", text: "혼자 사시는 탈북민 어르신들이 한국 생활에 잘 적응하실 수 있도록 곁에서 돕습니다." },
+        { icon: "💻", title: "컴퓨터 교육", text: "컴퓨터 사용법을 배워 한국 생활에 필요한 일을 스스로 하실 수 있도록 돕습니다." },
+        { icon: "🎨", title: "그림 그리기", text: "그림을 그리며 마음을 표현하고, 이웃과 어울리는 시간을 만듭니다." },
+        { icon: "🍲", title: "명절 나눔", text: "추석과 설에 함께 모여 음식을 나누고 정을 나눕니다." }
+      ]
+    },
+    about: {
+      mission: "혼자 사시는 탈북민 어르신들이 외롭지 않게, 한국 사회의 이웃으로 함께 살아가시도록 돕습니다.",
+      vision: [
+        "어르신 한 분 한 분의 속도에 맞춰 함께합니다.",
+        "배움과 취미 활동으로 새로운 일상을 만들어 갑니다.",
+        "명절에는 가족처럼 모여 정을 나눕니다."
+      ],
+      history: [
+        { year: "2026", text: "그림 그리기 모임 작품 전시회 개최" },
+        { year: "2024", text: "어르신 컴퓨터 교실 정규 과정 시작 (주 2회)" },
+        { year: "2022", text: "정기 후원자 100명 돌파" },
+        { year: "2019", text: "봉사자 5명이 모여 단체 설립" }
+      ],
+      people: [
+        { name: "한소망", role: "대표", photo: "" },
+        { name: "윤다온", role: "사무국장", photo: "" },
+        { name: "서해솔", role: "컴퓨터 교육 담당", photo: "" },
+        { name: "민가람", role: "그림 그리기 담당", photo: "" }
+      ]
+    },
+    news: [
+      { date: "2026-10-04", category: "명절 나눔", title: "추석 송편 빚기 모임을 열었습니다",
+        summary: "추석을 앞두고 어르신 스물네 분과 봉사자들이 모여 송편을 빚었습니다. 고향에서 드시던 모양대로 빚어 주신 송편이 가장 인기였습니다.",
+        body: "올해 추석 모임은 동네 복지관 강당에서 열었습니다.\n\n어르신들께서 고향에서 빚으시던 송편 모양을 알려 주셔서, 봉사자들도 처음 보는 모양의 송편을 함께 빚어 보았습니다. 빚은 송편은 함께 쪄서 나누어 먹고, 남은 것은 모임에 오지 못하신 어르신 댁에 직접 전해 드렸습니다.\n\n후원해 주신 덕분에 쌀과 재료를 넉넉히 준비할 수 있었습니다. 감사합니다.",
+        image: "", photos: [pic("#c9762c", "🥮", "송편 빚기"), pic("#8a5a44", "🍵", "함께 나눈 차"), pic("#6b3a8c", "🎁", "댁으로 전한 선물")] },
+      { date: "2026-09-12", category: "그림 그리기", title: "가을 그림 모임 작품 전시회",
+        summary: "1년 동안 그린 그림 서른두 점을 모아 작은 전시회를 열었습니다. 고향의 산과 지금 사는 동네 풍경이 나란히 걸렸습니다.",
+        body: "그림 모임 어르신들이 1년 동안 그린 작품을 모아 처음으로 전시회를 열었습니다.\n\n작품에는 이름 대신 어르신들이 직접 정한 호를 적었습니다. 사흘 동안 이웃 주민 이백여 명이 다녀가며 방명록에 응원의 글을 남겨 주셨습니다.",
+        image: "", photos: [pic("#115a9e", "🎨", "작품 전시"), pic("#3e6b8a", "🖼️", "가을 풍경 그림")] },
+      { date: "2026-08-21", category: "컴퓨터 교육", title: "스마트폰으로 병원 예약하기 수업",
+        summary: "컴퓨터 교실에서 스마트폰 앱으로 병원을 예약하고 약 처방을 확인하는 방법을 배웠습니다.",
+        body: "이번 달 컴퓨터 교실 주제는 '스마트폰으로 병원 예약하기'였습니다.\n\n어르신들이 가장 어려워하시던 본인 인증 단계를 여러 번 반복해 연습했고, 수업이 끝난 뒤에는 각자 다니시는 병원 예약을 직접 해 보셨습니다.",
+        image: pic("#0077d4", "📱", "스마트폰 교실"), photos: [] },
+      { date: "2026-07-15", category: "홀로 계신 어르신 돕기", title: "여름맞이 댁 방문과 선풍기 점검",
+        summary: "무더위를 앞두고 봉사자들이 어르신 댁을 찾아가 선풍기와 에어컨을 점검하고 여름 반찬을 전해 드렸습니다.",
+        body: "봉사자 열두 명이 두 명씩 짝을 지어 어르신 댁 열여덟 곳을 방문했습니다.\n\n고장 난 선풍기 세 대를 새로 바꿔 드리고, 더운 날 몸 상태를 알려 주실 수 있도록 연락 방법도 다시 안내해 드렸습니다.",
+        image: pic("#2f8f6b", "🧺", "여름 반찬 전달"), photos: [] },
+      { date: "2026-05-30", category: "컴퓨터 교육", title: "컴퓨터 교실 봄 학기 수료식",
+        summary: "봄 학기 컴퓨터 교실을 마친 어르신 열한 분께 수료증을 드렸습니다. 다음 학기에는 사진 정리 수업을 준비하고 있습니다.",
+        body: "", image: "", photos: [] },
+      { date: "2026-02-14", category: "명절 나눔", title: "설맞이 떡국 나눔",
+        summary: "설을 맞아 함께 떡국을 끓여 먹고 윷놀이를 했습니다. 오랜만에 큰 웃음소리가 가득한 하루였습니다.",
+        body: "설 연휴 첫날, 어르신과 봉사자 마흔 명이 모여 떡국을 함께 끓여 먹었습니다.\n\n오후에는 편을 나누어 윷놀이를 했는데, 고향에서 하시던 규칙을 알려 주셔서 더 재미있었습니다.",
+        image: pic("#5f6b73", "🥣", "떡국 한 그릇"), photos: [] }
+    ],
+    donate: {
+      intro: "보내 주신 후원금은 탈북민 어르신들의 컴퓨터 교육, 그림 그리기 활동, 명절 나눔 모임에 쓰입니다.",
+      types: [
+        { title: "정기 후원", text: "매달 정해진 금액을 자동이체로 후원합니다. 신청서를 남겨 주시면 담당자가 연락드려 자동이체를 안내합니다." },
+        { title: "일시 후원", text: "원하실 때 원하는 금액을 아래 계좌로 보내 주세요." }
+      ],
+      amountExamples: [
+        { amount: "10,000원", text: "어르신 한 분의 그림 그리기 재료 한 달 치" },
+        { amount: "30,000원", text: "컴퓨터 교실 교재와 간식 한 학기 치" },
+        { amount: "50,000원", text: "명절 나눔 모임에서 어르신 다섯 분께 드리는 선물" }
+      ],
+      bank: { bankName: "데모은행 (가상 은행)", accountNumber: "000-000000-00-000", accountHolder: "마음이 따뜻한 사람들" },
+      taxNotice: "후원금은 연말정산 시 기부금 공제를 받을 수 있습니다. 영수증이 필요하시면 신청서에 표시해 주세요. 발급에 필요한 정보는 담당자가 따로 연락드려 확인합니다.",
+      googleForm: {
+        googleFormUrl: "",
+        fields: { name: "entry.0000000001", phone: "entry.0000000002", email: "entry.0000000003", type: "entry.0000000004", amount: "entry.0000000005", receipt: "entry.0000000006", message: "entry.0000000007" }
+      }
+    },
+    privacy: {
+      effectiveDate: "2026-01-01",
+      officerName: "윤다온 (사무국장, 가상 인물)",
+      officerContact: "privacy@example.org",
+      retentionPeriod: "후원 종료 후 5년 (기부금 영수증 관련 법령에 따름)"
+    },
+    texts: {
+      nav: { home: "홈", about: "단체 소개", news: "활동 소식", donate: "후원하기" },
+      home: { primaryButton: "정기 후원하기", secondaryButton: "단체 알아보기", statsTitle: "숫자로 보는 활동", statsLead: "", introButton: "단체 소개 보기",
+        programsTitle: "이런 일을 합니다", programsLead: "어르신들이 한국 사회에 잘 정착하실 수 있도록 이런 활동을 함께합니다.", programsButton: "활동 소식 보기",
+        newsTitle: "최근 활동 소식", newsLead: "", newsButton: "활동 소식 전체 보기", ctaTitle: "어르신들의 곁에 함께해 주세요", ctaText: "" },
+      about: { missionTitle: "미션", visionTitle: "우리의 약속", historyTitle: "연혁", peopleTitle: "함께하는 사람들", peopleLead: "어르신들과 함께하는 사람들입니다. (모두 가상 인물)",
+        ctaTitle: "뜻을 함께해 주세요", ctaText: "정기 후원은 꾸준한 활동을 가능하게 하는 가장 큰 힘입니다." },
+      news: { lead: "어르신들과 함께한 활동 기록입니다.", backButton: "활동 소식 목록으로", ctaTitle: "다음 소식을 함께 만들어 주세요", ctaText: "후원자님의 손길이 다음 활동 소식이 됩니다." },
+      donate: { amountTitle: "후원금은 이렇게 쓰입니다", amountLead: "금액별 사용 예시입니다.", bankTitle: "후원 계좌", applyButton: "후원 신청서 쓰기",
+        applyTitle: "후원 신청", applyLead: "신청서를 남겨 주시면 담당자가 확인 후 연락드립니다. 이 사이트에서는 결제가 이루어지지 않습니다." }
+    }
+  };
+
+  // 페이지를 열 때마다 "데모 관리자"로 로그인된 상태이며, 관람객이 게시한 내용이 있으면 그것을, 없으면 예시 데이터를 씁니다.
+  C = loadContent();
+  T = mergeTexts(C.texts);
+  renderShell();
+  bindShell();
+  window.addEventListener("hashchange", navigate);
+  navigate();
+})();
+</script>
+</body>
+</html>

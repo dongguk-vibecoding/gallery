@@ -71,6 +71,15 @@
       "liveUrl": "",
       "prompt": "인스타그램이나 블로그의 사진은 올린 사람의 저작물이에요. 저장해서 사이트에 쓰거나 주소만 연결해 보여 주는 것도 허락 없이 쓰는 셈이에요.",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "09",
+      "title": "봉사 단체 소개",
+      "author": "마음이 따뜻한 사람들",
+      "summary": "저희 봉사단체는 어르신들만 있습니다. 홍보를 할 방법을 언제부터 찾고 있었는데 오늘 기회에 할 수 있게 되어 기쁩니다.",
+      "liveUrl": "https://volunteerservice.vercel.app/",
+      "prompt": "홈페이지 이미지를 계절별로 변할 수 있게 해달라고 하니 그렇게 만들어 준 것이 기억에 남습니다.",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }
