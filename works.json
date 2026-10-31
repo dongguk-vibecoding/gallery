@@ -89,6 +89,15 @@
       "liveUrl": "https://claude.ai/artifact/HYZRuhfnc9J5ALvvbknSuA",
       "prompt": "",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "11",
+      "title": "방치형 한의원 경영게임",
+      "author": "인술당",
+      "summary": "인술당: 담보를 되찾아라 간이의자 하나로 시작해 병상과 간호사를 늘리고, 담보로 넘어간 한옥 한의원을 되찾는 방치형 경영 게임.",
+      "liveUrl": "",
+      "prompt": "",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }

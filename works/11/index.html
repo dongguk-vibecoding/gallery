@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인술당 — 방치형 한의원</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+:root{
+  --paper:#F1E9D8; --paper-dark:#E4D8BE; --paper-deep:#D9C9A6;
+  --ink:#2B2620; --ink-soft:#5c5142;
+  --herb-green:#5C6B47; --herb-green-dark:#414d33;
+  --seal-red:#A63A3A; --seal-red-dark:#7c2b2b;
+  --wood:#7A5A3A; --wood-dark:#54391f; --wood-light:#9c7a4f;
+  --gold:#B8935A; --sky:#5b7a8c; --sky-dark:#3f5866;
+  --shadow: rgba(43,38,32,.25);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;min-height:100%;}
+body{
+  font-family:'Noto Sans KR', sans-serif; color:var(--ink);
+  background:
+    radial-gradient(ellipse at top left, rgba(255,255,255,.25), transparent 60%),
+    repeating-linear-gradient(135deg, rgba(43,38,32,.02) 0px, rgba(43,38,32,.02) 2px, transparent 2px, transparent 8px),
+    var(--paper);
+  min-height:100vh; overflow-x:hidden;
+}
+#app{ width:100%; max-width:1100px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
+
+header{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  padding:10px 20px; background:linear-gradient(180deg, var(--wood) 0%, var(--wood-dark) 100%);
+  color:var(--paper); box-shadow:0 3px 10px var(--shadow); position:sticky; top:0; z-index:20;
+}
+.brand{ font-family:'Noto Serif KR', serif; font-weight:900; font-size:19px; letter-spacing:2px; display:flex; align-items:baseline; gap:8px; }
+.brand small{ font-family:'Noto Sans KR',sans-serif; font-weight:500; font-size:10.5px; opacity:.75; letter-spacing:0; }
+.stats{display:flex; gap:16px; align-items:center; font-variant-numeric:tabular-nums;}
+.stat{display:flex; flex-direction:column; align-items:flex-end; font-size:10.5px; opacity:.9;}
+.stat b{font-size:15px; font-weight:700; color:#fff;}
+.stat.gold b{color:#F0D48A;} .stat.rep b{color:#e8b9b9;}
+.hdr-btns{display:flex; gap:8px;}
+.hbtn{ border:1.5px solid rgba(241,233,216,.5); background:transparent; color:var(--paper); border-radius:16px; padding:5px 12px;
+  font-size:12px; cursor:pointer; font-family:'Noto Sans KR',sans-serif; }
+.hbtn:hover{background:rgba(255,255,255,.12);}
+.hbtn.primary{background:var(--seal-red); border-color:var(--seal-red);}
+
+.stage-wrap{ padding:10px 20px 0; }
+.stage-head{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-soft); margin-bottom:4px; flex-wrap:wrap; gap:6px;}
+.stage-head b{color:var(--seal-red-dark);}
+.bar-bg{height:10px; border-radius:6px; background:var(--paper-dark); overflow:hidden; box-shadow:inset 0 1px 3px rgba(0,0,0,.15);}
+.stage-bar{height:100%; background:linear-gradient(90deg, var(--seal-red), #c9615f); border-radius:6px; transition:width .3s ease;}
+.day-bg{height:4px; border-radius:3px; background:var(--paper-dark); overflow:hidden; margin-top:6px;}
+.day-bar{height:100%; background:var(--herb-green); border-radius:3px;}
+
+.screen{ flex:1; display:none; flex-direction:column; padding:14px 20px 40px; animation:fadeIn .35s ease; }
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+.btn{ font-family:'Noto Serif KR', serif; border:none; cursor:pointer; font-weight:700; letter-spacing:1px;
+  padding:12px 28px; border-radius:6px; font-size:15px; background:var(--seal-red); color:#fdf6ea;
+  box-shadow:0 4px 0 var(--seal-red-dark), 0 6px 14px var(--shadow); transition:transform .12s ease; }
+.btn:active{transform:translateY(3px); box-shadow:0 1px 0 var(--seal-red-dark);}
+.btn.secondary{ background:var(--herb-green); box-shadow:0 4px 0 var(--herb-green-dark), 0 6px 14px var(--shadow); }
+.btn.sky{background:var(--sky); box-shadow:0 4px 0 var(--sky-dark), 0 6px 14px var(--shadow);}
+.btn.ghost{ background:transparent; color:var(--ink-soft); box-shadow:none; border:1.5px solid var(--paper-deep); }
+.btn:disabled{opacity:.4; cursor:not-allowed; transform:none; box-shadow:none;}
+.btn.small{padding:6px 13px; font-size:12px; box-shadow:0 3px 0 rgba(0,0,0,.2);}
+.btn.small.ghost{box-shadow:none;}
+
+/* title */
+#screen-title{align-items:center; justify-content:center; text-align:center; gap:16px; padding-top:6vh;}
+.title-seal{ width:100px; height:100px; border-radius:50%; border:4px solid var(--seal-red); color:var(--seal-red);
+  display:flex; align-items:center; justify-content:center; font-family:'Noto Serif KR', serif; font-weight:900; font-size:30px;
+  transform:rotate(-6deg); box-shadow:0 0 0 3px rgba(166,58,58,.15) inset; }
+.title-h1{ font-family:'Noto Serif KR', serif; font-weight:900; font-size:40px; letter-spacing:5px; margin:0; }
+.title-sub{color:var(--ink-soft); font-size:14.5px; line-height:1.8; max-width:580px;}
+.title-sub b{color:var(--herb-green-dark);}
+.title-btns{display:flex; gap:12px; flex-wrap:wrap; justify-content:center;}
+
+/* scene */
+#scene{ position:relative; width:100%; height:400px; border-radius:14px; overflow:hidden; border:2px solid var(--wood);
+  background:linear-gradient(180deg,#f7efdc 0%, #ecdfc2 100%); box-shadow:0 8px 20px var(--shadow); }
+#scene:before{ content:''; position:absolute; left:0; right:0; bottom:0; height:46px;
+  background:repeating-linear-gradient(90deg, rgba(122,90,58,.14) 0 48px, rgba(122,90,58,.07) 48px 96px); }
+.zone{position:absolute; top:0; bottom:0; border-left:1px dashed rgba(122,90,58,.35);}
+.zone.locked{background:repeating-linear-gradient(45deg, rgba(43,38,32,.06) 0 8px, transparent 8px 16px);}
+.zone-label{position:absolute; top:6px; left:0; right:0; text-align:center; font-size:11px; font-weight:700; color:var(--wood-dark); font-family:'Noto Serif KR',serif;}
+.zone-label small{display:block; font-weight:400; font-size:9.5px; color:var(--ink-soft);}
+.zone-empty{position:absolute; left:0; right:0; top:46%; text-align:center; font-size:11.5px; color:var(--ink-soft); opacity:.8; line-height:1.6;}
+.slot{ position:absolute; border:1.5px dashed var(--paper-deep); border-radius:8px; background:rgba(255,255,255,.4); }
+.slot.busy{border-style:solid; border-color:var(--herb-green); background:rgba(255,255,255,.65);}
+.slot.unowned{opacity:.25;}
+.slot .bed{position:absolute; bottom:8px; left:5px; font-size:12px; opacity:.55;}
+.slot .eq{position:absolute; top:2px; right:4px; font-size:11px;}
+.slot .bar{position:absolute; left:4px; right:4px; bottom:3px; height:5px; background:#fff; border-radius:3px; overflow:hidden;}
+.slot .bar i{display:block; height:100%; width:0; background:var(--seal-red);}
+.desk{position:absolute; transform:translate(-10%,-50%); font-size:11px; font-weight:700; color:var(--wood-dark); background:rgba(255,253,248,.85); border:1.5px solid var(--wood-light); border-radius:8px; padding:3px 10px; white-space:nowrap;}
+.desk small{display:block; font-weight:400; font-size:9px; color:var(--ink-soft);}
+.door{position:absolute; left:1%; top:88%; transform:translate(-30%,-50%); font-size:30px;}
+.actor{ position:absolute; transform:translate(-50%,-50%); transition:left .9s ease-in-out, top .9s ease-in-out, opacity .5s; z-index:5; line-height:1; pointer-events:none; text-align:center;}
+.actor .em{display:inline-block; font-size:26px;}
+.actor .nm{ position:absolute; top:100%; left:50%; transform:translateX(-50%); font-size:9px; white-space:nowrap; background:rgba(255,253,248,.88); padding:0 5px; border-radius:6px; margin-top:1px; color:var(--ink);}
+.actor.walking .em{animation:bob .35s infinite;}
+.actor.hard .em{filter:drop-shadow(0 0 4px var(--seal-red));}
+.actor.hard:after{content:'!'; position:absolute; top:-12px; right:-8px; background:var(--seal-red); color:#fff; font-size:10px; width:14px; height:14px; border-radius:50%; font-weight:700; display:flex; align-items:center; justify-content:center;}
+.actor.gone{opacity:0;}
+@keyframes bob{50%{transform:translateY(-4px);}}
+.pop{ position:absolute; z-index:9; transform:translate(-50%,-100%); font-size:12px; font-weight:700; background:#fffdf8; padding:2px 8px; border-radius:10px;
+  border:1.5px solid var(--seal-red); color:var(--seal-red); animation:popUp 1.5s forwards; pointer-events:none; white-space:nowrap;}
+.pop.good{border-color:var(--herb-green); color:var(--herb-green-dark);}
+@keyframes popUp{0%{opacity:0; margin-top:0;} 15%{opacity:1;} 100%{opacity:0; margin-top:-34px;}}
+
+/* lower area */
+.lower{display:grid; grid-template-columns:1fr 280px; gap:16px; margin-top:14px;}
+.section-title{ font-family:'Noto Serif KR', serif; font-weight:700; font-size:13.5px; color:var(--wood-dark);
+  margin:2px 0 6px; letter-spacing:1px; display:flex; align-items:center; gap:8px; }
+.section-title:after{content:''; flex:1; height:1px; background:var(--paper-deep);}
+.queue-strip{display:flex; gap:10px; overflow-x:auto; padding:4px 2px 10px; min-height:150px;}
+.patient-chip{ flex:0 0 172px; background:#fffdf8; border:1px solid var(--paper-deep); border-radius:12px; padding:10px 12px; box-shadow:0 4px 10px var(--shadow); }
+.pc-row{display:flex; align-items:center; gap:8px;}
+.pc-avatar{ width:32px; height:32px; border-radius:50%; background:var(--paper-dark); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+.pc-name{font-size:12px; font-weight:700;} .pc-type{font-size:10px; color:var(--ink-soft);}
+.pc-speech{font-size:10.5px; color:var(--ink-soft); margin:6px 0; line-height:1.4; min-height:26px;}
+.pc-bar-bg{height:6px; border-radius:4px; background:var(--paper-dark); overflow:hidden; margin-bottom:8px;}
+.pc-bar{height:100%; border-radius:4px; background:var(--herb-green);}
+.pc-assign{width:100%; padding:7px 0; font-size:11.5px;}
+.auto-note{font-size:10.5px; color:var(--herb-green-dark); text-align:center; padding:6px 0;}
+.empty-queue{color:var(--ink-soft); font-size:12.5px; padding:14px 4px; opacity:.7;}
+.hard-tag{ display:inline-block; font-size:9px; background:var(--seal-red); color:#fff; padding:2px 6px; border-radius:9px; margin-left:5px; vertical-align:middle; }
+.info-tag{ font-size:10px; background:var(--sky); color:#fff; padding:3px 8px; border-radius:8px; margin:4px 0; display:inline-block; }
+.info-tag-dim{ background:var(--paper-deep); color:var(--ink-soft); }
+.log-box{ background:#fffdf8; border:1px solid var(--paper-deep); border-radius:12px; padding:10px 12px; min-height:150px; font-size:11.5px; color:var(--ink-soft); line-height:1.6; }
+.log-box div{padding:2px 0; border-bottom:1px dotted var(--paper-deep);} .log-box div:last-child{border-bottom:none;}
+.log-box div:first-child{color:var(--ink); font-weight:500;}
+
+/* modals */
+.modal-overlay{ position:fixed; inset:0; background:rgba(43,38,32,.55); display:none; align-items:center; justify-content:center; z-index:100; padding:16px; }
+.modal-overlay.show{display:flex;}
+.modal-box{ background:#fffdf8; border-radius:16px; padding:20px; max-width:600px; width:100%; max-height:88vh; overflow-y:auto;
+  box-shadow:0 16px 40px var(--shadow); border:1px solid var(--paper-deep); position:relative; }
+.modal-title{font-family:'Noto Serif KR',serif; font-weight:900; font-size:21px; margin:0;}
+.modal-title .hanja{font-size:12px; font-weight:400; color:var(--ink-soft); margin-left:6px;}
+.modal-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin:2px 0 4px;}
+.modal-patient{font-size:11.5px; color:var(--ink-soft); background:var(--paper-dark); border-radius:8px; padding:8px 12px; margin:10px 0 12px;}
+.modal-hint{font-size:11.5px; color:var(--seal-red-dark); font-weight:700; margin-bottom:10px;}
+.modal-close-x{position:absolute; top:14px; right:16px; background:none; border:none; font-size:18px; color:var(--ink-soft); cursor:pointer;}
+.modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:4px;}
+.rx-tray2{ background:var(--paper-dark); border:1.5px dashed var(--paper-deep); border-radius:10px; padding:10px 12px;
+  min-height:42px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:14px; }
+.rx-tray2 .empty-hint{font-size:11.5px; color:var(--ink-soft); opacity:.7;}
+.rx-chip2{ background:#fff; border:1px solid var(--paper-deep); border-radius:20px; padding:5px 12px; font-size:12px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 4px var(--shadow); }
+.rx-chip2 b{color:var(--herb-green-dark);}
+.mini-cabinet{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-bottom:16px;}
+.mini-drawer{ background:linear-gradient(180deg, #f7f0df 0%, var(--paper-dark) 100%); border:1.5px solid var(--paper-deep); border-radius:10px; padding:9px 11px; cursor:pointer; }
+.mini-drawer:active{transform:translateY(2px);}
+.mini-drawer.selected{ border-color:var(--seal-red); box-shadow:0 0 0 2px rgba(166,58,58,.18) inset; background:#fff3ee; }
+.mini-drawer .md-name{font-size:12.5px; font-weight:700;} .mini-drawer .md-hanja{font-size:9.5px; color:var(--ink-soft); margin-left:4px; font-weight:400;}
+.mini-drawer .md-desc{font-size:10.5px; color:var(--ink-soft); line-height:1.4; margin-top:3px;}
+.rx-symptoms{font-size:11.5px; color:var(--ink-soft); margin:0 0 8px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+.tagchip{display:inline-block; font-size:10px; padding:1px 7px; border-radius:9px; background:#fff; color:var(--ink-soft); border:1px solid var(--paper-deep); margin:3px 4px 0 0;}
+.tagchip.match{background:#fff3ee; border-color:var(--seal-red); color:var(--seal-red-dark); font-weight:700;}
+.modal-result{ position:absolute; inset:0; border-radius:16px; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,253,248,.95); opacity:0; pointer-events:none; flex-direction:column; gap:8px; }
+.modal-result.show{animation:stampShow2 1.1s ease forwards;}
+.modal-result .mr-seal{ border:4px solid var(--seal-red); color:var(--seal-red); border-radius:50%; width:76px; height:76px;
+  display:flex; align-items:center; justify-content:center; font-family:'Noto Serif KR',serif; font-weight:900; font-size:17px; transform:rotate(-10deg); }
+.modal-result .mr-text{font-size:13.5px; font-weight:700;}
+@keyframes stampShow2{ 0%{opacity:0; transform:scale(1.5);} 20%{opacity:1; transform:scale(1);} 82%{opacity:1;} 100%{opacity:0;} }
+
+.tab-row{display:flex; gap:8px; margin-bottom:14px;}
+.tab-btn{ flex:1; padding:9px 0; border-radius:8px; border:1.5px solid var(--paper-deep); background:#fff; cursor:pointer; font-family:'Noto Serif KR',serif; font-weight:700; font-size:13px; color:var(--ink-soft); }
+.tab-btn.active{background:var(--wood); color:#fff; border-color:var(--wood);}
+.market-list{display:flex; flex-direction:column; gap:12px;}
+.market-item{background:var(--paper-dark); border-radius:10px; padding:14px;}
+.mi-top{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+.mi-icon{font-size:20px;} .mi-name{font-weight:700; font-size:13.5px;}
+.mi-hanja{font-size:9.5px; color:var(--ink-soft); font-weight:400; margin-left:4px;}
+.mi-badge{margin-left:auto; font-size:10.5px; background:#fff; border-radius:10px; padding:2px 9px; color:var(--ink-soft);}
+.mi-stats{font-size:11px; color:var(--ink-soft); margin-bottom:8px; line-height:1.5;}
+.mi-actions{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+.level-dots{display:flex; gap:3px; margin:4px 0 8px;}
+.level-dot{width:14px; height:6px; border-radius:3px; background:#fff;} .level-dot.filled{background:var(--herb-green);}
+.bed-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#fff; border-radius:8px; padding:8px 10px; margin-top:6px; font-size:12px;}
+.bed-row b{min-width:52px;}
+.eq-on{font-size:11px; color:var(--herb-green-dark); font-weight:700;}
+
+#toast{ position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--paper);
+  padding:10px 20px; border-radius:24px; font-size:12.5px; opacity:0; transition:all .3s ease; pointer-events:none; z-index:150; max-width:80%; text-align:center; }
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+@media (max-width:760px){ .lower{grid-template-columns:1fr;} #scene{height:340px;} .mini-cabinet{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="brand">仁術堂<small>인술당 · 방치형 한의원</small></div>
+    <div class="stats">
+      <div class="stat"><span>일차</span><b id="hdr-day">-</b></div>
+      <div class="stat gold"><span>냥</span><b id="hdr-gold">0</b></div>
+      <div class="stat rep"><span>명성</span><b id="hdr-rep">0</b></div>
+    </div>
+    <div class="hdr-btns" id="hdr-btns" style="display:none;">
+      <button class="hbtn" id="btn-speed" onclick="toggleSpeed()">⏩ 배속 ×1</button>
+      <button class="hbtn" onclick="saveGame(true)">💾 저장</button>
+      <button class="hbtn primary" onclick="openManagePanel()">📋 경영 관리</button>
+    </div>
+  </header>
+
+  <div class="stage-wrap" id="stage-wrap" style="display:none;">
+    <div class="stage-head"><span id="stage-name">-</span><b id="stage-text">-</b><span id="rent-text">-</span></div>
+    <div class="bar-bg"><div class="stage-bar" id="stage-bar" style="width:0%;"></div></div>
+    <div class="day-bg"><div class="day-bar" id="day-bar" style="width:0%;"></div></div>
+  </div>
+
+  <!-- TITLE -->
+  <section class="screen active" id="screen-title">
+    <div class="title-seal">仁術</div>
+    <h1 class="title-h1">인술당</h1>
+    <p class="title-sub">3대째 이어온 한옥 한의원이 부모님의 사기로 <b>담보</b>에 넘어갔습니다.<br>
+    간이의자 하나뿐인 좁은 월세 한의원에서 다시 시작하세요.<br>
+    병상을 들이고 뜸·물리치료 장비를 갖추면 한 병상에서 여러 시술을 함께 합니다.<br>
+    접수·안내 간호사가 환자를 병상까지 안내하고, 시술 담당 간호사가 케어하면 진료는 알아서 돌아갑니다.<br>
+    까다로운 <b>특별 처방</b> 환자만 직접 탕약을 지어주면 됩니다.<br>
+    창을 닫아도 진료는 이어집니다. (최대 8시간)</p>
+    <div class="title-btns">
+      <button class="btn" id="btn-continue" onclick="continueGame()" style="display:none;">이어하기</button>
+      <button class="btn secondary" onclick="newGame()">새로 시작</button>
+    </div>
+  </section>
+
+  <!-- CLINIC -->
+  <section class="screen" id="screen-clinic">
+    <div id="scene"></div>
+    <div class="lower">
+      <div>
+        <div class="section-title">대기실 <span id="queue-count" style="font-weight:400; font-size:11px;"></span></div>
+        <div class="queue-strip" id="queue-strip"></div>
+      </div>
+      <div>
+        <div class="section-title">진료 소식</div>
+        <div class="log-box" id="log-box"></div>
+      </div>
+    </div>
+  </section>
+</div>
+<div id="toast"></div>
+
+<!-- PRESCRIPTION MODAL -->
+<div class="modal-overlay" id="rx-modal">
+  <div class="modal-box">
+    <div class="modal-result" id="rx-result"><div class="mr-seal" id="rx-result-seal">完治</div><div class="mr-text" id="rx-result-text"></div></div>
+    <h3 class="modal-title" id="rx-recipe-name">탕약명</h3>
+    <p class="modal-desc" id="rx-recipe-desc"></p>
+    <div class="modal-patient" id="rx-patient-line"></div>
+    <div class="rx-symptoms" id="rx-symptoms"></div>
+    <div class="modal-hint" id="rx-hint"></div>
+    <button class="btn secondary small" id="rx-diag-btn" onclick="diagnoseInModal()" style="margin-bottom:12px;">🩺 진맥하기 (후보 줄이기)</button>
+    <button class="btn ghost small" id="rx-hint-btn" onclick="revealHint()" style="margin-bottom:12px;">💡 필요한 약재 보기</button>
+    <div class="rx-tray2" id="rx-tray2"></div>
+    <div class="mini-cabinet" id="mini-cabinet"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closePrescribeModal(true)">취소</button>
+      <button class="btn secondary" id="rx-submit" onclick="submitPrescription()">처방하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- INFO / OFFLINE MODAL -->
+<div class="modal-overlay" id="info-modal">
+  <div class="modal-box" style="text-align:center; max-width:460px;">
+    <h3 class="modal-title" id="info-title" style="margin-bottom:10px;"></h3>
+    <p class="modal-desc" id="info-body" style="font-size:13.5px; line-height:1.8;"></p>
+    <div class="modal-actions" style="justify-content:center; margin-top:14px;">
+      <button class="btn" onclick="closeInfo()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGE -->
+<div class="modal-overlay" id="manage-modal">
+  <div class="modal-box">
+    <button class="modal-close-x" onclick="closeManagePanel()">✕</button>
+    <h3 class="modal-title" style="margin-bottom:12px;">경영 관리</h3>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tab-facility" onclick="switchTab('facility')">시설</button>
+      <button class="tab-btn" id="tab-nurse" onclick="switchTab('nurse')">직원</button>
+      <button class="tab-btn" id="tab-classic" onclick="switchTab('classic')">고전</button>
+      <button class="tab-btn" id="tab-compendium" onclick="switchTab('compendium')">도감</button>
+    </div>
+    <div class="market-list" id="manage-list"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+      <div style="font-size:12.5px;">보유 냥: <b id="manage-gold">0</b></div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn ghost small" onclick="resetGame()">초기화</button>
+        <button class="btn" onclick="closeManagePanel()">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const SAVE_KEY = 'insuldang_v2_save';
+const SAVE_VERSION = 3;
+const DAY_LENGTH = 120;            // 게임 하루 = 실시간 120초
+const OFFLINE_CAP = 8*3600;        // 오프라인 정산 상한 8시간
+const GOAL_SCALE = 1;              // 출시용 템포 조절 배수
+const MAX_QUEUE = 5;
+const CLINIC_START_MIN = 600, CLINIC_END_MIN = 1110;
+
+const STAGES = [
+  { name:'1단계 · 월세 한의원', goal:3000*GOAL_SCALE,  rent:20,
+    clear:'좁은 월세 방에서 자리를 잡았습니다. 건물 한 층을 더 빌려 병상을 4개까지, 간이의자를 4개까지 둘 수 있게 되었습니다.' },
+  { name:'2단계 · 확장 한의원', goal:10000*GOAL_SCALE, rent:80,
+    clear:'환자들 사이에 인술당 소문이 퍼졌습니다. 건물을 통째로 쓰게 되어 병상을 6개까지 둘 수 있습니다. 이제 한옥을 되찾을 상환금을 모을 차례입니다.' },
+  { name:'3단계 · 한옥 되찾기', goal:30000*GOAL_SCALE, rent:200, clear:'' },
+];
+
+// 시술
+const TREAT = {
+  acu:   { name:'침',      icon:'🪡', duration:6,  reward:9,  rep:2,
+    lines:['어깨가 뭉쳐서 침 좀 맞고 싶어요.','허리가 뻐근해요, 침으로 풀어주세요.','두통이 심해서 왔어요.','목이 뻣뻣해서 침을 맞으려고요.'] },
+  moxa:  { name:'뜸',      icon:'🔥', duration:10, reward:16, rep:3,
+    lines:['배가 냉해서 그런지 자꾸 체해요.','손발이 찬 게 낫질 않아요.','생리통이 심해서 뜸을 뜨고 싶어요.','속이 냉해서 소화가 잘 안 돼요.'] },
+  physio:{ name:'물리치료', icon:'⚡', duration:14, reward:26, rep:4,
+    lines:['허리디스크 때문에 걷기가 힘들어요.','무릎 관절이 시큰거려요.','근육이 뭉쳐서 재활이 필요해요.','다리에 힘이 안 들어가요.'] },
+};
+const TREAT_KEYS = ['acu','moxa','physio'];
+// 환자 요구 조합 (침/뜸/물리치료) — 가중치
+const REQ_POOL = [
+  {req:{acu:1,moxa:0,physio:0}, w:5},
+  {req:{acu:0,moxa:1,physio:0}, w:2.5},
+  {req:{acu:0,moxa:0,physio:1}, w:2},
+  {req:{acu:1,moxa:1,physio:0}, w:2},
+  {req:{acu:1,moxa:0,physio:1}, w:1.5},
+  {req:{acu:0,moxa:1,physio:1}, w:1.2},
+  {req:{acu:1,moxa:1,physio:1}, w:0.6},
+];
+
+// 시설
+const CHAIR_CAPS = [3,4,4];
+const BED_CAPS   = [2,4,6];
+const CHAIR_COSTS = [40,90,160];     // 간이의자 2·3·4번째 설치 비용
+const BED_COSTS  = [300,600,1200,2400,4500,7000];
+const EQUIP_COST = { moxa:100, physio:250 };
+// 간호사: 접수·안내(guide) / 간이의자 담당(chair) / 병상 담당(bed). 각 팀은 인원(count)과 공통 레벨을 가진다.
+const NURSE_KINDS = ['guide','chair','bed'];
+const NURSE_BASE = { guide:80, chair:50, bed:120 };
+const NURSE_NAME = { guide:'접수·안내', chair:'간이의자 담당', bed:'병상 담당' };
+const NURSE_MAX = 5;
+const COVER = { chair:3, bed:2 };        // 시술 담당 1명이 케어하는 자리 수
+const GUIDE_CAPS = [1,2,3];              // 단계별 접수·안내 간호사 최대 인원
+const ESCORT_TIME = 3;                   // 한 명을 병상까지 안내하는 기본 시간(초)
+function nurseHireCost(kind){ return Math.round(NURSE_BASE[kind]*Math.pow(1.5, state.nurses[kind].count)); }
+function nurseLevelCost(kind, nextLv){ return Math.round(35*Math.pow(nextLv,1.8)*(1+0.3*Math.max(0,state.nurses[kind].count-1))); }
+
+// 장면 좌표(%)
+const CHAIR_X = 47, CHAIR_Y = [22,42,62,82];
+const BED_COLS = [66,86], BED_ROWS = [24,50,76];
+const WAIT_SPOTS = [[9,30],[19,30],[29,30],[14,60],[24,60]];
+const DOOR = [3,88];
+const DESK = [31,86];
+
+const HERBS = [
+  {id:'insam', name:'인삼', hanja:'人蔘', desc:'원기를 북돋우는 대표적인 보양 뿌리'},
+  {id:'gamcho', name:'감초', hanja:'甘草', desc:'다른 약재의 성질을 조화롭게 다듬어주는 약재'},
+  {id:'saenggang', name:'생강', hanja:'生薑', desc:'몸을 따뜻하게 데워 한기를 몰아내는 뿌리'},
+  {id:'gyepi', name:'계피', hanja:'桂皮', desc:'속을 데우고 혈행을 돕는 나무껍질'},
+  {id:'hwanggi', name:'황기', hanja:'黃芪', desc:'기운을 보충하고 땀을 다스리는 뿌리'},
+  {id:'danggui', name:'당귀', hanja:'當歸', desc:'혈을 보하고 어지럼증을 다스리는 약재'},
+  {id:'jinpi', name:'진피', hanja:'陳皮', desc:'체기를 내리고 소화를 돕는 귤껍질'},
+  {id:'daechu', name:'대추', hanja:'大棗', desc:'몸을 편안하게 하고 기운을 더하는 열매'},
+  {id:'bakha', name:'박하', hanja:'薄荷', desc:'막힌 속과 머리를 시원하게 뚫어주는 잎'},
+  {id:'omija', name:'오미자', hanja:'五味子', desc:'다섯 가지 맛을 내며 기력과 정신을 다잡는 열매'},
+];
+const H = Object.fromEntries(HERBS.map(h=>[h.id,h]));
+// 효능 키워드: 약재 카드와 환자 증상에 같은 키워드가 보여 단서가 됩니다
+const HERB_TAGS = {
+  insam:['기력'], gamcho:['조화'], saenggang:['온기'], gyepi:['온기','혈행'], hwanggi:['기력'],
+  danggui:['혈','어지럼'], jinpi:['소화'], daechu:['안정','기력'], bakha:['두통','답답'], omija:['정신','기력'],
+};
+// 진맥: 약재 10종 중 정답을 포함한 후보만 남긴다. 맥경 레벨이 오를수록 후보가 줄어든다 (최소 정답 수 + 1)
+function makeCands(recipe){
+  const need = recipe.herbs.length;
+  const size = Math.max(need+1, need+3-state.classics.maekgyeong.level);
+  const others = HERBS.map(h=>h.id).filter(id=>!recipe.herbs.includes(id)).sort(()=>Math.random()-0.5).slice(0, size-need);
+  const set = new Set([...recipe.herbs, ...others]);
+  return HERBS.map(h=>h.id).filter(id=>set.has(id));
+}
+function recipeTags(r){ const s=new Set(); r.herbs.forEach(id=>HERB_TAGS[id].forEach(t=>s.add(t))); return [...s]; }
+
+const RECIPES = [
+  {name:'쌍화탕', hanja:'雙和湯', herbs:['saenggang','gyepi','daechu'], desc:'몸살로 지친 몸을 데워 기운을 되찾게 하는 처방', reward:34, rep:5, patientLine:'뼛속까지 으슬으슬해요. 웬만한 침으로는 안 나을 것 같아요...'},
+  {name:'십전대보탕', hanja:'十全大補湯', herbs:['insam','hwanggi','danggui'], desc:'기력이 크게 쇠한 이의 원기를 북돋우는 보약', reward:40, rep:6, patientLine:'몇 달째 기운이 하나도 없어요. 제대로 된 보약이 필요해요...'},
+  {name:'평위산', hanja:'平胃散', herbs:['jinpi','gamcho'], desc:'오래 체한 속을 가라앉히고 소화를 돕는 처방', reward:26, rep:4, patientLine:'몇 주째 체한 게 낫질 않아요. 제대로 처방을 받고 싶어요...'},
+  {name:'총명탕', hanja:'聰明湯', herbs:['bakha','jinpi','gamcho'], desc:'머리를 맑게 하고 두통을 다스리는 처방', reward:30, rep:4, patientLine:'두통이 몇 달째 낫질 않아 정신이 없어요...'},
+  {name:'사물탕', hanja:'四物湯', herbs:['danggui','omija'], desc:'혈이 허해 생기는 어지럼증을 다스리는 처방', reward:32, rep:5, patientLine:'어지럼증이 심해서 제대로 서 있기도 힘들어요...'},
+  {name:'가미소요산', hanja:'加味逍遙散', herbs:['bakha','gamcho','daechu'], desc:'맺힌 화기를 풀어 답답한 속을 다스리는 처방', reward:30, rep:4, patientLine:'가슴이 꽉 막힌 듯 답답해서 견딜 수가 없어요...'},
+];
+
+const CLASSICS = {
+  dongui:{ name:'동의보감', hanja:'東醫寶鑑', icon:'📗', desc:'진료 수익이 늘어납니다 (레벨당 +8%)', maxLevel:5, perLevel:0.08 },
+  hwangje:{ name:'황제내경', hanja:'黃帝內經', icon:'📘', desc:'명성 획득이 늘어납니다 (레벨당 +10%)', maxLevel:5, perLevel:0.10 },
+  chimgu:{ name:'침구경험방', hanja:'鍼灸經驗方', icon:'📙', desc:'진료 시간이 줄어듭니다 (레벨당 -6%)', maxLevel:5, perLevel:0.06 },
+  maekgyeong:{ name:'맥경', hanja:'脈經', icon:'🩺', desc:'Lv.1부터 💉 약침(침 환자 추가 수익)이 가능해지고, 레벨당 +3냥', maxLevel:5, perLevel:3 },
+};
+const CLASSIC_ORDER = ['dongui','hwangje','chimgu','maekgyeong'];
+function classicCost(nextLevel){ return Math.round(30*Math.pow(nextLevel,1.6)); }
+
+const AVATARS = ['🧑','👨','👩','🧔','👵','👴','🧕','👨‍🌾','👩‍🌾','🧑‍🎨','👨‍🦳','👩‍🦱'];
+const SURNAMES = ['김','이','박','최','정','조','윤','장','임','한'];
+
+/* ================= STATE ================= */
+function newState(){
+  return {
+    day:1, dayElapsed:0, gold:30, rep:30, totalEarned:0, stage:0, endingSeen:false, totalPatients:0,
+    chairs:1, beds:[],                       // beds: [{moxa:false, physio:false}]
+    nurses:{ guide:{count:0,level:1}, chair:{count:0,level:1}, bed:{count:0,level:1} },
+    doctor:{ level:1 },
+    classics:{ dongui:{level:0}, hwangje:{level:0}, chimgu:{level:0}, maekgyeong:{level:0} },
+    discovered:{},
+    lastSeen:Date.now(),
+  };
+}
+let state = newState();
+let rt = { stations:[], queue:[], escorts:[], nextSpawnIn:1.2, modalPatient:null, modalRx:[], modalHintUsed:false,
+  queueDirty:true, running:false, lastTick:0, logs:[], timeScale:1, uid:1 };
+function uid(){ return 'p'+(rt.uid++); }
+
+/* ================= HELPERS ================= */
+function $(id){return document.getElementById(id);}
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), 2000); }
+function log(msg){ rt.logs.unshift(msg); if(rt.logs.length>8) rt.logs.pop(); renderLog(); }
+function renderLog(){ const b=$('log-box'); if(b) b.innerHTML = rt.logs.map(m=>'<div>'+m+'</div>').join('') || '<div>아직 소식이 없습니다.</div>'; }
+function fmt(n){ return Math.floor(n).toLocaleString('ko-KR'); }
+
+function repMultiplier(){
+  const r=state.rep;
+  if(r>=80) return 1.4; if(r>=60) return 1.2; if(r>=40) return 1.0; if(r>=20) return 0.85; return 0.7;
+}
+function incomeMult(){ return 1 + state.classics.dongui.level*CLASSICS.dongui.perLevel; }
+function repMult2(){ return 1 + state.classics.hwangje.level*CLASSICS.hwangje.perLevel; }
+function speedMult(){ return Math.max(0.5, 1 - state.classics.chimgu.level*CLASSICS.chimgu.perLevel); }
+function yakchimFee(){ return 12 + state.classics.maekgyeong.level*CLASSICS.maekgyeong.perLevel; }
+function yakchimOpen(){ return state.classics.maekgyeong.level>=1; }
+// 시술 케어: 담당 범위 안의 자리는 간호사 레벨만큼 빠르고 불만이 적고, 범위 밖은 느리고 불만이 잦다
+function covered(st){ return st.idx < state.nurses[st.kind].count*COVER[st.kind]; }
+function careSpeed(st){ return covered(st) ? Math.max(0.6, 1 - 0.08*(state.nurses[st.kind].level-1)) : 1.3; }
+function careComplaint(st, nReq){
+  const base = covered(st) ? 0.20 - 0.04*(state.nurses[st.kind].level-1) : 0.30;
+  return Math.min(0.6, Math.max(0.02, base - 0.03*(state.doctor.level-1) + 0.06*((nReq||1)-1)));
+}
+function guideSpeed(){ return Math.max(0.6, 1 - 0.1*(state.nurses.guide.level-1)); }
+function guideActive(){ return state.nurses.guide.count>0; }
+// 원장: 레벨이 오를수록 특별 환자가 오래 기다리고, 이탈 페널티와 불만이 줄어든다
+const DOC_MAX = 5;
+function doctorLevelCost(nextLv){ return Math.round(60*Math.pow(nextLv,1.8)); }
+function doctorPatience(){ return 1 + 0.12*(state.doctor.level-1); }
+function hardLeavePenalty(){ return Math.max(1, 3 - Math.floor((state.doctor.level-1)/2)); }
+// 접수·안내 간호사의 대기실 케어: 인원과 레벨이 높을수록 대기 환자의 인내심이 천천히 닳고, 특별 환자는 더 잘 달랜다
+function waitDecay(p){
+  if(!guideActive()) return 1;
+  const g = state.nurses.guide;
+  let m = Math.max(0.5, 1 - 0.07*(g.level-1) - 0.05*(g.count-1));
+  if(p.hard) m *= 0.8;
+  return m;
+}
+function reqCount(req){ return TREAT_KEYS.filter(k=>req[k]).length; }
+function chairCap(){ return CHAIR_CAPS[state.stage]; }
+function bedCap(){ return BED_CAPS[state.stage]; }
+function currentRent(){ return STAGES[state.stage].rent; }
+function currentClockMin(){ const t=Math.min(1, state.dayElapsed/DAY_LENGTH); return CLINIC_START_MIN + t*(CLINIC_END_MIN-CLINIC_START_MIN); }
+function formatClock(min){ let h=Math.floor(min/60), m=Math.floor(min%60); const ap=h<12?'오전':'오후'; let h12=h%12; if(h12===0)h12=12; return ap+' '+h12+':'+String(m).padStart(2,'0'); }
+
+// 요구 시술 → 시간/수익/명성/표시
+function reqTime(req){ return (req.acu?TREAT.acu.duration:0) + Math.max(req.moxa?TREAT.moxa.duration:0, req.physio?TREAT.physio.duration:0); }
+function reqReward(req){
+  const n = reqCount(req); const sum = TREAT_KEYS.reduce((a,k)=>a+(req[k]?TREAT[k].reward:0),0);
+  return sum * (1 + 0.1*(n-1));
+}
+function reqRep(req){ return TREAT_KEYS.reduce((a,k)=>a+(req[k]?TREAT[k].rep:0),0); }
+function reqIcons(req){ return TREAT_KEYS.filter(k=>req[k]).map(k=>TREAT[k].icon).join(''); }
+function reqLabel(req){ return TREAT_KEYS.filter(k=>req[k]).map(k=>TREAT[k].name).join(' + '); }
+function acuOnly(req){ return req.acu && !req.moxa && !req.physio; }
+
+// 스테이션 적합성
+function stationCan(st, req){
+  if(st.kind==='chair') return acuOnly(req);
+  const b = state.beds[st.idx]; if(!b) return false;
+  return (!req.moxa || b.moxa) && (!req.physio || b.physio);
+}
+function reqPossible(req){ return rt.stations.some(st=>stationCan(st, req)); }
+// 요구 시술을 처리할 수 있는 자리가 많을수록 그 요구가 더 자주 나온다 (병상 1개에 환자가 몰리지 않게)
+function requestPool(){
+  return REQ_POOL.map(e=>({req:e.req, w:e.w*Math.sqrt(rt.stations.filter(st=>stationCan(st,e.req)).length)})).filter(e=>e.w>0);
+}
+function pickRequest(){
+  const pool = requestPool(); if(!pool.length) return null;
+  const tot = pool.reduce((a,e)=>a+e.w,0); let r=Math.random()*tot;
+  for(const e of pool){ r-=e.w; if(r<=0) return Object.assign({}, e.req); }
+  return Object.assign({}, pool[0].req);
+}
+
+function hardChance(){ if(state.day<3) return 0; return Math.min(0.08 + state.stage*0.06 + state.day*0.002, 0.3); }
+function spawnGap(){ return Math.max(1.2, 7 - state.rep*0.03 - rt.stations.length*0.45); }
+function chairCost(){ return CHAIR_COSTS[Math.min(Math.max(state.chairs-1,0), CHAIR_COSTS.length-1)]; }
+
+/* ================= SAVE / LOAD ================= */
+function saveGame(manual){
+  try{
+    state.lastSeen = Date.now();
+    localStorage.setItem(SAVE_KEY, JSON.stringify({v:SAVE_VERSION, state}));
+    if(manual) toast('저장했습니다.');
+  }catch(e){ if(manual) toast('저장에 실패했습니다.'); }
+}
+function loadSave(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return null;
+    const d = JSON.parse(raw);
+    if(!d || d.v!==SAVE_VERSION || !d.state) return null;
+    const base = newState(), s = d.state;
+    ['day','dayElapsed','gold','rep','totalEarned','stage','endingSeen','totalPatients','chairs','lastSeen'].forEach(k=>{ if(s[k]!==undefined) base[k]=s[k]; });
+    if(Array.isArray(s.beds)) base.beds = s.beds.map(b=>({moxa:!!b.moxa, physio:!!b.physio}));
+    NURSE_KINDS.forEach(k=>{ if(s.nurses && s.nurses[k]) Object.assign(base.nurses[k], s.nurses[k]); });
+    if(s.doctor) Object.assign(base.doctor, s.doctor);
+    Object.keys(base.classics).forEach(k=>{ if(s.classics && s.classics[k]) Object.assign(base.classics[k], s.classics[k]); });
+    if(s.discovered) Object.assign(base.discovered, s.discovered);
+    return base;
+  }catch(e){ return null; }
+}
+function resetGame(){
+  if(!confirm('저장 데이터를 모두 지우고 처음부터 시작할까요?')) return;
+  try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
+  location.reload();
+}
+
+/* ================= FLOW ================= */
+function newGame(){
+  const hasSave = !!loadSave();
+  if(hasSave && !confirm('기존 저장 데이터가 지워집니다. 새로 시작할까요?')) return;
+  state = newState();
+  startRun(false);
+}
+function continueGame(){
+  const s = loadSave(); if(!s){ toast('저장 데이터가 없습니다.'); return; }
+  state = s;
+  startRun(true);
+}
+function startRun(settle){
+  rt.queue=[]; rt.escorts=[]; rt.stations=[]; rt.nextSpawnIn=1.2; rt.logs=[]; rt.modalPatient=null;
+  ensureStations();
+  $('hdr-btns').style.display='flex'; $('stage-wrap').style.display='block';
+  showScreen('screen-clinic');
+  renderSceneStatic(); renderQueue(); renderLog(); updateHeader();
+  log(state.beds.length===0 ? '간이의자 하나로 문을 열었습니다.' : '인술당이 문을 열었습니다.');
+  if(settle){
+    const sec = (Date.now()-state.lastSeen)/1000;
+    if(sec>=30) settleOffline(sec);
+  }
+  rt.lastTick = Date.now(); rt.running = true;
+  clearInterval(rt._h); rt._h = setInterval(loop, 100);
+  clearInterval(rt._s); rt._s = setInterval(()=>saveGame(false), 10000);
+}
+function toggleSpeed(){
+  rt.timeScale = rt.timeScale===1 ? 10 : 1;
+  $('btn-speed').textContent = '⏩ 배속 ×'+rt.timeScale;
+}
+
+function ensureStations(){
+  const have = k=>rt.stations.filter(s=>s.kind===k).length;
+  for(let i=have('chair');i<state.chairs;i++) rt.stations.push({id:'chair-'+i, kind:'chair', idx:i, status:'idle', patient:null, progress:0, total:1});
+  for(let i=have('bed');i<state.beds.length;i++) rt.stations.push({id:'bed-'+i, kind:'bed', idx:i, status:'idle', patient:null, progress:0, total:1});
+}
+
+/* ================= GAME LOOP ================= */
+function loop(){
+  if(!rt.running) return;
+  try{
+    const now = Date.now();
+    const real = (now - rt.lastTick)/1000; rt.lastTick = now;
+    if(real > 5){ settleOffline(real); return; }   // 탭이 백그라운드였던 경우
+    let dt = real*rt.timeScale;
+    while(dt>0){ const step=Math.min(0.1, dt); gameStep(step); dt-=step; }
+    updateHeader(); updateQueueBars(); updateSlotBars(); sceneSync();
+    if(rt.queueDirty){ renderQueue(); rt.queueDirty=false; }
+  }catch(e){ console.error('loop error', e); }
+}
+
+function gameStep(dt){
+  state.dayElapsed += dt;
+  if(state.dayElapsed >= DAY_LENGTH){ state.dayElapsed -= DAY_LENGTH; endOfDay(); }
+
+  rt.nextSpawnIn -= dt;
+  if(rt.nextSpawnIn<=0){ spawnPatient(); rt.nextSpawnIn = spawnGap() + Math.random(); }
+
+  for(let i=rt.queue.length-1;i>=0;i--){
+    const p = rt.queue[i]; p.age += dt; p.wait -= dt*waitDecay(p);
+    if(p.wait<=0){
+      rt.queue.splice(i,1); rt.queueDirty=true;
+      const pen = p.hard ? hardLeavePenalty() : 3;
+      state.rep = Math.max(0, state.rep-pen);
+      log(p.name+'이(가) 기다리다 지쳐 돌아갔습니다. (명성 -'+pen+')');
+    }
+  }
+
+  rt.stations.forEach(st=>{
+    if(st.status==='busy'){ st.progress -= dt; if(st.progress<=0) completeTreatment(st); }
+  });
+
+  autoAssign(dt);
+  checkStage();
+}
+
+function endOfDay(){
+  const rent = currentRent();
+  if(state.gold >= rent){ state.gold -= rent; log('월세 '+rent+'냥을 냈습니다. ('+state.day+'일차 마감)'); }
+  else { state.rep = Math.max(0, state.rep-3); log('월세 '+rent+'냥을 내지 못했습니다. (명성 -3)'); }
+  state.day++;
+}
+
+function spawnPatient(){
+  const hard = Math.random() < hardChance();
+  const req = hard ? null : pickRequest();
+  if(!hard && !req) return;
+  if(rt.queue.length >= MAX_QUEUE){
+    state.rep = Math.max(0, state.rep-2);
+    log('대기실이 가득 차 환자가 그냥 돌아갔습니다. (명성 -2)');
+    return;
+  }
+  rt.queue.push(makePatient({hard, req}));
+  rt.queueDirty = true;
+}
+function makePatient({hard, req}){
+  const name = SURNAMES[Math.floor(Math.random()*SURNAMES.length)]+' 씨';
+  const avatar = AVATARS[Math.floor(Math.random()*AVATARS.length)];
+  let line, maxWait, recipe=null;
+  if(hard){
+    const rpool = RECIPES.filter(x=>state.stage>0 || x.herbs.length<=2);   // 1단계는 약재 2개짜리 처방만
+    recipe = rpool[Math.floor(Math.random()*rpool.length)];
+    line = recipe.patientLine; maxWait = Math.round(24*doctorPatience()); req = null;
+  } else {
+    const keys = TREAT_KEYS.filter(k=>req[k]);
+    const lines = TREAT[keys[Math.floor(Math.random()*keys.length)]].lines;
+    line = lines[Math.floor(Math.random()*lines.length)];
+    maxWait = Math.max(10, Math.round(16 + (req.physio?4:req.moxa?2:0) + (reqCount(req)-1) - Math.min(4, state.day*0.05)));
+  }
+  return {id:uid(), name, avatar, req, line, wait:maxWait, maxWait, age:0, hard, recipe,
+    diagnosed:false, wantsYakchim:(!hard && req.acu && Math.random()<0.35), clueHerb:null, applyYakchim:false};
+}
+
+// 환자에게 맞는 빈 스테이션 (침 전용은 간이의자 우선)
+function idleStationsFor(p){
+  return rt.stations.filter(st=>st.status==='idle' && stationCan(st, p.req))
+    .sort((a,b)=> (a.kind==='chair'?0:1) - (b.kind==='chair'?0:1));
+}
+
+// 접수·안내 간호사: 대기실 환자에게 가서 빈 자리까지 안내한다 (한 번에 한 명)
+function autoAssign(dt){
+  for(let i=rt.escorts.length-1;i>=0;i--){
+    const e = rt.escorts[i]; e.t -= dt;
+    if(e.t<=0){ rt.escorts.splice(i,1); startTreatment(e.p, e.st, true); }
+  }
+  const used = new Set(rt.escorts.map(e=>e.g));
+  for(let g=0; g<state.nurses.guide.count; g++){
+    if(used.has(g)) continue;
+    const p = rt.queue.find(q=>!q.hard && q.age>=1.0 && idleStationsFor(q).length>0);
+    if(!p) break;
+    const st = idleStationsFor(p)[0];
+    const qi = rt.queue.indexOf(p); rt.queue.splice(qi,1);
+    st.status = 'reserved';
+    const total = ESCORT_TIME * guideSpeed();
+    rt.escorts.push({p, st, g, t:total, total, spot:WAIT_SPOTS[Math.min(qi, WAIT_SPOTS.length-1)]});
+    rt.queueDirty = true;
+  }
+}
+function startTreatment(p, st, byNurse){
+  const idx = rt.queue.indexOf(p); if(idx>=0) rt.queue.splice(idx,1);
+  st.status='busy'; st.patient=p;
+  st.total = reqTime(p.req) * speedMult() * careSpeed(st);
+  st.progress = st.total;
+  if(p.wantsYakchim && yakchimOpen() && (p.diagnosed || byNurse)) p.applyYakchim = true;
+  rt.queueDirty = true;
+}
+
+function earn(amount){ state.gold += amount; state.totalEarned += amount; }
+
+function completeTreatment(st){
+  const p = st.patient;
+  let income = Math.round(reqReward(p.req) * repMultiplier() * incomeMult());
+  let repGain = Math.max(1, Math.round(reqRep(p.req) * repMult2()));
+  let complained = false;
+  if(Math.random() < careComplaint(st, reqCount(p.req))){
+    complained = true; income = Math.round(income*0.7); repGain = -1;
+  }
+  let yak = 0;
+  if(p.applyYakchim && !complained){ yak = Math.round(yakchimFee()); income += yak; repGain += 1; }
+  earn(income);
+  state.rep = Math.max(0, Math.min(100, state.rep+repGain));
+  state.totalPatients++;
+  const pos = stationPos(st);
+  st.status='idle'; st.patient=null; st.progress=0;
+  leave(p.id);
+  if(complained){ popAt(pos[0], pos[1]-8, '😣 불만 -1'); log(p.name+'이(가) 시술이 아프다며 불만을 표했습니다.'); }
+  else popAt(pos[0], pos[1]-8, '完治 +'+income+'냥', true);
+  if(yak) log('약침 추가 시술로 '+yak+'냥을 더 받았습니다.');
+  rt.queueDirty = true;
+}
+
+function assignPatient(id){
+  const p = rt.queue.find(x=>x.id===id); if(!p) return;
+  const st = idleStationsFor(p, false)[0];
+  if(!st){ toast('요구한 시술을 할 수 있는 빈자리가 없습니다.'); return; }
+  startTreatment(p, st, false);
+}
+function diagnosePatient(id){
+  const p = rt.queue.find(x=>x.id===id); if(!p || p.diagnosed) return;
+  p.diagnosed = true;
+  if(p.hard && p.recipe){
+    p.cands = makeCands(p.recipe);
+    toast('진맥 결과, 약재 후보가 '+p.cands.length+'종으로 좁혀졌습니다.');
+  } else if(p.wantsYakchim) toast(p.name+'이(가) 약침 시술도 함께 원합니다.');
+  else toast('진맥 결과, 특별한 사항은 없어 보입니다.');
+  rt.queueDirty = true;
+}
+
+/* ================= STAGES ================= */
+function checkStage(){
+  let guard = 5;
+  while(guard-- > 0){
+    if(state.stage<2 && state.totalEarned >= STAGES[state.stage].goal){
+      const cleared = STAGES[state.stage];
+      state.stage++;
+      renderSceneStatic();
+      showInfo(cleared.name.split('·')[1].trim()+' 달성!', cleared.clear+'<br><br>이제 <b>'+STAGES[state.stage].name+'</b>이(가) 시작됩니다. 월세는 하루 '+STAGES[state.stage].rent+'냥으로 오릅니다.');
+    } else if(state.stage===2 && !state.endingSeen && state.totalEarned >= STAGES[2].goal){
+      state.endingSeen = true;
+      showInfo('담보를 되찾았습니다!', '누적 '+fmt(state.totalEarned)+'냥, '+state.day+'일 만에 담보로 넘어간 한옥과 한의원을 되찾았습니다.<br>인술당은 다시 문을 활짝 엽니다.<br><br>이제부터는 <b>명의 모드</b>입니다. 계속 진료하며 인술당의 이름을 높여보세요.');
+    } else break;
+  }
+}
+
+/* ================= OFFLINE ================= */
+function offlineRate(){
+  const pool = requestPool();
+  if(!pool.length) return {income:0, patients:0};
+  const mult = repMultiplier()*incomeMult();
+  const lambda = 1/(spawnGap()+0.5);
+  const W = pool.reduce((a,e)=>a+e.w,0);
+  const acuPool = pool.filter(e=>acuOnly(e.req)), othPool = pool.filter(e=>!acuOnly(e.req));
+  const wAcu = acuPool.reduce((a,e)=>a+e.w,0), wOth = othPool.reduce((a,e)=>a+e.w,0);
+  let income=0, patients=0;
+  if(!guideActive()) return {income, patients};          // 안내 간호사가 없으면 환자를 받지 못한다
+  const guideCap = state.nurses.guide.count/(ESCORT_TIME*guideSpeed());
+  // 구역별 처리 능력: 담당 범위 안/밖 자리의 속도와 불만을 반영
+  const zoneRate = (kind, total, avgT, avgN)=>{
+    const sts = rt.stations.filter(s=>s.kind===kind);
+    let cap=0, comp=0;
+    sts.forEach(st=>{ cap += 1/(avgT*speedMult()*careSpeed(st)); comp += careComplaint(st, avgN); });
+    return {cap, comp: sts.length ? comp/sts.length : 0};
+  };
+  if(state.chairs>0 && wAcu>0){
+    const z = zoneRate('chair', state.chairs, TREAT.acu.duration, 1);
+    const served = Math.min(lambda*wAcu/W, z.cap);
+    income += served*reqReward({acu:1,moxa:0,physio:0})*mult*(1-0.3*z.comp); patients += served;
+  }
+  if(state.beds.length>0 && wOth>0){
+    const avgT = othPool.reduce((a,e)=>a+e.w*reqTime(e.req),0)/wOth;
+    const avgR = othPool.reduce((a,e)=>a+e.w*reqReward(e.req),0)/wOth;
+    const avgN = othPool.reduce((a,e)=>a+e.w*reqCount(e.req),0)/wOth;
+    const z = zoneRate('bed', state.beds.length, avgT, avgN);
+    const served = Math.min(lambda*wOth/W, z.cap);
+    income += served*avgR*mult*(1-0.3*z.comp); patients += served;
+  }
+  if(patients>guideCap){ const k=guideCap/patients; income*=k; patients*=k; }   // 안내 병목
+  return {income, patients};
+}
+function settleOffline(sec){
+  sec = Math.min(sec, OFFLINE_CAP);
+  const anyNurse = guideActive() && (state.chairs>0 || state.beds.length>0);
+  const r = offlineRate();
+  const gain = Math.round(r.income*sec);
+  const served = Math.floor(r.patients*sec);
+  const totalDay = state.dayElapsed + sec;
+  const days = Math.floor(totalDay/DAY_LENGTH);
+  state.dayElapsed = totalDay % DAY_LENGTH;
+  earn(gain); state.totalPatients += served;
+  const rent = currentRent();
+  const payDays = rent>0 ? Math.min(days, Math.floor(state.gold/rent)) : days;
+  state.gold -= payDays*rent;
+  const unpaid = days - payDays;
+  const repLoss = Math.min(15, unpaid);
+  state.rep = Math.max(0, state.rep - repLoss);
+  state.day += days;
+  // 특별 손님: 1시간당 15%, 최대 1명
+  let special = false;
+  if(Math.random() < 1 - Math.pow(0.85, sec/3600)){
+    special = true;
+    rt.queue.unshift(makePatient({hard:true, req:null})); rt.queueDirty = true;
+  }
+  const mins = Math.floor(sec/60);
+  const dur = mins>=60 ? Math.floor(mins/60)+'시간 '+(mins%60)+'분' : mins+'분';
+  let body = '<b>'+dur+'</b> 동안 자리를 비웠습니다.<br>';
+  if(anyNurse) body += '진료 환자 약 <b>'+served+'명</b>, 수입 <b>'+fmt(gain)+'냥</b><br>';
+  else body += '간호사가 없어 진료가 이뤄지지 않았습니다. 간호사를 고용하면 자리를 비워도 진료합니다.<br>';
+  if(days>0) body += '월세 '+days+'일치: '+(unpaid>0 ? payDays+'일치만 냈습니다 (명성 -'+repLoss+')' : (payDays*rent)+'냥 납부')+'<br>';
+  if(special) body += '<br>🧪 <b>특별한 손님</b>이 대기실에서 기다리고 있습니다!';
+  showInfo('자리를 비운 사이', body);
+  rt.lastTick = Date.now();
+  checkStage(); saveGame(false);
+}
+
+/* ================= SCENE ================= */
+const actors = {};           // id -> {el, x, y, leaving}
+const doc = {target:null, nextAt:0};
+function stationXY(kind, idx){
+  if(kind==='chair') return [CHAIR_X, CHAIR_Y[Math.min(idx,3)]];
+  return [BED_COLS[idx%2], BED_ROWS[Math.min(Math.floor(idx/2),2)]];
+}
+function stationPos(st){ return stationXY(st.kind, st.idx); }
+
+function renderSceneStatic(){
+  const sc = $('scene');
+  sc.querySelectorAll('.zone, .door, .desk, .slot').forEach(e=>e.remove());
+  const frag = document.createDocumentFragment();
+  const nurseSub = k=> state.nurses[k].count>0 ? '간호사 '+state.nurses[k].count+'명 Lv.'+state.nurses[k].level : '간호사 없음';
+
+  const wz = document.createElement('div'); wz.className='zone'; wz.style.left='3%'; wz.style.width='34%'; wz.style.borderLeft='none';
+  wz.innerHTML = '<div class="zone-label">대기실<small>환자가 기다리는 곳</small></div>'; frag.appendChild(wz);
+  const door = document.createElement('div'); door.className='door'; door.textContent='🚪'; frag.appendChild(door);
+  const desk = document.createElement('div'); desk.className='desk';
+  desk.style.cssText='left:'+(DESK[0]-1)+'%; top:'+(DESK[1]+7)+'%;';
+  desk.innerHTML='🗂️ 접수<small>'+(state.nurses.guide.count>0 ? '안내 간호사 '+state.nurses.guide.count+'명 Lv.'+state.nurses.guide.level : '안내 간호사 없음')+'</small>';
+  frag.appendChild(desk);
+
+  const cz = document.createElement('div'); cz.className='zone'; cz.style.left='37.5%'; cz.style.width='19%';
+  cz.innerHTML = '<div class="zone-label">💺 간이의자<small>침 전용 · '+nurseSub('chair')+'</small></div>'; frag.appendChild(cz);
+
+  const bz = document.createElement('div'); bz.className='zone'+(state.beds.length?'':' locked'); bz.style.left='56.5%'; bz.style.width='42%';
+  bz.innerHTML = '<div class="zone-label">🛏️ 병상 구역<small>'+(state.beds.length ? nurseSub('bed')+' · 병상마다 뜸/물리치료 장비 장착' : '병상 없음')+'</small></div>'+
+    (state.beds.length ? '' : '<div class="zone-empty">경영 관리 › 시설에서<br>병상을 설치하세요</div>');
+  frag.appendChild(bz);
+
+  for(let i=0;i<CHAIR_CAPS[CHAIR_CAPS.length-1];i++){
+    if(i>=chairCap()) continue;
+    const [x,y] = stationXY('chair',i);
+    const s = document.createElement('div'); s.className='slot'+(i<state.chairs?'':' unowned'); s.id='slot-chair-'+i;
+    s.style.cssText='left:'+(x-4.5)+'%; top:'+(y-8)+'%; width:9%; height:16%;';
+    s.innerHTML='<span class="bed">💺</span><div class="bar"><i></i></div>'; frag.appendChild(s);
+  }
+  for(let i=0;i<bedCap();i++){
+    const [x,y] = stationXY('bed',i); const b = state.beds[i];
+    const s = document.createElement('div'); s.className='slot'+(b?'':' unowned'); s.id='slot-bed-'+i;
+    s.style.cssText='left:'+(x-5.5)+'%; top:'+(y-9)+'%; width:11%; height:18%;';
+    s.innerHTML='<span class="bed">🛏️</span><span class="eq">'+(b?(b.moxa?'🔥':'')+(b.physio?'⚡':''):'')+'</span><div class="bar"><i></i></div>'; frag.appendChild(s);
+  }
+  sc.insertBefore(frag, sc.firstChild);
+}
+function updateSlotBars(){
+  rt.stations.forEach(st=>{
+    const el = $('slot-'+st.id); if(!el) return;
+    el.classList.toggle('busy', st.status==='busy');
+    const bar = el.querySelector('.bar i');
+    bar.style.width = st.status==='busy' ? Math.max(0,(1 - st.progress/st.total)*100)+'%' : '0%';
+  });
+}
+function ensureActor(id, emoji, cls, name){
+  let a = actors[id];
+  if(!a){
+    const el = document.createElement('div'); el.className='actor '+cls;
+    el.innerHTML = '<span class="em">'+emoji+'</span>'+(name?'<span class="nm">'+name+'</span>':'');
+    el.style.left = DOOR[0]+'%'; el.style.top = DOOR[1]+'%';
+    $('scene').appendChild(el); void el.offsetWidth;
+    a = actors[id] = {el, x:DOOR[0], y:DOOR[1], leaving:false};
+  }
+  return a;
+}
+function moveActor(a, x, y){
+  if(a.x===x && a.y===y) return;
+  a.x=x; a.y=y; a.el.style.left=x+'%'; a.el.style.top=y+'%';
+  a.el.classList.add('walking'); clearTimeout(a._w);
+  a._w = setTimeout(()=>a.el.classList.remove('walking'), 950);
+}
+function leave(id){
+  const a = actors[id]; if(!a || a.leaving) return;
+  a.leaving = true; moveActor(a, DOOR[0], DOOR[1]);
+  setTimeout(()=>{ a.el.classList.add('gone'); }, 900);
+  setTimeout(()=>{ a.el.remove(); delete actors[id]; }, 1500);
+}
+function popAt(x, y, text, good){
+  const d = document.createElement('div'); d.className='pop'+(good?' good':''); d.textContent=text;
+  d.style.left=x+'%'; d.style.top=y+'%'; $('scene').appendChild(d);
+  setTimeout(()=>d.remove(), 1600);
+}
+function patientLabel(p){ return p.hard ? p.name : p.name+' '+reqIcons(p.req); }
+function sceneSync(){
+  const want = new Set();
+  rt.queue.forEach((p,i)=>{
+    const a = ensureActor(p.id, p.avatar, 'patient'+(p.hard?' hard':''), patientLabel(p));
+    const sp = WAIT_SPOTS[Math.min(i, WAIT_SPOTS.length-1)];
+    if(!a.leaving) moveActor(a, sp[0], sp[1]); want.add(p.id);
+  });
+  if(rt.modalPatient){
+    const p = rt.modalPatient; const a = ensureActor(p.id, p.avatar, 'patient hard', p.name);
+    if(!a.leaving) moveActor(a, WAIT_SPOTS[0][0], WAIT_SPOTS[0][1]); want.add(p.id);
+  }
+  rt.stations.forEach(st=>{
+    if(st.status==='busy' && st.patient){
+      const p=st.patient; const a = ensureActor(p.id, p.avatar, 'patient', patientLabel(p));
+      const [x,y]=stationPos(st); if(!a.leaving) moveActor(a,x,y); want.add(p.id);
+    }
+  });
+  // 안내 중인 환자: 간호사가 환자에게 가서(전반) 함께 자리로 걸어간다(후반)
+  rt.escorts.forEach(e=>{
+    const a = ensureActor(e.p.id, e.p.avatar, 'patient', patientLabel(e.p)); want.add(e.p.id);
+    if(!a.leaving && e.t <= e.total/2) { const [x,y]=stationPos(e.st); moveActor(a, x, y); }
+  });
+  Object.keys(actors).forEach(id=>{
+    if(/^p\d+$/.test(id) && !want.has(id) && !actors[id].leaving) leave(id);
+  });
+  // 간호사: 접수·안내 / 구역 담당
+  const wantNurse = new Set();
+  const nurseActor = (id, label, x, y)=>{
+    wantNurse.add(id); const a = ensureActor(id, '👩‍⚕️', 'nurse', label);
+    a.el.querySelector('.nm').textContent = label; moveActor(a, x, y);
+  };
+  for(let g=0; g<state.nurses.guide.count; g++){
+    const e = rt.escorts.find(x=>x.g===g); const label='접수 Lv.'+state.nurses.guide.level;
+    if(!e) nurseActor('guide-'+g, label, DESK[0]+g*4, DESK[1]);
+    else if(e.t > e.total/2) nurseActor('guide-'+g, label, e.spot[0]+5, e.spot[1]);
+    else { const [x,y]=stationPos(e.st); nurseActor('guide-'+g, label, x-6, y); }
+  }
+  ['chair','bed'].forEach(kind=>{
+    const n = state.nurses[kind];
+    for(let i=0;i<n.count;i++){
+      const range = rt.stations.filter(s=>s.kind===kind && s.idx>=i*COVER[kind] && s.idx<(i+1)*COVER[kind]);
+      if(range.length===0) continue;
+      const busy = range.filter(s=>s.status==='busy').sort((p,q)=>q.progress-p.progress)[0];
+      const label = '간호사 Lv.'+n.level;
+      if(busy){ const [x,y]=stationPos(busy); nurseActor('nurse-'+kind+'-'+i, label, x-(kind==='bed'?8:7), y); }
+      else { const mid = range[Math.floor(range.length/2)]; const [x,y]=stationPos(mid); nurseActor('nurse-'+kind+'-'+i, label, x-(kind==='bed'?9:8), y); }
+    }
+  });
+  Object.keys(actors).forEach(id=>{ if(/^(guide|nurse)-/.test(id) && !wantNurse.has(id)){ actors[id].el.remove(); delete actors[id]; } });
+  // 원장(한의사)
+  const d = ensureActor('doctor','🧑‍⚕️','doctor','원장');
+  if(actors.doctor) actors.doctor.el.querySelector('.nm').textContent = '원장 Lv.'+state.doctor.level;
+  const nowMs = Date.now();
+  if(nowMs>=doc.nextAt || (doc.target && doc.target.status!=='busy')){
+    const busy = rt.stations.filter(s=>s.status==='busy');
+    doc.target = busy.length ? busy[Math.floor(Math.random()*busy.length)] : null;
+    doc.nextAt = nowMs + 3500;
+  }
+  if(doc.target && doc.target.status==='busy'){ const [x,y]=stationPos(doc.target); moveActor(d, x+(doc.target.kind==='bed'?8:7), y); }
+  else moveActor(d, 36, 52);
+}
+
+/* ================= HEADER / QUEUE RENDER ================= */
+function updateHeader(){
+  $('hdr-day').textContent = state.day;
+  $('hdr-gold').textContent = fmt(state.gold);
+  $('hdr-rep').textContent = state.rep;
+  const st = STAGES[state.stage];
+  $('stage-name').textContent = st.name + (state.endingSeen ? ' (명의 모드)' : '');
+  if(state.endingSeen){
+    $('stage-text').textContent = '누적 수익 '+fmt(state.totalEarned)+'냥';
+    $('stage-bar').style.width = '100%';
+  } else {
+    $('stage-text').textContent = '누적 '+fmt(state.totalEarned)+' / '+fmt(st.goal)+'냥';
+    $('stage-bar').style.width = Math.min(100, state.totalEarned/st.goal*100)+'%';
+  }
+  $('rent-text').textContent = formatClock(currentClockMin())+' · 월세 '+st.rent+'냥/일';
+  $('day-bar').style.width = (state.dayElapsed/DAY_LENGTH*100)+'%';
+  $('queue-count').textContent = rt.queue.length+' / '+MAX_QUEUE;
+}
+function barColor(pct){ return pct<25 ? 'var(--seal-red)' : pct<55 ? '#c99a3e' : 'var(--herb-green)'; }
+function updateQueueBars(){
+  rt.queue.forEach(p=>{
+    const el = document.querySelector('.patient-chip[data-pid="'+p.id+'"] .pc-bar'); if(!el) return;
+    const pct = Math.max(0, p.wait/p.maxWait*100);
+    el.style.width = pct+'%'; el.style.background = barColor(pct);
+  });
+}
+function renderQueue(){
+  const wrap = $('queue-strip');
+  if(rt.queue.length===0){ wrap.innerHTML='<div class="empty-queue">대기 중인 환자가 없습니다.</div>'; return; }
+  wrap.innerHTML='';
+  rt.queue.forEach(p=>{
+    const pct = Math.max(0, p.wait/p.maxWait*100);
+    const chip = document.createElement('div'); chip.className='patient-chip'; chip.setAttribute('data-pid', p.id);
+    const covered = !p.hard && guideActive();
+    const needDiag = !p.diagnosed && (p.hard || (p.wantsYakchim && yakchimOpen() && !covered));
+    const diagBtn = needDiag ? '<button class="btn ghost small pc-diag" style="width:100%; margin-bottom:6px;">🩺 진맥</button>' : '';
+    let tag='';
+    if(p.diagnosed){
+      if(p.hard && p.cands) tag = '<div class="info-tag">🔍 약재 후보 '+p.cands.length+'종</div>';
+      else if(!p.hard && p.wantsYakchim) tag='<div class="info-tag'+(yakchimOpen()?'':' info-tag-dim')+'">💉 약침 희망'+(yakchimOpen()?'':' (맥경 Lv.1 필요)')+'</div>';
+    }
+    if(p.hard){
+      chip.innerHTML = '<div class="pc-row"><div class="pc-avatar">'+p.avatar+'</div><div><div class="pc-name">'+p.name+'<span class="hard-tag">특별 처방</span></div><div class="pc-type">🧪 탕약이 필요해요</div></div></div>'+
+        '<div class="pc-speech">"'+p.line+'"</div>'+tag+'<div class="pc-bar-bg"><div class="pc-bar" style="width:'+pct+'%; background:'+barColor(pct)+';"></div></div>'+diagBtn+
+        '<button class="btn sky pc-assign">처방하기</button>';
+      chip.querySelector('.pc-assign').onclick = ()=>openPrescribeModal(p.id);
+    } else {
+      const open = idleStationsFor(p,false).length>0;
+      const action = covered ? '<div class="auto-note">👩‍⚕️ 접수 간호사가 곧 안내합니다</div>'
+        : '<button class="btn secondary pc-assign" '+(open?'':'disabled')+'>'+(open?'배정':'자리 없음')+'</button>';
+      chip.innerHTML = '<div class="pc-row"><div class="pc-avatar">'+p.avatar+'</div><div><div class="pc-name">'+p.name+'</div><div class="pc-type">'+reqIcons(p.req)+' '+reqLabel(p.req)+'</div></div></div>'+
+        '<div class="pc-speech">"'+p.line+'"</div>'+tag+'<div class="pc-bar-bg"><div class="pc-bar" style="width:'+pct+'%; background:'+barColor(pct)+';"></div></div>'+diagBtn+action;
+      const ab = chip.querySelector('.pc-assign'); if(ab) ab.onclick = ()=>assignPatient(p.id);
+    }
+    const db = chip.querySelector('.pc-diag'); if(db) db.onclick = ()=>diagnosePatient(p.id);
+    wrap.appendChild(chip);
+  });
+}
+
+/* ================= PRESCRIPTION ================= */
+function openPrescribeModal(id){
+  if(rt.modalPatient){ toast('먼저 진행 중인 처방을 마쳐주세요.'); return; }
+  const idx = rt.queue.findIndex(p=>p.id===id); if(idx===-1) return;
+  const patient = rt.queue.splice(idx,1)[0];
+  rt.modalPatient = patient; rt.modalRx = []; rt.modalHintUsed = false; rt.modalAttempts = 0; rt.queueDirty = true;
+  const r = patient.recipe;
+  $('rx-recipe-name').innerHTML = r.name+'<span class="hanja">'+r.hanja+'</span>';
+  $('rx-recipe-desc').textContent = r.desc;
+  $('rx-patient-line').textContent = patient.name+': "'+patient.line+'"';
+  $('rx-result').classList.remove('show');
+  $('rx-symptoms').innerHTML = '환자 증상 키워드 '+recipeTags(r).map(t=>'<span class="tagchip match">'+t+'</span>').join('');
+  const known = !!state.discovered[r.name]; const hb = $('rx-hint-btn');
+  if(known){
+    $('rx-hint').innerHTML = '📖 이미 알고 있는 처방입니다 — 필요한 약재: <b>'+r.herbs.map(i=>H[i].name).join(', ')+'</b>';
+    hb.style.display='none';
+  } else {
+    if(patient.cands) $('rx-hint').innerHTML = '🩺 진맥으로 약재 후보가 <b>'+patient.cands.length+'종</b>으로 좁혀졌어요. 증상 키워드와 맞는 '+r.herbs.length+'가지를 골라주세요.';
+    else $('rx-hint').textContent = '증상 키워드와 같은 효능의 약재 '+r.herbs.length+'가지를 골라주세요. 🩺 진맥을 하면 후보가 줄어들어요. 틀려도 한 번 더 시도할 수 있어요.';
+    hb.style.display='inline-block'; hb.textContent='💡 필요한 약재 보기 (보상 40% 감소)';
+  }
+  $('rx-diag-btn').style.display = (!known && !patient.diagnosed) ? 'inline-block' : 'none';
+  renderMiniCabinet(); renderRxTray();
+  $('rx-modal').classList.add('show');
+}
+function revealHint(){
+  const p = rt.modalPatient; if(!p) return; const r=p.recipe;
+  rt.modalHintUsed = true; state.discovered[r.name] = true;
+  $('rx-hint').innerHTML = '💡 필요한 약재: <b>'+r.herbs.map(i=>H[i].name).join(', ')+'</b> (보상이 40% 줄어듭니다)';
+  $('rx-hint-btn').style.display='none';
+}
+function diagnoseInModal(){
+  const p = rt.modalPatient; if(!p || p.diagnosed) return;
+  p.diagnosed = true; p.cands = makeCands(p.recipe);
+  rt.modalRx = rt.modalRx.filter(id=>p.cands.includes(id));
+  $('rx-hint').innerHTML = '🩺 진맥 결과 약재 후보가 <b>'+p.cands.length+'종</b>으로 좁혀졌습니다.';
+  $('rx-diag-btn').style.display = 'none';
+  renderMiniCabinet(); renderRxTray();
+}
+function closePrescribeModal(cancel){
+  $('rx-modal').classList.remove('show');
+  if(cancel && rt.modalPatient){ rt.queue.unshift(rt.modalPatient); rt.queueDirty = true; }
+  rt.modalPatient = null; rt.modalRx = []; rt.modalHintUsed = false;
+}
+function renderMiniCabinet(){
+  const cab = $('mini-cabinet'); cab.innerHTML='';
+  const want = rt.modalPatient ? new Set(recipeTags(rt.modalPatient.recipe)) : new Set();
+  const cands = rt.modalPatient && rt.modalPatient.cands;
+  (cands ? HERBS.filter(h=>cands.includes(h.id)) : HERBS).forEach(h=>{
+    const sel = rt.modalRx.includes(h.id);
+    const div = document.createElement('div'); div.className='mini-drawer'+(sel?' selected':'');
+    div.innerHTML = '<div class="md-name">'+h.name+(sel?' ✓':'')+'<span class="md-hanja">'+h.hanja+'</span></div><div class="md-desc">'+h.desc+'</div>'+
+      '<div>'+HERB_TAGS[h.id].map(t=>'<span class="tagchip'+(want.has(t)?' match':'')+'">'+t+'</span>').join('')+'</div>';
+    div.onclick = ()=>{
+      const need = rt.modalPatient ? rt.modalPatient.recipe.herbs.length : 0;
+      const i = rt.modalRx.indexOf(h.id);
+      if(i>=0) rt.modalRx.splice(i,1);
+      else if(rt.modalRx.length>=need){ toast('약재는 '+need+'가지까지 담을 수 있어요.'); return; }
+      else rt.modalRx.push(h.id);
+      renderMiniCabinet(); renderRxTray();
+    };
+    cab.appendChild(div);
+  });
+}
+function updateRxSubmit(){
+  const btn = $('rx-submit'); if(!btn) return;
+  const need = rt.modalPatient ? rt.modalPatient.recipe.herbs.length : 0;
+  btn.textContent = '처방하기 ('+rt.modalRx.length+'/'+need+')';
+  btn.disabled = !rt.modalPatient || rt.modalRx.length!==need;
+}
+function renderRxTray(){
+  const tray = $('rx-tray2'); updateRxSubmit();
+  if(rt.modalRx.length===0){ tray.innerHTML='<span class="empty-hint">약재 설명을 참고해 처방전을 완성하세요</span>'; return; }
+  tray.innerHTML='';
+  rt.modalRx.forEach((id,idx)=>{
+    const chip = document.createElement('div'); chip.className='rx-chip2';
+    chip.innerHTML = '<b>'+H[id].name+'</b><span class="x" style="cursor:pointer; color:var(--seal-red); font-weight:700;">✕</span>';
+    chip.querySelector('.x').onclick = ()=>{ rt.modalRx.splice(idx,1); renderMiniCabinet(); renderRxTray(); };
+    tray.appendChild(chip);
+  });
+}
+function submitPrescription(){
+  const patient = rt.modalPatient; if(!patient) return;
+  const r = patient.recipe; const need = r.herbs.length;
+  if(rt.modalRx.length!==need){ toast('약재를 '+need+'가지 골라주세요.'); return; }
+  const matched = rt.modalRx.filter(id=>r.herbs.includes(id)).length;
+  const exact = matched===need;
+  rt.modalAttempts++;
+  if(!exact && rt.modalAttempts<2){
+    $('rx-hint').innerHTML = '❌ '+need+'가지 중 <b>'+matched+'가지</b>만 맞았습니다. 한 번 더 시도할 수 있어요. (성공해도 보상 70%)';
+    return;
+  }
+  let income=0, repChange=0, good=true, text='';
+  const pen = (rt.modalHintUsed ? 0.6 : 1) * (rt.modalAttempts>1 ? 0.7 : 1);
+  state.discovered[r.name] = true;   // 실패해도 정답을 도감에서 확인할 수 있다
+  if(exact){
+    income = Math.round(r.reward*repMultiplier()*incomeMult()*pen*3);
+    repChange = Math.max(1, Math.round(r.rep*repMult2()));
+    text = r.name+' 완성! +'+income+'냥'+(rt.modalHintUsed?' (힌트 사용)':'')+(rt.modalAttempts>1?' (재시도)':'');
+  } else {
+    income = Math.round(r.reward*0.5*(matched/need)*repMultiplier()*incomeMult()*pen*3);
+    repChange = -2; good=false;
+    text = r.name+' 처방이 완전하지 않았습니다 ('+matched+'/'+need+') +'+income+'냥 · 도감에 정답이 기록되었어요';
+  }
+  earn(income); state.rep = Math.max(0, Math.min(100, state.rep+repChange)); state.totalPatients++;
+  log(patient.name+': '+text);
+  $('rx-result-seal').textContent = good?'完治':'未治';
+  $('rx-result-seal').style.borderColor = good?'var(--seal-red)':'var(--ink-soft)';
+  $('rx-result-seal').style.color = good?'var(--seal-red)':'var(--ink-soft)';
+  $('rx-result-text').textContent = text; $('rx-result').classList.add('show');
+  const pid = patient.id; rt.modalPatient = null; rt.modalRx = [];
+  setTimeout(()=>{ $('rx-modal').classList.remove('show'); leave(pid); }, 1100);
+}
+
+/* ================= MANAGE ================= */
+let curTab = 'facility';
+function openManagePanel(){ $('manage-modal').classList.add('show'); switchTab(curTab); }
+function closeManagePanel(){ $('manage-modal').classList.remove('show'); }
+function switchTab(tab){
+  curTab = tab;
+  ['facility','nurse','classic','compendium'].forEach(t=>$('tab-'+t).classList.toggle('active', t===tab));
+  $('manage-gold').textContent = fmt(state.gold);
+  const list = $('manage-list'); list.innerHTML='';
+  if(tab==='facility') renderFacilityTab(list);
+  else if(tab==='nurse') renderNurseTab(list);
+  else if(tab==='classic') renderClassicTab(list);
+  else renderCompendiumTab(list);
+}
+function refreshManage(){ ensureStations(); renderSceneStatic(); rt.queueDirty=true; updateHeader(); switchTab(curTab); }
+function bedCost(){ return BED_COSTS[Math.min(state.beds.length, BED_COSTS.length-1)]; }
+function spend(c){ if(state.gold<c){ toast('냥이 부족합니다.'); return false; } state.gold-=c; return true; }
+
+function renderFacilityTab(list){
+  // 간이의자
+  let row=document.createElement('div'); row.className='market-item';
+  const chairMax = CHAIR_CAPS[2]; let act='';
+  if(state.chairs>=chairMax) act='<span class="mi-stats">최대로 늘렸습니다 ('+state.chairs+'개)</span>';
+  else if(state.chairs>=chairCap()) act='<span class="mi-stats">현재 건물의 한계입니다 ('+state.chairs+'개) — 다음 단계에서 늘릴 수 있습니다</span>';
+  else act='<span class="mi-stats">보유 '+state.chairs+'개 / 현재 최대 '+chairCap()+'개</span><button class="btn small secondary" id="b-chair">간이의자 추가 ('+chairCost()+'냥)</button>';
+  row.innerHTML='<div class="mi-top"><span class="mi-icon">💺</span><span class="mi-name">간이의자<span class="mi-hanja">鍼</span></span><span class="mi-badge">침 전용</span></div>'+
+    '<div class="mi-stats">침 시술 '+TREAT.acu.duration+'초 · 진료비 약 '+TREAT.acu.reward+'냥 · 명성 +'+TREAT.acu.rep+'</div><div class="mi-actions">'+act+'</div>';
+  list.appendChild(row);
+  const bc=row.querySelector('#b-chair'); if(bc) bc.onclick=()=>{ if(!spend(chairCost())) return; state.chairs++; log('간이의자를 하나 더 들였습니다.'); refreshManage(); };
+
+  // 병상
+  row=document.createElement('div'); row.className='market-item'; act='';
+  const bedMax = BED_CAPS[2];
+  if(state.beds.length>=bedMax) act='<span class="mi-stats">최대로 늘렸습니다 ('+state.beds.length+'개)</span>';
+  else if(state.beds.length>=bedCap()) act='<span class="mi-stats">현재 건물의 한계입니다 ('+state.beds.length+'개) — 다음 단계에서 늘릴 수 있습니다</span>';
+  else act='<span class="mi-stats">보유 '+state.beds.length+'개 / 현재 최대 '+bedCap()+'개</span><button class="btn small sky" id="b-bed">병상 설치 ('+fmt(bedCost())+'냥)</button>';
+  row.innerHTML='<div class="mi-top"><span class="mi-icon">🛏️</span><span class="mi-name">병상<span class="mi-hanja">病床</span></span><span class="mi-badge">범용</span></div>'+
+    '<div class="mi-stats">침은 기본, 뜸 키트·물리치료기를 장착하면 한 병상에서 여러 시술을 함께 합니다. (뜸·물리치료는 동시에 진행)</div><div class="mi-actions">'+act+'</div>';
+  state.beds.forEach((b,i)=>{
+    const br=document.createElement('div'); br.className='bed-row';
+    br.innerHTML='<b>병상 '+(i+1)+'</b>'+
+      (b.moxa ? '<span class="eq-on">🔥 뜸 장착</span>' : '<button class="btn small secondary" data-eq="moxa">🔥 뜸 키트 ('+EQUIP_COST.moxa+'냥)</button>')+
+      (b.physio ? '<span class="eq-on">⚡ 물리치료기 장착</span>' : '<button class="btn small secondary" data-eq="physio">⚡ 물리치료기 ('+EQUIP_COST.physio+'냥)</button>');
+    br.querySelectorAll('button').forEach(btn=>{
+      btn.onclick=()=>{ const k=btn.getAttribute('data-eq'); if(!spend(EQUIP_COST[k])) return; b[k]=true; log('병상 '+(i+1)+'에 '+TREAT[k].name+' 장비를 갖췄습니다.'); refreshManage(); };
+    });
+    row.appendChild(br);
+  });
+  list.appendChild(row);
+  const bb=row.querySelector('#b-bed'); if(bb) bb.onclick=()=>{ if(!spend(bedCost())) return; state.beds.push({moxa:false,physio:false}); log('병상을 하나 들였습니다.'); refreshManage(); };
+}
+function renderNurseTab(list){
+  const note=document.createElement('div'); note.className='mi-stats'; note.style.padding='0 4px';
+  note.innerHTML='<b>접수·안내</b> 간호사가 있어야 환자가 자동으로 병상까지 안내됩니다(없으면 직접 배정). <b>시술 담당</b> 간호사는 한 명이 간이의자 '+COVER.chair+'석 또는 병상 '+COVER.bed+'개를 케어하며, 담당 범위 밖의 자리는 시술이 느리고 불만이 잦습니다.';
+  list.appendChild(note);
+  // 원장
+  {
+    const d = state.doctor; let dots='';
+    for(let i=0;i<DOC_MAX;i++) dots+='<div class="level-dot'+(i<d.level?' filled':'')+'"></div>';
+    const row=document.createElement('div'); row.className='market-item';
+    row.innerHTML='<div class="mi-top"><span class="mi-icon">🧑‍⚕️</span><span class="mi-name">원장<span class="mi-hanja">院長</span></span><span class="mi-badge">Lv.'+d.level+'/'+DOC_MAX+'</span></div>'+
+      '<div class="level-dots">'+dots+'</div><div class="mi-stats">특별 환자 대기 시간 +'+Math.round((doctorPatience()-1)*100)+'% · 특별 환자 이탈 시 명성 -'+hardLeavePenalty()+' · 모든 시술 불만 -'+Math.round(3*(d.level-1))+'%p</div>'+
+      '<div class="mi-actions">'+(d.level>=DOC_MAX?'<span class="mi-stats">최고 경지입니다.</span>':'<button class="btn small sky" id="b-doc">원장 레벨업 ('+fmt(doctorLevelCost(d.level+1))+'냥)</button>')+'</div>';
+    list.appendChild(row);
+    const b=row.querySelector('#b-doc'); if(b) b.onclick=()=>{ if(!spend(doctorLevelCost(d.level+1))) return; d.level++; log('원장이 Lv.'+d.level+'이 되었습니다.'); refreshManage(); };
+  }
+  NURSE_KINDS.forEach(kind=>{
+    const n=state.nurses[kind];
+    const stCount = kind==='chair' ? state.chairs : kind==='bed' ? state.beds.length : 0;
+    const maxHire = kind==='guide' ? GUIDE_CAPS[state.stage] : Math.ceil(stCount/COVER[kind]);
+    const row=document.createElement('div'); row.className='market-item'; let act='', dots='';
+    for(let i=0;i<NURSE_MAX;i++) dots+='<div class="level-dot'+(n.count>0&&i<n.level?' filled':'')+'"></div>';
+    const acts=[];
+    if(kind!=='guide' && stCount===0) acts.push('<span class="mi-stats">먼저 '+(kind==='chair'?'간이의자':'병상')+'를 설치하세요.</span>');
+    else {
+      if(n.count<maxHire) acts.push('<button class="btn small secondary" id="b-hire">'+(n.count===0?'고용하기':'추가 고용')+' ('+fmt(nurseHireCost(kind))+'냥)</button>');
+      else acts.push('<span class="mi-stats">'+(kind==='guide'?'현재 단계의 최대 인원입니다.':'담당 범위가 모든 자리를 덮고 있습니다.')+'</span>');
+      if(n.count>0 && n.level<NURSE_MAX) acts.push('<button class="btn small sky" id="b-lv">레벨업 ('+fmt(nurseLevelCost(kind,n.level+1))+'냥)</button>');
+      else if(n.count>0) acts.push('<span class="mi-stats">최고 숙련도입니다.</span>');
+    }
+    act = acts.join('');
+    let stat;
+    if(kind==='guide') stat = n.count>0 ? '안내 시간 '+(ESCORT_TIME*guideSpeed()).toFixed(1)+'초/명 · 동시에 '+n.count+'명 안내 · 대기실 케어: 일반 환자 대기 시간 소모 '+Math.round(Math.max(0.5,1-0.07*(n.level-1)-0.05*(n.count-1))*100)+'%, 특별 환자는 그 80%' : '고용하면 대기실 환자를 병상까지 안내하고, 대기 중인 환자의 불만도 달래줍니다.';
+    else stat = n.count>0 ? '담당 '+Math.min(stCount, n.count*COVER[kind])+' / '+stCount+'자리 · 범위 안 시술 시간 '+Math.round(Math.max(0.6,1-0.08*(n.level-1))*100)+'% · 불만 확률 '+Math.round(Math.max(0.02,0.20-0.04*(n.level-1))*100)+'%' : '담당 간호사가 없으면 시술이 느리고(×1.3) 불만 확률이 30%입니다.';
+    row.innerHTML='<div class="mi-top"><span class="mi-icon">👩‍⚕️</span><span class="mi-name">'+NURSE_NAME[kind]+' 간호사</span><span class="mi-badge">'+(n.count>0?n.count+'명 · Lv.'+n.level+'/'+NURSE_MAX:'미고용')+'</span></div>'+
+      '<div class="level-dots">'+dots+'</div><div class="mi-stats">'+stat+'</div><div class="mi-actions">'+act+'</div>';
+    list.appendChild(row);
+    const h=row.querySelector('#b-hire'); if(h) h.onclick=()=>{ if(!spend(nurseHireCost(kind))) return; n.count++; log(NURSE_NAME[kind]+' 간호사를 '+(n.count>1?'추가로 ':'')+'고용했습니다.'); refreshManage(); };
+    const l=row.querySelector('#b-lv'); if(l) l.onclick=()=>{ if(!spend(nurseLevelCost(kind,n.level+1))) return; n.level++; log(NURSE_NAME[kind]+' 간호사가 Lv.'+n.level+'이 되었습니다.'); refreshManage(); };
+  });
+}
+function renderClassicTab(list){
+  CLASSIC_ORDER.forEach(key=>{
+    const c=CLASSICS[key], st=state.classics[key]; let dots='';
+    for(let i=0;i<c.maxLevel;i++) dots+='<div class="level-dot'+(i<st.level?' filled':'')+'"></div>';
+    const maxed=st.level>=c.maxLevel;
+    const row=document.createElement('div'); row.className='market-item';
+    row.innerHTML='<div class="mi-top"><span class="mi-icon">'+c.icon+'</span><span class="mi-name">'+c.name+'<span class="mi-hanja">'+c.hanja+'</span></span><span class="mi-badge">Lv.'+st.level+'/'+c.maxLevel+'</span></div>'+
+      '<div class="mi-stats">'+c.desc+'</div><div class="level-dots">'+dots+'</div><div class="mi-actions">'+(maxed?'<span class="mi-stats">최대 레벨입니다</span>':'<button class="btn small secondary" id="b-c">냥으로 배우기 ('+classicCost(st.level+1)+'냥)</button>')+'</div>';
+    list.appendChild(row);
+    const b=row.querySelector('#b-c'); if(b) b.onclick=()=>{ if(!spend(classicCost(st.level+1))) return; st.level++; log(c.name+' 레벨이 올랐습니다.'); refreshManage(); };
+  });
+}
+function renderCompendiumTab(list){
+  RECIPES.forEach(r=>{
+    const known=!!state.discovered[r.name]; const row=document.createElement('div'); row.className='market-item';
+    row.innerHTML = known
+      ? '<div class="mi-top"><span class="mi-icon">📜</span><span class="mi-name">'+r.name+'<span class="mi-hanja">'+r.hanja+'</span></span><span class="mi-badge">확인함</span></div><div class="mi-stats">'+r.desc+'</div><div class="mi-stats"><b>필요 약재:</b> '+r.herbs.map(i=>H[i].name).join(', ')+'</div>'
+      : '<div class="mi-top"><span class="mi-icon">❔</span><span class="mi-name">???<span class="mi-hanja">미확인 처방</span></span><span class="mi-badge">미확인</span></div><div class="mi-stats">특별 처방 환자를 진료하거나 힌트를 사용하면 기록됩니다.</div>';
+    list.appendChild(row);
+  });
+}
+
+/* ================= INFO MODAL ================= */
+const infoQueue = [];
+function showInfo(title, body){
+  infoQueue.push({title, body});
+  if(!$('info-modal').classList.contains('show')) nextInfo();
+}
+function nextInfo(){
+  const it = infoQueue.shift(); if(!it) return;
+  $('info-title').textContent = it.title; $('info-body').innerHTML = it.body;
+  $('info-modal').classList.add('show');
+}
+function closeInfo(){
+  $('info-modal').classList.remove('show');
+  if(infoQueue.length) nextInfo();
+}
+
+/* ================= BOOT ================= */
+window.addEventListener('beforeunload', ()=>{ if(rt.running) saveGame(false); });
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden && rt.running) saveGame(false); });
+if(loadSave()) $('btn-continue').style.display='inline-block';
+window.dbg = { get state(){return state;}, get rt(){return rt;}, settleOffline, checkStage };
+</script>
+</body>
+</html>
