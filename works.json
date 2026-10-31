@@ -80,6 +80,15 @@
       "liveUrl": "https://volunteerservice.vercel.app/",
       "prompt": "홈페이지 이미지를 계절별로 변할 수 있게 해달라고 하니 그렇게 만들어 준 것이 기억에 남습니다.",
       "thumb": "gallery-thumb.png"
+    },
+    {
+      "id": "10",
+      "title": "저니쓰",
+      "author": "김동규",
+      "summary": "짧은 영상으로 소개하는 국내 지방 도시",
+      "liveUrl": "https://claude.ai/artifact/HYZRuhfnc9J5ALvvbknSuA",
+      "prompt": "",
+      "thumb": "gallery-thumb.png"
     }
   ]
 }
